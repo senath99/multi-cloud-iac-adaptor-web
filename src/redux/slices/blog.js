@@ -77,7 +77,7 @@ export async function registerClient(data) {
   console.log('REGISTER');
 
   try {
-    const response = await axios.post('/verify-registration', {
+    const response = await axios.post('/Marketplace/verify-registration', {
       ...dataSet
     });
     return response;

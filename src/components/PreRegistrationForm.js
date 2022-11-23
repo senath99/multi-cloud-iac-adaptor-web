@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import clsx from 'clsx';
-import { isEqual, pick } from 'lodash';
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { Form, FormikProvider, useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
-import { PATH_DASHBOARD } from '../routes/paths';
-// components
 
 // material ui
 import {
@@ -15,14 +11,7 @@ import {
   TextField,
   Typography,
   FormHelperText,
-  Button,
   Grid,
-  InputLabel,
-  Select,
-  FormControl,
-  MenuItem,
-  InputAdornment,
-  Radio,
   Checkbox,
   Link,
   Autocomplete
@@ -33,14 +22,11 @@ import { LoadingButton } from '@material-ui/lab';
 
 import CircleUnchecked from '@material-ui/icons/CheckCircleOutline';
 import CircleChecked from '@material-ui/icons/RadioButtonUncheckedOutlined';
-import DropDownFilter from './DropDownFilter';
-import { useMemo } from 'react';
-import countryList from 'react-select-country-list';
 import SuccessPage from 'src/views/SuccessPage';
 import { registerClient } from 'src/redux/slices/blog';
+import ErrorPage from 'src/views/ErrorPage';
 // ----------------------------------------------------------------------
 
-// ----------------------------------------------------------------------
 const useStyles = makeStyles((theme) => ({
   margin: {
     marginBottom: theme.spacing(3)
@@ -102,7 +88,7 @@ function PreRegistrationForm({}) {
     return {
       marketplaceToken: queryParams.get('x-amzn-marketplace-token'),
       companyDetails: {
-        country: { name: selectedCountry },
+        country: selectedCountry,
         addressLine1: values.address1,
         addressLine2: values.address2,
         city: values.city,
@@ -116,10 +102,10 @@ function PreRegistrationForm({}) {
       },
       companyName: values.companyName,
       businessEmail: values.companyMail,
-      clientName: values.portalCode,
-      clientDomain: values.clientDomain,
+      clientName: values.companyMail.split('@')[1].split('.')[0],
+      clientDomain: values.companyMail.split('@')[1],
       eULAVersion: eula.eULAVersion,
-      eULAAccpeted: values.eULAAccpeted
+      eULAAccpeted: values.isEulaAccepted
     };
   };
 
@@ -152,7 +138,7 @@ function PreRegistrationForm({}) {
       const data = getRegistrationDTO(values);
       setSubmitting(true);
       const response = await registerClient(data);
-
+      console.log(JSON.stringify(data));
       if (response.status === 200) {
         setStage(1);
         enqueueSnackbar(
@@ -166,6 +152,7 @@ function PreRegistrationForm({}) {
           }
         );
       } else {
+        setStage(2);
         enqueueSnackbar(
           <div>
             <Typography variant="subtitle2">
@@ -196,13 +183,14 @@ function PreRegistrationForm({}) {
   } = formik;
 
   const changeHandler = (_, value) => {
+    console.log(value);
     setSelectedCountry({
-      name: value?.ecountry_name_en,
-      m49Code: value?.m49Code
+      name: value?.country_name_en,
+      m49Code: value?.m49
     });
     setFieldValue('country', {
-      name: value?.ecountry_name_en,
-      m49Code: value?.m49Code
+      name: value?.country_name_en,
+      m49Code: value?.m49
     });
   };
 
@@ -210,6 +198,8 @@ function PreRegistrationForm({}) {
     <>
       {stage == 1 ? (
         <SuccessPage />
+      ) : stage == 2 ? (
+        <ErrorPage />
       ) : (
         <FormikProvider value={formik}>
           <Form
