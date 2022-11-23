@@ -1,0 +1,13 @@
+{
+  "bracketSpacing": true,
+  "printWidth": 80,
+  "singleQuote": true,
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "useTabs": false,
+  "endOfLine": "auto",
+  "editor.formatOnSave": false,
+  "[javascript]": {
+    "editor.formatOnSave": true
+  }
+}
