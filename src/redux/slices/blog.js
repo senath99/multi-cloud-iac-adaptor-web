@@ -72,73 +72,16 @@ export default slice.reducer;
 export const { getMorePosts } = slice.actions;
 
 // ----------------------------------------------------------------------
+export async function registerClient(data) {
+  let dataSet = { ...data };
+  console.log('REGISTER');
 
-export function getAllPosts() {
-  return async (dispatch) => {
-    dispatch(slice.actions.startLoading());
-    try {
-      const response = await axios.get('/api/blog/posts/all');
-      dispatch(slice.actions.getPostsSuccess(response.data.posts));
-    } catch (error) {
-      dispatch(slice.actions.hasError(error));
-    }
-  };
-}
-
-// ----------------------------------------------------------------------
-
-export function getPostsInitial(index, step) {
-  return async (dispatch) => {
-    dispatch(slice.actions.startLoading());
-    try {
-      const response = await axios.get('/api/blog/posts', {
-        params: { index, step }
-      });
-      const results = response.data.results.length;
-      const { maxLength } = response.data;
-
-      dispatch(slice.actions.getPostsInitial(response.data.results));
-
-      if (results >= maxLength) {
-        dispatch(slice.actions.noHasMore());
-      }
-    } catch (error) {
-      dispatch(slice.actions.hasError(error));
-    }
-  };
-}
-
-// ----------------------------------------------------------------------
-
-export function getPost(title) {
-  return async (dispatch) => {
-    dispatch(slice.actions.startLoading());
-    try {
-      const response = await axios.get('/api/blog/post', {
-        params: { title }
-      });
-      dispatch(slice.actions.getPostSuccess(response.data.post));
-    } catch (error) {
-      console.error(error);
-      dispatch(slice.actions.hasError());
-    }
-  };
-}
-
-// ----------------------------------------------------------------------
-
-export function getRecentPosts(title) {
-  return async (dispatch) => {
-    dispatch(slice.actions.startLoading());
-    try {
-      const response = await axios.get('/api/blog/posts/recent', {
-        params: { title }
-      });
-
-      dispatch(slice.actions.getRecentPostsSuccess(response.data.recentPosts));
-    } catch (error) {
-      console.error(error);
-      dispatch(slice.actions.hasError());
-    }
-  };
+  try {
+    const response = await axios.post('/verify-registration', {
+      ...dataSet
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
 }
