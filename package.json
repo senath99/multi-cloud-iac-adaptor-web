@@ -5,12 +5,14 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "start": "SET PORT=3979 && react-scripts start",
+    "start": "run-script-os",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ext .js,.jsx ./src",
-    "lint:fix": "eslint --fix --ext .js,.jsx ./src"
+    "lint:fix": "eslint --fix --ext .js,.jsx ./src",
+    "start:windows": "set PORT=3879 && react-scripts start",
+    "start:default": "PORT=3879 react-scripts start"
   },
   "jest": {
     "coverageReporters": [
@@ -156,6 +158,7 @@
     "redux-firestore": "^0.15.0",
     "redux-mock-store": "^1.5.4",
     "redux-persist": "^6.0.0",
+    "run-script-os": "^1.1.6",
     "simplebar": "^5.3.0",
     "simplebar-react": "^2.3.0",
     "slick-carousel": "^1.8.1",
