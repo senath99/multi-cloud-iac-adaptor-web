@@ -23,7 +23,7 @@ import { LoadingButton } from '@material-ui/lab';
 import CircleUnchecked from '@material-ui/icons/CheckCircleOutline';
 import CircleChecked from '@material-ui/icons/RadioButtonUncheckedOutlined';
 import SuccessPage from 'src/views/SuccessPage';
-import { registerClient } from 'src/redux/slices/blog';
+import { registerClient } from 'src/redux/slices/registration';
 import ErrorPage from 'src/views/ErrorPage';
 // ----------------------------------------------------------------------
 
@@ -67,21 +67,52 @@ function PreRegistrationForm({}) {
   }, []);
 
   const ContainerSchemaValues = Yup.object().shape({
-    fName: Yup.string().min(2).max(55).required().label('First Name'),
-    lName: Yup.string().min(2).max(55).required().label('Last Name'),
-    companyName: Yup.string().min(2).max(55).required().label('Business Name'),
-    companyMail: Yup.string()
+    fNameField: Yup.string()
+      .min(1)
+      .max(55)
+      .required('First Name is required')
+      .label('First Name'),
+    lNameField: Yup.string()
+      .min(1)
+      .max(55)
+      .required('Last Name is required')
+      .label('Last Name'),
+    companyNameField: Yup.string()
+      .min(1)
+      .max(55)
+      .required('Business Name is required')
+      .label('Business Name'),
+    companyMailField: Yup.string()
       .email()
-      .required('Email Address is required')
+      .required('Business Email is required')
       .label('Business Email'),
-    country: Yup.mixed().required().label('Country'),
-    address1: Yup.string().min(2).max(55).required().label('Address 1'),
-    address2: Yup.string().min(2).max(55).required().label('Address 2'),
-    city: Yup.string().min(2).max(55).required().label('City'),
-    state: Yup.string().min(2).max(55).required().label('State'),
-    postalCode: Yup.string().min(2).max(55).required().label('Postal Code'),
-    phoneNumber: Yup.string().min(2).max(55).required().label('Phone Number'),
-    isEulaAccepted: Yup.bool().oneOf([true], 'Field must be checked')
+    countryField: Yup.mixed().required('Country is required').label('Country'),
+    address1Field: Yup.string()
+      .min(1)
+      .max(55)
+      .required('Address 1 is required')
+      .label('Address 1'),
+    address2Field: Yup.string().min(2).max(55).label('Address 2'),
+    cityField: Yup.string().max(55).required('City is required').label('City'),
+    stateField: Yup.string()
+      .min(1)
+      .max(55)
+      .required('State is required')
+      .label('State'),
+    postalCodeField: Yup.string()
+      .min(1)
+      .max(55)
+      .required('Postal Code is required')
+      .label('Postal Code'),
+    phoneNumberField: Yup.number()
+      .min(1)
+      .max(55)
+      .required('Phone Number is required')
+      .label('Phone Number'),
+    isEulaAccepted: Yup.bool().oneOf(
+      [true],
+      'You must click on the check box and adhere to the terms and conditons'
+    )
   });
 
   const getRegistrationDTO = (values) => {
@@ -89,39 +120,39 @@ function PreRegistrationForm({}) {
       marketplaceToken: queryParams.get('x-amzn-marketplace-token'),
       companyDetails: {
         country: selectedCountry,
-        addressLine1: values.address1,
-        addressLine2: values.address2,
-        city: values.city,
-        province: values.province,
-        postalCode: values.postalCode,
-        phoneNumber: values.phoneNumber,
+        addressLine1: values.address1Field,
+        addressLine2: values.address2Field,
+        city: values.cityField,
+        province: values.provinceField,
+        postalCode: values.postalCodeField,
+        phoneNumber: values.phoneNumberField,
         contactPerson: {
-          fName: values.fName,
-          lName: values.lName
+          fName: values.fNameField,
+          lName: values.lNameField
         }
       },
-      companyName: values.companyName,
-      businessEmail: values.companyMail,
-      clientName: values.companyMail.split('@')[1].split('.')[0],
-      clientDomain: values.companyMail.split('@')[1],
+      companyName: values.companyNameField,
+      businessEmail: values.companyMailField,
+      clientName: values.companyMailField.split('@')[1].split('.')[0],
+      clientDomain: values.companyMailField.split('@')[1],
       eULAVersion: eula.eULAVersion,
       eULAAccpeted: values.isEulaAccepted
     };
   };
 
   const initialSchemaValues = {
-    fName: '',
-    lName: '',
-    companyMail: '',
-    companyName: '',
-    country: '',
-    address1: '',
-    address2: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    phoneNumber: '',
-    portalCode: '',
+    fNameField: '',
+    lNameField: '',
+    companyMailField: '',
+    companyNameField: '',
+    countryField: '',
+    address1Field: '',
+    address2Field: '',
+    cityField: '',
+    stateField: '',
+    postalCodeField: '',
+    phoneNumberField: '',
+    portalCodeField: '',
     isEulaAccepted: false,
     customerIdentifier: ''
   };
@@ -188,7 +219,7 @@ function PreRegistrationForm({}) {
       name: value?.country_name_en,
       m49Code: value?.m49
     });
-    setFieldValue('country', {
+    setFieldValue('countryField', {
       name: value?.country_name_en,
       m49Code: value?.m49
     });
@@ -214,9 +245,9 @@ function PreRegistrationForm({}) {
                   autoComplete="off"
                   fullWidth
                   label="Type the First Name"
-                  {...getFieldProps('fName')}
-                  error={Boolean(touched.fName && errors.fName)}
-                  helperText={touched.fName && errors.fName}
+                  {...getFieldProps('fNameField')}
+                  error={Boolean(touched.fNameField && errors.fNameField)}
+                  helperText={touched.fNameField && errors.fNameField}
                   className={classes.margin}
                   data-testid="fname"
                 />
@@ -227,9 +258,9 @@ function PreRegistrationForm({}) {
                   autoComplete="off"
                   fullWidth
                   label="Type the Last Name"
-                  {...getFieldProps('lName')}
-                  error={Boolean(touched.lName && errors.lName)}
-                  helperText={touched.lName && errors.lName}
+                  {...getFieldProps('lNameField')}
+                  error={Boolean(touched.lNameField && errors.lNameField)}
+                  helperText={touched.lNameField && errors.lNameField}
                   className={classes.margin}
                   data-testid="lName"
                 />
@@ -239,9 +270,11 @@ function PreRegistrationForm({}) {
               autoComplete="off"
               fullWidth
               label={'Type the Business Email'}
-              {...getFieldProps('companyMail')}
-              error={Boolean(touched.companyMail && errors.companyMail)}
-              helperText={touched.companyMail && errors.companyMail}
+              {...getFieldProps('companyMailField')}
+              error={Boolean(
+                touched.companyMailField && errors.companyMailField
+              )}
+              helperText={touched.companyMailField && errors.companyMailField}
               className={classes.margin}
               data-testid="companyEmail"
             />
@@ -249,9 +282,11 @@ function PreRegistrationForm({}) {
               autoComplete="off"
               fullWidth
               label="Type the Company Name"
-              {...getFieldProps('companyName')}
-              error={Boolean(touched.companyName && errors.companyName)}
-              helperText={touched.companyName && errors.companyName}
+              {...getFieldProps('companyNameField')}
+              error={Boolean(
+                touched.companyNameField && errors.companyNameField
+              )}
+              helperText={touched.companyNameField && errors.companyNameField}
               className={classes.margin}
               data-testid="companyName"
             />
@@ -267,8 +302,8 @@ function PreRegistrationForm({}) {
                 <TextField
                   {...params}
                   label="Select your country"
-                  error={Boolean(touched.country && errors.country)}
-                  helperText={touched.country && errors.country}
+                  error={Boolean(touched.countryField && errors.countryField)}
+                  helperText={touched.countryField && errors.countryField}
                 />
               )}
               sx={{ mb: 2 }}
@@ -280,9 +315,9 @@ function PreRegistrationForm({}) {
               multiline
               label="Type Address Line 1"
               maxRows={5}
-              {...getFieldProps('address1')}
-              error={Boolean(touched.address1 && errors.address1)}
-              helperText={touched.address1 && errors.address1}
+              {...getFieldProps('address1Field')}
+              error={Boolean(touched.address1Field && errors.address1Field)}
+              helperText={touched.address1Field && errors.address1Field}
               className={classes.margin}
               data-testid="address1"
             />
@@ -292,9 +327,9 @@ function PreRegistrationForm({}) {
               multiline
               label="Type Address Line 2"
               maxRows={5}
-              {...getFieldProps('address2')}
-              error={Boolean(touched.address2 && errors.address2)}
-              helperText={touched.address2 && errors.address2}
+              {...getFieldProps('address2Field')}
+              error={Boolean(touched.address2Field && errors.address2Field)}
+              helperText={touched.address2Field && errors.address2Field}
               className={classes.margin}
               data-testid="address2"
             />
@@ -304,9 +339,9 @@ function PreRegistrationForm({}) {
                   autoComplete="off"
                   fullWidth
                   label="Type the City"
-                  {...getFieldProps('city')}
-                  error={Boolean(touched.city && errors.city)}
-                  helperText={touched.city && errors.city}
+                  {...getFieldProps('cityField')}
+                  error={Boolean(touched.cityField && errors.cityField)}
+                  helperText={touched.cityField && errors.cityField}
                   className={classes.margin}
                   data-testid="city"
                 />
@@ -317,9 +352,9 @@ function PreRegistrationForm({}) {
                   autoComplete="off"
                   fullWidth
                   label="Type the State/Province"
-                  {...getFieldProps('state')}
-                  error={Boolean(touched.state && errors.state)}
-                  helperText={touched.state && errors.state}
+                  {...getFieldProps('stateField')}
+                  error={Boolean(touched.stateField && errors.stateField)}
+                  helperText={touched.stateField && errors.stateField}
                   className={classes.margin}
                   data-testid="state"
                 />
@@ -331,9 +366,11 @@ function PreRegistrationForm({}) {
                   autoComplete="off"
                   fullWidth
                   label="Type the Postal Code"
-                  {...getFieldProps('postalCode')}
-                  error={Boolean(touched.postalCode && errors.postalCode)}
-                  helperText={touched.postalCode && errors.postalCode}
+                  {...getFieldProps('postalCodeField')}
+                  error={Boolean(
+                    touched.postalCodeField && errors.postalCodeField
+                  )}
+                  helperText={touched.postalCodeField && errors.postalCodeField}
                   className={classes.margin}
                   data-testid="postalCode"
                 />
@@ -342,11 +379,16 @@ function PreRegistrationForm({}) {
               <Grid item xs={12} md={6} lg={6}>
                 <TextField
                   autoComplete="off"
+                  type="number"
                   fullWidth
                   label="Type the Phone Number"
-                  {...getFieldProps('phoneNumber')}
-                  error={Boolean(touched.phoneNumber && errors.phoneNumber)}
-                  helperText={touched.phoneNumber && errors.phoneNumber}
+                  {...getFieldProps('phoneNumberField')}
+                  error={Boolean(
+                    touched.phoneNumberField && errors.phoneNumberField
+                  )}
+                  helperText={
+                    touched.phoneNumberField && errors.phoneNumberField
+                  }
                   className={classes.margin}
                   data-testid="pNumber"
                 />
