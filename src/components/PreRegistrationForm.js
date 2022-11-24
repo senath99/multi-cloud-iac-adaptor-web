@@ -47,6 +47,7 @@ function PreRegistrationForm({}) {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [eula, setEula] = useState(null);
   const [stage, setStage] = useState(0);
+  const [errorDesc, setErrorDesc] = useState('Unexpected Error');
 
   useEffect(() => {
     fetch('/documents/countries.json')
@@ -96,8 +97,7 @@ function PreRegistrationForm({}) {
       .max(55)
       .required('Postal Code is required')
       .label('Postal Code'),
-    phoneNumberField: Yup.number()
-      .min(1)
+    phoneNumberField: Yup.string()
       .max(55)
       .required('Phone Number is required')
       .label('Phone Number'),
@@ -128,7 +128,7 @@ function PreRegistrationForm({}) {
       clientName: values.companyMailField.split('@')[1].split('.')[0],
       clientDomain: values.companyMailField.split('@')[1],
       eULAVersion: eula.eULAVersion,
-      eULAAccpeted: values.isEulaAccepted
+      eULAAccepted: values.isEulaAccepted
     };
   };
 
@@ -175,6 +175,7 @@ function PreRegistrationForm({}) {
           }
         );
       } else {
+        setErrorDesc(response?.errorDesc);
         setStage(2);
         enqueueSnackbar(
           <div>
@@ -222,7 +223,7 @@ function PreRegistrationForm({}) {
       {stage == 1 ? (
         <SuccessPage />
       ) : stage == 2 ? (
-        <ErrorPage />
+        <ErrorPage errorDesc={errorDesc} />
       ) : (
         <FormikProvider value={formik}>
           <Form

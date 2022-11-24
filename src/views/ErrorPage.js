@@ -1,7 +1,14 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { experimentalStyled as styled } from '@material-ui/core/styles';
 // material
-import { Box, Button, Typography, Container, Link } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Typography,
+  Container,
+  Link,
+  useTheme
+} from '@material-ui/core';
 // components
 import Page from '../components/Page';
 import Logo from '../components/Logo';
@@ -26,7 +33,8 @@ const HeaderStyle = styled('header')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function ErrorPage() {
+export default function ErrorPage({ errorDesc }) {
+  const theme = useTheme();
   return (
     <RootStyle title="experienz">
       <HeaderStyle>
@@ -52,9 +60,15 @@ export default function ErrorPage() {
           <Typography variant="h6" textAlign="left" sx={{ mt: 5 }}>
             Registration Unsuccessful!
           </Typography>
+
+          <Typography
+            textAlign="left"
+            sx={{ mt: 2, color: theme.palette.error.main }}
+          >
+            {errorDesc}
+          </Typography>
           <Typography textAlign="left" sx={{ mt: 2 }}>
-            Please contact <Link>info@experienz.co.uk</Link> if you didn't
-            receive the email.
+            Please contact <Link>info@experienz.co.uk</Link>
           </Typography>
         </Box>
       </Container>
