@@ -36,15 +36,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-PreRegistrationForm.propTypes = {
-  onCreateDigitalResourceContainer: PropTypes.func,
-  onUpdateDigitalResourceContainer: PropTypes.func,
-  singleContainer: PropTypes.object,
-  interestGroups: PropTypes.array,
-  isEditMode: PropTypes.bool,
-  setInitialDigitalResourceContainer: PropTypes.func,
-  className: PropTypes.string
-};
+PreRegistrationForm.propTypes = {};
 
 function PreRegistrationForm({}) {
   const { enqueueSnackbar } = useSnackbar();
