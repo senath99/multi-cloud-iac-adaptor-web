@@ -210,11 +210,13 @@ function PreRegistrationForm({}) {
     console.log(value);
     setSelectedCountry({
       name: value?.country_name_en,
-      m49Code: value?.m49
+      m49Code: value?.m49,
+      eSGRegion: value?.region
     });
     setFieldValue('countryField', {
       name: value?.country_name_en,
-      m49Code: value?.m49
+      m49Code: value?.m49,
+      eSGRegion: value?.region
     });
   };
 
