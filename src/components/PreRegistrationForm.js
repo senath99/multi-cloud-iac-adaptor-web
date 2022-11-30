@@ -115,9 +115,9 @@ function PreRegistrationForm({}) {
         addressLine1: values.address1Field,
         addressLine2: values.address2Field,
         city: values.cityField,
-        province: values.provinceField,
+        province: values.stateField,
         postalCode: values.postalCodeField,
-        phoneNumber: values.phoneNumberField,
+        phoneNumber: values.phoneNumberField.toString(),
         contactPerson: {
           fName: values.fNameField,
           lName: values.lNameField
@@ -161,7 +161,6 @@ function PreRegistrationForm({}) {
       const data = getRegistrationDTO(values);
       setSubmitting(true);
       const response = await registerClient(data);
-      console.log(JSON.stringify(data));
       if (response.status === 200) {
         setStage(1);
         enqueueSnackbar(
@@ -207,15 +206,14 @@ function PreRegistrationForm({}) {
   } = formik;
 
   const changeHandler = (_, value) => {
-    console.log(value);
     setSelectedCountry({
       name: value?.country_name_en,
-      m49Code: value?.m49,
+      m49Code: value?.m49.toString(),
       eSGRegion: value?.region
     });
     setFieldValue('countryField', {
       name: value?.country_name_en,
-      m49Code: value?.m49,
+      m49Code: value?.m49.toString(),
       eSGRegion: value?.region
     });
   };
