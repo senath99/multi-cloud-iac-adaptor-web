@@ -44,7 +44,7 @@ function PreRegistrationForm({}) {
   const queryParams = new URLSearchParams(window.location.search);
   const [eulaStatus, setEulaStatus] = useState(false);
   const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState({});
   const [eula, setEula] = useState(null);
   const [stage, setStage] = useState(0);
   const [errorDesc, setErrorDesc] = useState('Unexpected Error');
@@ -79,7 +79,12 @@ function PreRegistrationForm({}) {
       .email()
       .required('Business Email is required')
       .label('Business Email'),
-    countryField: Yup.mixed().required('Country is required').label('Country'),
+    countryField: Yup.object()
+      .test('country', 'Country is required', (val) =>
+        !val.name ? false : true
+      )
+      .required('Country is required')
+      .label('Country'),
     address1Field: Yup.string()
       .min(1)
       .max(55)
@@ -137,7 +142,7 @@ function PreRegistrationForm({}) {
     lNameField: '',
     companyMailField: '',
     companyNameField: '',
-    countryField: '',
+    countryField: {},
     address1Field: '',
     address2Field: '',
     cityField: '',
@@ -206,16 +211,18 @@ function PreRegistrationForm({}) {
   } = formik;
 
   const changeHandler = (_, value) => {
-    setSelectedCountry({
-      name: value?.country_name_en,
-      m49Code: value?.m49.toString(),
-      eSGRegion: value?.region
-    });
-    setFieldValue('countryField', {
-      name: value?.country_name_en,
-      m49Code: value?.m49.toString(),
-      eSGRegion: value?.region
-    });
+    if (value) {
+      setSelectedCountry({
+        name: value?.country_name_en,
+        m49Code: value?.m49.toString(),
+        eSGRegion: value?.region
+      });
+      setFieldValue('countryField', {
+        name: value?.country_name_en,
+        m49Code: value?.m49.toString(),
+        eSGRegion: value?.region
+      });
+    }
   };
 
   return (
@@ -286,6 +293,7 @@ function PreRegistrationForm({}) {
             <Autocomplete
               autoComplete="off"
               fullWidth
+              disableClearable
               options={countries}
               value={selectedCountry?.country_name_en}
               getOptionLabel={(option) => option?.country_name_en}
@@ -397,10 +405,15 @@ function PreRegistrationForm({}) {
             <Typography variant="caption">
               I hereby agree to abide by the terms and conditions as provided in
               the{' '}
-              <Link href={eula?.eulaUrl} sx={{ cursor: 'pointer' }}>
+              <Link
+                target="_blank"
+                href={eula?.eulaUrl}
+                sx={{ cursor: 'pointer' }}
+              >
                 licence agreement
               </Link>
             </Typography>
+
             <FormHelperText error className={classes.helperText}>
               {touched?.isEulaAccepted && errors?.isEulaAccepted}
             </FormHelperText>
