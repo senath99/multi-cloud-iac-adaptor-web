@@ -24,12 +24,9 @@ export default slice.reducer;
 export async function registerClient(data) {
   let dataSet = { ...data };
   try {
-    const response = await axios.post(
-      '/platform-registration/verify-registration',
-      {
-        ...dataSet
-      }
-    );
+    const response = await axios.post('/registration/verify-registration ', {
+      ...dataSet
+    });
     return response;
   } catch (error) {
     return error;
