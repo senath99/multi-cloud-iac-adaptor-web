@@ -1,4 +1,15 @@
-// ----------------------------------------------------------------------
+/*
+ * Project: Dynamedics Supplier Portal Web
+ * Created Date: Thursday April 13th 2023
+ * Author: senath999
+ * -----
+ * Last Modified: Thursday April 13th 2023 12:04:27 am
+ * Modified By: senath999 at <you@you.you>
+ * -----
+ * Copyright (c) 2023 Mitra Sparks
+ * -----
+ * HISTORY:
+ */
 
 function path(root, sublink) {
   return `${root}${sublink}`;
@@ -34,7 +45,165 @@ export const PATH_HOME = {
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   general: {
-    dashboard: path(ROOTS_DASHBOARD, '')
+    dashboard: path(ROOTS_DASHBOARD, ''),
+    insightsRoot: path('', '/insights'),
+    insightsOrganisationalHealth: path('', '/insights/organisational-health'),
+    insightsEmployeeExperience: path('', '/insights/employee-experience'),
+    insightsApplicationUsage: path('', '/insights/application-usage'),
+    insightsFinancialOutlook: path('', '/insights/financial-outcomes'),
+    insightsProductivity: path('', '/insights/productivity'),
+    insightsPulse: path('', '/insights/pulse'),
+    insightsReports: path('', '/insights/reports'),
+    insightsBookmarksRoot: path('', '/insights/reports/bookmarks'),
+    insightsBookmarks: path('', '/insights/reports/bookmarks/:viewId'),
+    registrationUnsucessful: path('', '/registration-unsucessful'),
+    registration: path('', '/registration'),
+    questionnaire: path('', '/questionnaire'),
+    questionnaireCompleted: path('', '/questionnaire-completed'),
+    successPage: path('', '/registration-success')
+  },
+  dataSetManagement: {
+    root: path('', '/esg-data'),
+    uploadDataSets: path('', '/esg-data/upload-esg-data'),
+    webForm: path('', '/esg-data/online-forms')
+  },
+  mail: {
+    root: path(ROOTS_DASHBOARD, '/mail'),
+    all: path(ROOTS_DASHBOARD, '/mail/all'),
+    labels: [
+      path(ROOTS_DASHBOARD, '/mail/label/:customLabel/:mailId?'),
+      path(ROOTS_DASHBOARD, '/mail/:systemLabel/:mailId?')
+    ]
+  },
+  chat: {
+    root: path(ROOTS_DASHBOARD, '/chat'),
+    new: path(ROOTS_DASHBOARD, '/chat/new'),
+    conversation: [
+      path(ROOTS_DASHBOARD, '/chat/new'),
+      path(ROOTS_DASHBOARD, '/chat/:conversationKey')
+    ]
+  },
+  calendar: path(ROOTS_DASHBOARD, '/calendar'),
+  user: {
+    root: path('', '/user'),
+    profile: path('', '/user/profile'),
+    management: path('', '/users/manage'),
+    cards: path('', '/user/card'),
+    list: path('', '/user/list'),
+    account: path('', '/user/account')
+  },
+  content: {
+    management: path(ROOTS_DASHBOARD, '/content/manage')
+  },
+  interestGroups: {
+    management: path(ROOTS_DASHBOARD, '/interest-groups/manage')
+  },
+  management: {
+    surveys: path('', '/management/surveys'),
+    users: path('', '/management/users'),
+    newUser: path('', '/management/users/add-user'),
+    editUserRoot: path('', '/management/users/edit-user'),
+    editUser: path('', '/management/users/edit-user/:id'),
+    content: path('', '/management/content'),
+    contentDetails: {
+      digitalResource: path('', '/management/content?type=digital-resource'),
+      news: path('', '/management/content?type=news'),
+      container: path('', '/management/content?type=container')
+    },
+    interestGroups: path('', '/management/interest-groups'),
+    interestGroupDetail: path('', '/management/interest-groups/:id'),
+    newInterestGroup: path(
+      '',
+      '/management/interest-groups/add-interest-group'
+    ),
+    editInterestGroupRoot: path(
+      '',
+      '/management/interest-groups/edit-interest-group'
+    ),
+    editInterestGroup: path(
+      '',
+      '/management/interest-groups/edit-interest-group/:id'
+    ),
+    communication: path('', '/management/communication'),
+    platformSettings: path('', '/management/platform-settings'),
+    newDigitalResource: path('', '/management/content/add-digital-resource'),
+    editDigitalResourceRoot: path(
+      '',
+      '/management/content/edit-digital-resource'
+    ),
+    editDigitalResource: path(
+      '',
+      '/management/content/edit-digital-resource/:id'
+    ),
+    newNews: path('', '/management/content/add-news'),
+    editNewsRoot: path('', '/management/content/edit-news'),
+    editNews: path('', '/management/content/edit-news/:id'),
+    newContainer: path('', '/management/content/add-container'),
+    editDigitalResourceContainerRoot: path(
+      '',
+      '/management/content/edit-digital-resource-container'
+    ),
+    editDigitalResourceContainer: path(
+      '',
+      '/management/content/edit-digital-resource-container/:id'
+    ),
+    dataSetManagement: path('', '/management/data-set'),
+    integratedReports: path('', '/management/integrated-reports'),
+    newIntegratedReportRoot: path(
+      '',
+      '/management/integrated-reports/add-integrated-report'
+    ),
+    newIntegratedReport: path(
+      '',
+      '/management/integrated-reports/add-integrated-report/:frameworkId'
+    ),
+    editIntegratedReportRoot: path(
+      '',
+      '/management/integrated-reports/edit-integrated-report'
+    ),
+    editIntegratedReport: path(
+      '',
+      '/management/integrated-reports/edit-integrated-report/:frameworkId/:id'
+    ),
+    reviewIntegratedReportRoot: path(
+      '',
+      '/management/integrated-reports/review-integrated-report'
+    ),
+    reviewIntegratedReport: path(
+      '',
+      '/management/integrated-reports/review-integrated-report/:frameworkId/:id'
+    ),
+    generateIntegratedReportRoot: path(
+      '',
+      '/management/integrated-reports/generate-integrated-report'
+    ),
+    generateIntegratedReport: path(
+      '',
+      '/management/integrated-reports/generate-integrated-report/:frameworkId/:id'
+    ),
+    uploadDataSets: path('', '/management/data-set/upload-data-set'),
+    dataSetManagement: path('', '/management/data-set')
+  },
+  eCommerce: {
+    root: path(ROOTS_DASHBOARD, '/e-commerce'),
+    shop: path(ROOTS_DASHBOARD, '/e-commerce/shop'),
+    product: path(ROOTS_DASHBOARD, '/e-commerce/product/:name'),
+    productById: path(
+      ROOTS_DASHBOARD,
+      '/e-commerce/product/nike-air-force-1-ndestrukt'
+    ),
+    list: path(ROOTS_DASHBOARD, '/e-commerce/list'),
+    checkout: path(ROOTS_DASHBOARD, '/e-commerce/checkout'),
+    invoice: path(ROOTS_DASHBOARD, '/e-commerce/invoice')
+  },
+  blog: {
+    root: path(ROOTS_DASHBOARD, '/blog'),
+    post: path(ROOTS_DASHBOARD, '/blog/post/:title'),
+    postById: path(
+      ROOTS_DASHBOARD,
+      '/blog/post/portfolio-review-is-this-portfolio-too-creative'
+    ),
+    newPost: path(ROOTS_DASHBOARD, '/blog/new-post')
   },
   foundations: {
     root: path(ROOTS_DASHBOARD, '/foundations'),

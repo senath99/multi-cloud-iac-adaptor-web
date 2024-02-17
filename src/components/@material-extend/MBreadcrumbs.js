@@ -69,10 +69,16 @@ function LinkItem({ link }) {
 
 MBreadcrumbs.propTypes = {
   links: PropTypes.array.isRequired,
-  activeLast: PropTypes.bool
+  activeLast: PropTypes.bool,
+  maxWidth: PropTypes.number
 };
 
-export default function MBreadcrumbs({ links, activeLast = false, ...other }) {
+export default function MBreadcrumbs({
+  links,
+  activeLast = false,
+  maxWidth = 260,
+  ...other
+}) {
   const currentLink = last(links).name;
 
   const listDefault = links.map((link) => (
@@ -86,7 +92,7 @@ export default function MBreadcrumbs({ links, activeLast = false, ...other }) {
         <Typography
           variant="body2"
           sx={{
-            maxWidth: 260,
+            maxWidth: maxWidth,
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             color: 'text.disabled',

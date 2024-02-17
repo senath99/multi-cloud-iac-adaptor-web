@@ -1,13 +1,21 @@
+/*
+ * Project: Dynamedics Supplier Portal Web
+ * Created Date: Thursday April 13th 2023
+ * Author: Senath Sadeesha
+ * -----
+ * Last Modified: Thursday April 13th 2023 12:04:27 am
+ * Modified By: Senath Sadeesha at <sweerasinghe@mitrai.com>
+ * -----
+ * Copyright (c) 2023 Mitra Sparks
+ * -----
+ * HISTORY:
+ */
+
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 // material
 import { experimentalStyled as styled } from '@material-ui/core/styles';
 //
-
-// ----------------------------------------------------------------------
-
-const APP_BAR_MOBILE = 64;
-const APP_BAR_DESKTOP = 92;
+import DashboardNavbar from './DashboardNavbar';
 
 const RootStyle = styled('div')({
   display: 'flex',
@@ -18,14 +26,7 @@ const RootStyle = styled('div')({
 const MainStyle = styled('div')(({ theme }) => ({
   flexGrow: 1,
   overflow: 'auto',
-  minHeight: '100%',
-  paddingTop: APP_BAR_MOBILE + 24,
-  paddingBottom: theme.spacing(10),
-  [theme.breakpoints.up('lg')]: {
-    paddingTop: APP_BAR_DESKTOP + 24,
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
-  }
+  minHeight: '100%'
 }));
 
 // ----------------------------------------------------------------------
@@ -35,11 +36,9 @@ DashboardLayout.propTypes = {
 };
 
 export default function DashboardLayout({ children }) {
-  const [open, setOpen] = useState(false);
-
   return (
     <RootStyle>
-      {/* <DashboardNavbar onOpenSidebar={() => setOpen(true)} /> */}
+      <DashboardNavbar />
       <MainStyle>{children}</MainStyle>
     </RootStyle>
   );

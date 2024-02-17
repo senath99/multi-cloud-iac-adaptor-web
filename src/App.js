@@ -35,7 +35,9 @@ export default function App() {
                   <Router history={history}>
                     <ScrollToTop />
                     <GoogleAnalytics />
+                    {/* <Scrollbar sx={{ display: 'flex', alignItems: 'center' }}> */}
                     {renderRoutes(routes)}
+                    {/* </Scrollbar> */}
                   </Router>
                 </NotistackProvider>
               </LocalizationProvider>

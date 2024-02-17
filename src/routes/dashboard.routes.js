@@ -12,9 +12,13 @@
  */
 
 import { lazy } from 'react';
-
+import { Redirect } from 'react-router-dom';
+// guards
+import AuthGuard from '../guards/AuthGuard';
 // layouts
 import DashboardLayout from '../layouts/dashboard';
+//
+import { PATH_DASHBOARD, PATH_PAGE } from './paths';
 
 // ----------------------------------------------------------------------
 
@@ -24,13 +28,13 @@ const DashboardRoutes = {
   routes: [
     {
       exact: true,
-      path: '/',
-      component: lazy(() => import('../views/PreRegistration'))
+      path: PATH_DASHBOARD.general.dashboard,
+      component: lazy(() => import('../views/GeneralApp'))
     },
+
+    // ----------------------------------------------------------------------
     {
-      exact: true,
-      path: '/success-page',
-      component: lazy(() => import('../views/SuccessPage'))
+      component: () => <Redirect to="/dashboard" />
     }
   ]
 };

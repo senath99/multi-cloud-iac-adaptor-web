@@ -44,14 +44,26 @@ export const getBase64FromFile = (file) => {
 };
 
 export const convertToBinaryStream = (file, type) => {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     let reader = new FileReader();
-    reader.readAsDataURL(file);
-    let binary = undefined;
-    reader.onload = () => {
-      let blobdata = b64toBlob(reader.result.split(',')[1], type, 512);
-      resolve(blobdata);
-    };
+    var chunkSize = (1 << 16) + 2;
+    var pos = 0;
+    var b64chunks = [];
+
+    while (pos < file.size) {
+      await new Promise((rs) => {
+        reader.readAsDataURL(file.slice(pos, pos + chunkSize));
+        reader.onload = () => {
+          const b64 = b64toBlob(reader.result.split(',')[1], type, 512);
+          // Keeping it as a blob allaws browser to offload memory to disk
+          b64chunks.push(new Blob([b64]));
+          rs();
+        };
+        pos += chunkSize;
+      });
+    }
+    const blob = new Blob(b64chunks);
+    resolve(blob);
   });
 };
 

@@ -3,13 +3,14 @@
  * Created Date: Wednesday May 18th 2022
  * Author: Nalinda Wijayagunawardhane
  * -----
- * Last Modified: Monday July 18th 2022 7:49:04 pm
- * Modified By: Nalinda Wijayagunawardhane at <nwijayagunawardhane@mitrai.com>
- *              KasunSKarunasekara at <kkarunasekara@mitrai.com>
+KasunSKarunasekara at <kkarunasekara@mitrai.com> * Modified By: KasunSKarunasekara at <kkarunasekara@mitrai.com>
  * -----
  * Copyright (c) 2022 Mitra Sparks
  * -----
  * HISTORY:
+ * 2023-02-06	NRB	Added show percentage option for progress table.
+ * 2022-11-15	NRB	Added additional options for Swarm Plot.
+ * 2022-11-14	NRB	Added options for Swarm Plot, Bullet chart.
  * 2022-11-01	NRB	Added comparison mode option for bullet chart.
  * 2022-10-31	NRB	Added Bullet Chart and supporting options.
  * 2022-10-24	NRB	Added support for filter box widget.
@@ -34,6 +35,8 @@
  * 2022-07-18	NRB	Added options maps for colors, font sizes, and percentage selections.
  * 2022-07-16	NRB	Added color schemes for Nivo charts.
  * 2022-07-19	KK Added time insensitivity
+ * 2022-12-12 KK Added Interest group types.
+ * 2023-06-08 KK Changed supplier keyword to partner.
  */
 
 export const CORE_PILLARS = [
@@ -75,6 +78,16 @@ export const REPORTING_FILTER_DIMENSIONS = [
   'department',
   'company'
 ];
+export const INTEREST_GROUP_TYPE = {
+  PUBLIC: {
+    VALUE: 'Public',
+    HASH_CODE: 0
+  },
+  PRIVATE: {
+    VALUE: 'Private',
+    HASH_CODE: 1
+  }
+};
 export const REPORTING_DATE_RANGES = [
   { name: 'All time' },
   // { name: 'Today' },
@@ -1045,6 +1058,16 @@ export const REPORTING_CHART_TYPES = [
       },
       {
         type: 'radio',
+        optionName: 'dataLabelsInside',
+        label: 'Data Labels Position',
+        valueType: 'boolean',
+        selections: [
+          { name: 'Outside', value: false },
+          { name: 'Inside', value: true }
+        ]
+      },
+      {
+        type: 'radio',
         optionName: 'showLegend',
         label: 'Show Legend',
         valueType: 'boolean',
@@ -1222,6 +1245,16 @@ export const REPORTING_CHART_TYPES = [
         optionName: 'maxIcons',
         valueType: 'primitive',
         selections: [5, 10]
+      },
+      {
+        type: 'radio',
+        optionName: 'showPercentage',
+        valueType: 'boolean',
+        label: 'Show Percentage',
+        selections: [
+          { name: 'No', value: false },
+          { name: 'Yes', value: true }
+        ]
       }
     ],
     category: 'Generic'
@@ -1692,6 +1725,134 @@ export const REPORTING_CHART_TYPES = [
           { name: 'Yes', value: true },
           { name: 'No', value: false }
         ]
+      },
+      {
+        type: 'select',
+        optionName: 'recordsPerPage',
+        valueType: 'primitive',
+        label: 'Records Per Page',
+        selections: TABLE_ROW_COUNTS
+      },
+      {
+        type: 'text',
+        optionName: 'label',
+        valueType: 'string',
+        label: 'Pages Label'
+      },
+      {
+        type: 'text',
+        optionName: 'rangesColors',
+        valueType: 'string',
+        label: 'Ranges Colors'
+      },
+      {
+        type: 'select',
+        optionName: 'marginLeft',
+        valueType: 'primitive',
+        label: 'Left Margin',
+        selections: [100, 150, 200, 250, 300]
+      }
+    ],
+    category: 'Generic'
+  },
+  {
+    name: 'Swarm Chart',
+    value: 'swarm',
+    optionAvailable: true,
+    options: [
+      ...COMMON_OPTIONS,
+      {
+        type: 'radio',
+        optionName: 'hideYAxis',
+        label: 'Hide Y Axis',
+        valueType: 'boolean',
+        selections: [
+          { name: 'No', value: false },
+          { name: 'Yes', value: true }
+        ]
+      },
+      {
+        type: 'radio',
+        optionName: 'hideXAxis',
+        label: 'Hide X Axis',
+        valueType: 'boolean',
+        selections: [
+          { name: 'No', value: false },
+          { name: 'Yes', value: true }
+        ]
+      },
+      {
+        type: 'radio',
+        optionName: 'isHorizontal',
+        label: 'Horizontal',
+        valueType: 'boolean',
+        selections: [
+          { name: 'No', value: false },
+          { name: 'Yes', value: true }
+        ]
+      },
+      {
+        type: 'select',
+        label: 'Color Scheme',
+        optionName: 'colorScheme',
+        valueType: 'object',
+        selections: NIVO_COLOR_SCHEMES
+      },
+      {
+        type: 'select',
+        label: 'Font Size',
+        optionName: 'fontSize',
+        valueType: 'object',
+        selections: [...FONT_SIZES]
+      },
+      {
+        type: 'select',
+        label: 'Measure Index For Y Axis',
+        optionName: 'measureIndex',
+        valueType: 'object',
+        selections: [
+          { name: 'Primary', value: 0 },
+          { name: 'Secondary', value: 1 },
+          { name: 'Tertiary', value: 2 }
+        ]
+      },
+      {
+        type: 'text',
+        optionName: 'unit',
+        valueType: 'string',
+        label: 'Unit'
+      },
+      {
+        type: 'text',
+        optionName: 'colors',
+        valueType: 'string',
+        label: 'Colors (Separated by commas)'
+      },
+      {
+        type: 'select',
+        label: 'Markers Size',
+        optionName: 'markerSize',
+        valueType: 'object',
+        selections: PERCENTAGE_OPTIONS
+      },
+      {
+        type: 'text',
+        optionName: 'tooltipLabel',
+        valueType: 'string',
+        label: 'Tooltip Label'
+      },
+      {
+        type: 'text',
+        optionName: 'tooltipSecondaryLabel',
+        valueType: 'string',
+        label: 'Secondary Tooltip Label'
+      },
+      {
+        type: 'select',
+        label: 'Primary Measure Type',
+        optionName: 'primaryMeasureType',
+        valueType: 'object',
+        selections: [...REPORT_UNIT_TYPES.map((t) => ({ value: t }))]
       }
     ],
     category: 'Generic'
@@ -1773,6 +1934,108 @@ export const REPORTING_CHART_TYPES = [
         valueType: 'primitive',
         label: 'Records Per Page',
         selections: TABLE_ROW_COUNTS
+      }
+    ],
+    category: 'Climate and Emissions'
+  },
+  {
+    name: 'Partner Emissions Chart',
+    value: 'partner_emissions',
+    optionAvailable: true,
+    options: [
+      ...COMMON_OPTIONS,
+      {
+        type: 'radio',
+        optionName: 'hideYAxis',
+        label: 'Hide Y Axis',
+        valueType: 'boolean',
+        selections: [
+          { name: 'No', value: false },
+          { name: 'Yes', value: true }
+        ]
+      },
+      {
+        type: 'radio',
+        optionName: 'hideXAxis',
+        label: 'Hide X Axis',
+        valueType: 'boolean',
+        selections: [
+          { name: 'No', value: false },
+          { name: 'Yes', value: true }
+        ]
+      },
+      {
+        type: 'radio',
+        optionName: 'isHorizontal',
+        label: 'Horizontal',
+        valueType: 'boolean',
+        selections: [
+          { name: 'No', value: false },
+          { name: 'Yes', value: true }
+        ]
+      },
+      {
+        type: 'select',
+        label: 'Color Scheme',
+        optionName: 'colorScheme',
+        valueType: 'object',
+        selections: NIVO_COLOR_SCHEMES
+      },
+      {
+        type: 'select',
+        label: 'Font Size',
+        optionName: 'fontSize',
+        valueType: 'object',
+        selections: [...FONT_SIZES]
+      },
+      {
+        type: 'select',
+        label: 'Measure Index For Y Axis',
+        optionName: 'measureIndex',
+        valueType: 'object',
+        selections: [
+          { name: 'Primary', value: 0 },
+          { name: 'Secondary', value: 1 },
+          { name: 'Tertiary', value: 2 }
+        ]
+      },
+      {
+        type: 'text',
+        optionName: 'unit',
+        valueType: 'string',
+        label: 'Unit'
+      },
+      {
+        type: 'text',
+        optionName: 'colors',
+        valueType: 'string',
+        label: 'Colors (Separated by commas)'
+      },
+      {
+        type: 'select',
+        label: 'Markers Size',
+        optionName: 'markerSize',
+        valueType: 'object',
+        selections: PERCENTAGE_OPTIONS
+      },
+      {
+        type: 'text',
+        optionName: 'tooltipLabel',
+        valueType: 'string',
+        label: 'Tooltip Label'
+      },
+      {
+        type: 'text',
+        optionName: 'tooltipSecondaryLabel',
+        valueType: 'string',
+        label: 'Secondary Tooltip Label'
+      },
+      {
+        type: 'select',
+        label: 'Primary Measure Type',
+        optionName: 'primaryMeasureType',
+        valueType: 'object',
+        selections: [...REPORT_UNIT_TYPES.map((t) => ({ value: t }))]
       }
     ],
     category: 'Climate and Emissions'
@@ -1862,6 +2125,7 @@ export const ROLE_PULSE = 'insights_pulse';
 export const ROLE_PRODUCTIVITY = 'insights_productivity';
 export const ROLE_REPORT_WRITE = 'insights_reports_create';
 export const ROLE_REPORT_READ = 'insights_reports_read';
+export const ROLE_INSIGHTS_SUPPLIER = 'insights_supplier';
 //roles-management
 
 export const ROLE_COMMUNICATION = 'manage_communications';
@@ -1872,6 +2136,11 @@ export const ROLE_SETTINGS = 'manage_settings';
 export const ROLE_USERS = 'manage_users';
 export const ROLE_DATA_SETS_READ = 'manage_datasets_read';
 export const ROLE_DATA_SETS_WRITE = 'manage_datasets_write';
+export const ROLE_INTEGRATED_REPORTS_READ = 'integrated_reports_read';
+export const ROLE_INTEGRATED_REPORTS_WRITE = 'integrated_reports_write';
+export const ROLE_INTEGRATED_REPORTS_REVIEW = 'integrated_reports_review';
+export const ROLE_MANAGE_SUPPLIERS = 'manage_suppliers';
+export const ROLE_MANAGE_EVENTS = 'manage_events';
 
 //email validation
 export const EMAIL_VALIDATION = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -1898,12 +2167,22 @@ export const REPORT_VIEW_BOOKMARK_REMOVED_SUCCESS =
   'View was removed from bookmarks successfully.';
 export const REPORT_VIEW_BOOKMARKED_ERROR =
   'Bookmark status was not changed. Please try again.';
+export const PIN_SUPPLIER_VIEW_SUCCESS =
+  'View was pinned to partner section successfully.';
+export const UNPIN_SUPPLIER_VIEW_SUCCESS =
+  'View was unpinned from partner section successfully.';
+export const PIN_SUPPLIER_VIEW_ERROR = 'View was not pinned. Please try again.';
+export const UNPIN_SUPPLIER_VIEW_ERROR =
+  'View was not unpinned. Please try again.';
 export const REPORT_VIEW_DELETE_SUCCESS = 'View was deleted successfully.';
 export const REPORT_VIEW_DELETE_ERROR =
   'View was not deleted. Please try again.';
 export const EDIT_CANCEL_TITLE = 'Discarding Changes';
 export const EDIT_CANCEL_DESCRIPTION =
   'Are you sure you want to discard the changes?';
+
+//Common Labels
+export const ACCEPTED_FILES_LABEL = `(Only *.{fileExtension} files will be accepted)`;
 
 export const PROCESS_STATUS = {
   INITIAL: 'INITIAL',
@@ -1994,6 +2273,202 @@ export const LIMIT_DIMENSION_ARRAY = [
   { chartType: 'heatmap', dimensionLimit: 2 },
   { chartType: 'sankey', dimensionLimit: 2 }
 ];
+
+export const INTEGRATED_REPORT_STATUS = {
+  DRAFT: {
+    VALUE: 'draft',
+    LABEL: 'Draft',
+    HASH_CODE: 0
+  },
+  PENDING_APPROVAL: {
+    VALUE: 'pending_approval',
+    LABEL: 'Pending Approval',
+    HASH_CODE: 1
+  },
+  IMPROVEMENTS_NEEDED: {
+    VALUE: 'improvements_needed',
+    LABEL: 'Improvements Needed',
+    HASH_CODE: 2
+  },
+  APPROVED: {
+    VALUE: 'approved',
+    LABEL: 'Approved',
+    HASH_CODE: 3
+  },
+  REJECTED: {
+    VALUE: 'rejected',
+    LABEL: 'Rejected',
+    HASH_CODE: 4
+  }
+};
+
+export const IR_HELPER_TEXTS = {
+  TOPICS: {
+    LABEL: 'Topics to be reported under the standard',
+    VALUE: 1
+  },
+  NAME: {
+    LABEL: 'Name of the report',
+    VALUE: 2
+  },
+  PERIOD: {
+    LABEL: 'Period of reporting',
+    VALUE: 3
+  },
+  APPROVERS: {
+    LABEL: 'Users who have access to review the report',
+    VALUE: 4
+  }
+};
+
+export const IR_ENUMS = {
+  NO_DATA_FOUND: 'No data found'
+};
+
+export const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
 export const NO_DATA_CHARTS = ['unsdgsummary'];
 export const NO_MEASURES_CHARTS = ['filter'];
 export const NO_TITLE_CHARTS = ['filter'];
+export const DATA_SET_FILE_TYPE = 'text/csv';
+export const DATA_SET_OPTIONS = {
+  DATA_UPLOAD: 0,
+  WEB_FORMS: 1
+};
+export const WEB_FORMS_STATUS = {
+  LOADING: 0,
+  FIRST_STEP: 1,
+  SECOND_STEP: 2
+};
+
+export const WEB_FORMS_HELPER_TEXTS = {
+  Segment: 'ESG pillar of the indicator',
+  Sector: 'Classification of the specific ESG pillar',
+  Indicator: 'Measure of the specific ESG pillar',
+  Category: 'Section of the indicator selected',
+  Sub_Category: 'Sub section of the indicator selected',
+  Company: 'Name of the company',
+  Department: 'default',
+  Location: 'Company location of data ownership',
+  Data_Type: 'Type of data of the indicator ',
+  Data_Unit: 'Unit of measurement of the indicator ',
+  Data: 'Quantity of the indicator',
+  Date: 'Related Date'
+};
+
+export const EVENTS_ADD_EDIT_FORM = {
+  CREATE_EVENT_HELPER:
+    'Please create a new event where your partners can input their ESG (Environmental, Social, and Governance) data.',
+  EDIT_EVENT_HELPER: 'Update the selected event details.',
+  VALIDATION_TEXT: {
+    CHAR_LIMIT: '{fieldName} must be at most {limit} characters.',
+    REQUIRED: '{fieldName} is required.',
+    END_DATE_BEFORE_START_DATE: "End Date can't be before Start Date.",
+    DEADLINE_BEFORE_END_DATE:
+      "Submission Deadline can't be before Event End Date."
+  },
+  ALERT_MESSAGES: {
+    CREATE_EVENT_SUCCESS: 'Event added successfully.',
+    CREATE_EVENT_FAILD: 'Event was not added successfully.',
+    EDIT_EVENT_SUCCESS: 'Event updated successfully.',
+    EDIT_EVENT_FAILD: 'Event was not updated successfully.'
+  },
+  CONFIRMATION_MESSAGES: {
+    ADD_NEW_SEGMENT: 'Add this as a new segment?',
+    CREATE_NEW_EVENT: 'Are you sure you want to create this event?'
+  }
+};
+
+export const SUPPLIER_ADD_INVITE_FORM_TEXT = {
+  ADD_OR_INVITE_HELPER:
+    'Search for a partner that is already registered with experienz, and add them to your list of partners.',
+  DATA_ENTRY_HELPER: `Please use the <strong>"Partner Entry Template"</strong> for uploading multiple partners in .csv format. Existing partners will be added to your Approved list, and new partners will receive invitations.`,
+  DATA_ENTRY_TOOLTIP: `Add or invite multiple partners.`,
+  VALIDATION_TEXT: {
+    CHAR_LIMIT: '{fieldName} must be at most {limit} characters.',
+    REQUIRED: '{fieldName} is required.',
+    ONE_OR_MORE_INVALID: 'One or more rows are invalid.',
+    ONE_OR_MORE_EMAILS_INVALID:
+      'One or more email addresses you have provided are invalid.',
+    ONE_OR_MORE_EMAILS_REQUIRED:
+      'Email address is required. One or more rows are invalid.'
+  },
+  SUPPLIER_ADDITION_SUCCESS: 'Partner added successfully.',
+  SUPPLIER_ADDITION_FAILED: 'Partner was not added successfully.',
+  SUPPLIER_DELETION_SUCCESS: 'Partner deleted successfully.',
+  SUPPLIER_DELETION_FAILED: 'Partner was not deleted successfully.',
+  SUPPLIER_INVITATION_FAILED: `Invitations was not sent successfully.`,
+  SUPPLIER_FILE_PROCESSED_SUCCESSFULLY:
+    'Your data file has been processed successfully!',
+  SUPPLIER_FILE_INVALID: 'Please correct the invalid records and reupload',
+  CONFIRM_SUPPLIER_FILE: 'Confirm the Validated',
+  SUPPLIERS_NOT_FOUND_TITLE: 'Partners Not Found',
+  SUPPLIER_INVITATIONS_NOT_FOUND_TITLE: 'Invitations Not Found',
+  SUPPLIER_APPROVALS_NOT_FOUND_TITLE: 'Approvals Not Found',
+  SUPPLIER_DATA_SUBMISSIONS_NOT_FOUND_TITLE: 'Data Submissions Not Found',
+  SUPPLIER_DATA_SUBMISSIONS_NOT_FOUND_DESCRIPTION:
+    'We are unable to retrieve any submissions at the moment.',
+  SUPPLIER_APPROVALS_NOT_FOUND_DESCRIPTION:
+    'We are unable to retrieve any approvals at the moment.',
+  SUPPLIERS_NOT_FOUND_DECRIPTION:
+    'Partner cannot be found. Please fill in the required details above and send an invite.',
+  SUPPLIERS_INVITE_CONFIRMATION: `Are you sure you want to send an invitation to this partner?`,
+  NO_RECORDS_FOUND: `No records found`,
+  SUPPLIER_SHAREABLE_LINK_TITLE: 'Partner Invitation Link',
+  SUPPLIER_SHAREABLE_LINK_DESCRIPTION:
+    'Invite your partners to register with experienz by sending the link below.',
+  SHAREABLE_LINK_COPPIED: 'Copied to clipboard',
+  SUPPLIER_ADD_TEXT:
+    'Invite a new partner to register with Experienz by filling the required details below.'
+};
+
+export const SUPPLIER_SEARCH_LIST = {
+  ERROR_MESSAGES: {
+    SUPPLIER_NOT_FOUND_INVITE:
+      'Partner cannot be found. Please fill in the required details below and send an invite.'
+  }
+};
+
+export const SUPPLIER_APPROVALS_STATUS = {
+  REJECTED: {
+    VALUE: 'rejected',
+    LABEL: 'Rejected',
+    HASH_CODE: 6
+  },
+  APPROVED: {
+    VALUE: 'approved',
+    LABEL: 'Approved',
+    HASH_CODE: 2
+  },
+  PENDING_APPROVAL: {
+    VALUE: 'pending_approval',
+    LABEL: 'Pending Approval',
+    HASH_CODE: 5
+  }
+};
+
+export const SUPPLIER_APPROVALS_ACTION = {
+  REJECT: {
+    VALUE: 'reject',
+    LABEL: 'Reject',
+    HASH_CODE: 2
+  },
+  APPROVE: {
+    VALUE: 'approve',
+    LABEL: 'Approve',
+    HASH_CODE: 1
+  }
+};

@@ -4,7 +4,7 @@ import { Box } from '@material-ui/core';
 // ----------------------------------------------------------------------
 
 export default function Logo({
-  height = 60,
+  height = 40,
   logo = '/static/brand/logo.svg',
   ...other
 }) {

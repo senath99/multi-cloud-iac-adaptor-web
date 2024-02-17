@@ -2,7 +2,7 @@ import { alpha } from '@material-ui/core/styles';
 
 // ----------------------------------------------------------------------
 
-function createGradient(color1, color2) {
+export function createGradient(color1, color2) {
   return `linear-gradient(to bottom, ${color1}, ${color2})`;
 }
 
@@ -71,15 +71,16 @@ const GREY = {
   500_80: alpha('#919EAB', 0.8)
 };
 
-const GRADIENTS = {
+export const GRADIENTS = {
   primary: createGradient(PRIMARY.light, PRIMARY.main),
   info: createGradient(INFO.light, INFO.main),
   success: createGradient(SUCCESS.light, SUCCESS.main),
   warning: createGradient(WARNING.light, WARNING.main),
-  error: createGradient(ERROR.light, ERROR.main)
+  error: createGradient(ERROR.light, ERROR.main),
+  toolbar: createGradient(PRIMARY.main, SUCCESS.main)
 };
 
-const COMMON = {
+export const COMMON = {
   common: { black: '#000', white: '#fff' },
   primary: { ...PRIMARY, contrastText: '#fff' },
   secondary: { ...SECONDARY, contrastText: '#fff' },
@@ -106,14 +107,16 @@ const palette = {
     ...COMMON,
     text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
     background: { paper: '#fff', default: '#fff', neutral: GREY[200] },
-    action: { active: GREY[600], ...COMMON.action }
+    action: { active: GREY[600], ...COMMON.action },
+    gradient: GRADIENTS.success
   },
   dark: {
     ...COMMON,
     text: { primary: '#fff', secondary: GREY[500], disabled: GREY[600] },
     background: { paper: GREY[800], default: GREY[900], neutral: GREY[500_16] },
     action: { active: GREY[500], ...COMMON.action }
-  }
+  },
+  gradientSuccess: {}
 };
 
 export default palette;

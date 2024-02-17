@@ -26,7 +26,8 @@ import {
   TEXT_DIMENSIONS,
   DATA_SET_DOC_TYPE,
   ACCESS_TOKEN,
-  EMPTY_STRING
+  EMPTY_STRING,
+  MONTH_NAMES
 } from './constants';
 import {
   fCurrency,
@@ -110,7 +111,7 @@ export const getWorkplaceWellbeingDescriptors = (
     label: 'Health Index',
     labelType: 'TEXT',
     value: current,
-    description: `Your employees show ${current}% positiveness towards your organisation.`
+    description: `Your employees show ${current}% positivity towards your organisation.`
   });
   if (previous) {
     descriptors.push({
@@ -131,7 +132,7 @@ export const getWorkplaceWellbeingDescriptors = (
       label: 'No Change',
       labelType: 'ICON',
       value: 0,
-      description: 'We are yet to collect the subsequent responses.'
+      description: 'We are yet to collect responses.'
     });
   }
   if (overall) {
@@ -176,14 +177,14 @@ export function applySort(posts, sortBy) {
   return posts;
 }
 
-export function chartFormatter(val, type) {
+export function chartFormatter(val, type, skipFormat) {
   switch (type) {
     case 'CURRENCY':
       return fCurrency(val);
 
     case 'PERCENT':
       let temp = val;
-      if (temp < 1) {
+      if (temp < 1 && !skipFormat) {
         temp = temp * 100.0;
       }
       return fPercent(temp);
@@ -348,7 +349,7 @@ export const documentTypeFormater = (type) => {
   if (type === DATA_SET_DOC_TYPE.ESG_KPIS.VALUE) {
     return DATA_SET_DOC_TYPE.ESG_KPIS.LABEL;
   } else {
-    return DATA_SET_DOC_TYPE.OTHER.LABEL;
+    return type;
   }
 };
 
@@ -404,5 +405,47 @@ export const formatDateLabel = (date, granularity) => {
     return format(parseISO(date), granularityToDateFormat(granularity));
   } catch (error) {
     return date;
+  }
+};
+
+export const getIRPeriod = (dateRangeName) => {
+  const rangeType = dateRangeName.toLowerCase().split(' ')[0];
+  const timerange = dateRangeName.toLowerCase().split(' ')[1];
+
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+
+  switch (timerange) {
+    case 'month': {
+      if (today.getMonth() == 0) {
+        const monthName = MONTH_NAMES[11];
+        const derivedYear = currentYear - 1;
+        return `${monthName} ${derivedYear}`;
+      } else {
+        const month =
+          rangeType == 'this' ? today.getMonth() : today.getMonth() - 1;
+        const monthName = MONTH_NAMES[month];
+        return `${monthName} ${currentYear}`;
+      }
+    }
+    case 'quarter': {
+      var quarter =
+        rangeType == 'this'
+          ? Math.floor((currentMonth + 3) / 3)
+          : Math.floor((currentMonth + 3) / 3) - 1;
+      if (quarter == 0) {
+        quarter = 4;
+        const derivedYear = currentYear - 1;
+        return `Q${quarter} ${derivedYear}`;
+      }
+      return `Q${quarter} ${currentYear}`;
+    }
+    case 'year':
+      const year =
+        rangeType == 'this' ? today.getFullYear() : today.getFullYear() - 1;
+      return year;
+    default:
+      return dateRangeName;
   }
 };

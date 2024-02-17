@@ -54,6 +54,7 @@ export default function DropDownFilter({
   sx,
   value,
   property = 'name',
+  disabled,
   ...other
 }) {
   return (
@@ -66,6 +67,8 @@ export default function DropDownFilter({
           value={value}
           onChange={onChange}
           label={label}
+          disabled={disabled}
+          {...other}
           // fullWidth
           endAdornment={
             value &&

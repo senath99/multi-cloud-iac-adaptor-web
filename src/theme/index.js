@@ -22,7 +22,8 @@ ThemeConfig.propTypes = {
 };
 
 export default function ThemeConfig({ children }) {
-  const isLight = 'light';
+  const { themeMode, themeDirection } = useSettings();
+  const isLight = themeMode === 'light';
 
   const themeOptions = useMemo(
     () => ({
@@ -32,10 +33,11 @@ export default function ThemeConfig({ children }) {
       shape,
       typography,
       breakpoints,
+      direction: themeDirection,
       shadows: isLight ? shadows.light : shadows.dark,
       customShadows: isLight ? customShadows.light : customShadows.dark
     }),
-    [isLight]
+    [isLight, themeDirection]
   );
 
   const theme = createMuiTheme(themeOptions);

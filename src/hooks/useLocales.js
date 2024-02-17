@@ -5,18 +5,18 @@ import { useTranslation } from 'react-i18next';
 const LANGS = [
   {
     value: 'en',
-    label: 'English',
-    icon: '/static/icons/ic_flag_en.svg'
+    label: 'Silverstone',
+    icon: '/static/icons/silverstone.png'
   },
   {
     value: 'de',
-    label: 'German',
-    icon: '/static/icons/ic_flag_de.svg'
+    label: 'Sysco Labs',
+    icon: '/static/icons/mitrai_logo.png'
   },
   {
-    value: 'fr',
-    label: 'French',
-    icon: '/static/icons/ic_flag_fr.svg'
+    value: 'rr',
+    label: 'Mitra Innovation',
+    icon: '/static/icons/logo_sysco.png'
   }
 ];
 
@@ -24,8 +24,8 @@ const LANGS = [
 
 export default function useLocales() {
   const { i18n, t: translate } = useTranslation();
-  const langStorage = localStorage.getItem('i18nextLng');
-  const currentLang = LANGS.find((_lang) => _lang.value === langStorage);
+
+  const currentLang = LANGS.find((_lang) => _lang.value === 'en');
 
   const handleChangeLanguage = (newlang) => {
     i18n.changeLanguage(newlang);

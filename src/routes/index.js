@@ -3,10 +3,12 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import { Suspense, Fragment, lazy, useEffect, useMemo } from 'react';
 // material
 import { makeStyles } from '@material-ui/core/styles';
+// guards
+import GuestGuard from '../guards/GuestGuard';
 // components
 import LoadingScreen from '../components/LoadingScreen';
 //
-import { PATH_PAGE, PATH_AUTH } from './paths';
+import { PATH_PAGE, PATH_AUTH, PATH_DASHBOARD } from './paths';
 import DashboardRoutes from './dashboard.routes';
 
 // ----------------------------------------------------------------------
@@ -92,6 +94,12 @@ export function renderRoutes(routes = []) {
 }
 
 const routes = [
+  {
+    exact: true,
+    path: PATH_AUTH.root,
+    component: () => <Redirect to={PATH_DASHBOARD.general} />
+  },
+
   // App Routes
   DashboardRoutes
 ];

@@ -16,14 +16,14 @@ const SimpleBarStyle = styled(SimpleBarReact)(({ theme }) => ({
   maxHeight: '100%',
   '& .simplebar-scrollbar': {
     '&:before': {
-      backgroundColor: alpha(theme.palette.grey[600], 0.48)
+      backgroundColor: alpha(theme.palette.primary.dark, 0.6)
     },
     '&.simplebar-visible:before': {
       opacity: 1
     }
   },
   '& .simplebar-track.simplebar-vertical': {
-    width: 10
+    width: 12
   },
   '& .simplebar-track.simplebar-horizontal .simplebar-scrollbar': {
     height: 6
