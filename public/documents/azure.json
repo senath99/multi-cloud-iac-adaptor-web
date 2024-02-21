@@ -1,0 +1,43 @@
+[
+  {
+    "provider": "azure",
+    "id": "network-security-group",
+    "name": "Network Security Group Name",
+    "type": "text",
+    "size": 12
+  },
+  {
+    "id": "network-security-rule",
+    "provider": "aws",
+    "name": "Type",
+    "type": "dropdown",
+    "values": [],
+    "size": 12
+  },
+  {
+    "provider": "aws",
+    "name": "From Port",
+    "type": "text",
+    "size": 6
+  },
+  {
+    "provider": "aws",
+    "name": "To Port",
+    "type": "text",
+    "size": 6
+  },
+  {
+    "provider": "aws",
+    "name": "Protocol",
+    "type": "dropdown",
+    "values": [],
+    "size": 12
+  },
+  {
+    "provider": "aws",
+    "name": "CIDR Blocks",
+    "type": "",
+    "values": [],
+    "size": 12
+  }
+]

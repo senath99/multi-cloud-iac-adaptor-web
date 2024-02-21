@@ -52,10 +52,9 @@ const RootStyle = styled('div')(({ theme }) => ({
 }));
 
 const TABLE_HEAD = [
-  { id: 'uploadedDate', label: 'Date Added', alignRight: false },
-  { id: 'description', label: 'Description', alignRight: false },
-  { id: 'documentType', label: 'Document Type', alignRight: false },
-  { id: 'uploadedBy', label: 'Uploaded By', alignRight: false }
+  { id: 'stack_name', label: 'Stack Name', alignRight: false },
+  { id: 'version', label: 'version', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false }
 ];
 
 DataList.propTypes = {
@@ -63,16 +62,21 @@ DataList.propTypes = {
   onupdateUser: PropTypes.func,
   isLoading: PropTypes.bool
 };
-export default function DataList({ ESGData = [], isLoading, ondeleteDataSet }) {
+export default function DataList({
+  ESGData = [],
+  isLoading,
+  ondeleteDataSet,
+  onEditOpen
+}) {
   const dispatch = useDispatch();
 
   const { enqueueSnackbar } = useSnackbar();
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('desc');
-  const [selected, setSelected] = useState({ id: -1, createdOn: '' });
+  const [selected, setSelected] = useState({ stack_name: -1 });
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [orderBy, setOrderBy] = useState('dateAdded');
+  const [orderBy, setOrderBy] = useState('stack_name');
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -98,7 +102,7 @@ export default function DataList({ ESGData = [], isLoading, ondeleteDataSet }) {
     ESGData,
     getComparator(order, orderBy),
     filterName,
-    'description'
+    'stack_name'
   );
 
   const clearSearchText = () => {
@@ -135,7 +139,7 @@ export default function DataList({ ESGData = [], isLoading, ondeleteDataSet }) {
           onLoading={isLoading}
           onClearSearchText={clearSearchText}
           ondeleteDataSet={handleDeleteDataSet}
-          user={{}}
+          onEditOpen={onEditOpen}
         />
 
         {isLoading ? (
@@ -158,23 +162,23 @@ export default function DataList({ ESGData = [], isLoading, ondeleteDataSet }) {
                   {filteredESGData
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, label, title } = row;
+                      const { stack_name, version, status, provider } = row;
 
-                      const isItemSelected = selected.id === id;
+                      const isItemSelected = selected.stack_name === stack_name;
 
                       return (
                         <TableRow
                           hover
-                          key={id}
+                          key={stack_name}
                           tabIndex={-1}
                           role="checkbox"
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
                           onClick={(event) =>
-                            id == selected.id
-                              ? setSelected({ id: -1, uploadedBy: '' })
+                            stack_name == selected.stack_name
+                              ? setSelected({ stack_name: stack_name })
                               : setSelected({
-                                  id: id
+                                  stack_name: stack_name
                                 })
                           }
                         >
@@ -193,23 +197,19 @@ export default function DataList({ ESGData = [], isLoading, ondeleteDataSet }) {
                           </TableCell>
                           <TableCell>
                             <Typography variant="caption" noWrap>
-                              {label}
+                              {stack_name}
                             </Typography>
                           </TableCell>
 
                           <TableCell>
                             <Typography variant="caption" noWrap>
-                              {title}ddd
+                              {version}
                             </Typography>
                           </TableCell>
+
                           <TableCell>
                             <Typography variant="caption" noWrap>
-                              {title}
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="caption" noWrap>
-                              {title}
+                              {status}
                             </Typography>
                           </TableCell>
                         </TableRow>

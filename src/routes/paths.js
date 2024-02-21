@@ -46,21 +46,8 @@ export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   general: {
     dashboard: path(ROOTS_DASHBOARD, ''),
-    insightsRoot: path('', '/insights'),
-    insightsOrganisationalHealth: path('', '/insights/organisational-health'),
-    insightsEmployeeExperience: path('', '/insights/employee-experience'),
-    insightsApplicationUsage: path('', '/insights/application-usage'),
-    insightsFinancialOutlook: path('', '/insights/financial-outcomes'),
-    insightsProductivity: path('', '/insights/productivity'),
-    insightsPulse: path('', '/insights/pulse'),
-    insightsReports: path('', '/insights/reports'),
-    insightsBookmarksRoot: path('', '/insights/reports/bookmarks'),
-    insightsBookmarks: path('', '/insights/reports/bookmarks/:viewId'),
-    registrationUnsucessful: path('', '/registration-unsucessful'),
-    registration: path('', '/registration'),
-    questionnaire: path('', '/questionnaire'),
-    questionnaireCompleted: path('', '/questionnaire-completed'),
-    successPage: path('', '/registration-success')
+    ruleAdd: path('', '/rule-form'),
+    ruleEdit: path('', '/rule-edit')
   },
   dataSetManagement: {
     root: path('', '/esg-data'),

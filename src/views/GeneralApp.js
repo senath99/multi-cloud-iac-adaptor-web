@@ -1,14 +1,6 @@
 import React from 'react';
-import {
-  Box,
-  Grid,
-  Card,
-  Typography,
-  useMediaQuery,
-  useTheme,
-  Container
-} from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
+import { useTheme, Container } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
 
 import InstanceList from 'src/components/dashboard/InstanceList';
 

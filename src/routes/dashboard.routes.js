@@ -31,6 +31,16 @@ const DashboardRoutes = {
       path: PATH_DASHBOARD.general.dashboard,
       component: lazy(() => import('../views/GeneralApp'))
     },
+    {
+      exact: true,
+      path: PATH_DASHBOARD.general.ruleAdd,
+      component: lazy(() => import('../views/RuleAdd'))
+    },
+    {
+      exact: true,
+      path: PATH_DASHBOARD.general.ruleEdit,
+      component: lazy(() => import('../views/RuleEdit'))
+    },
 
     // ----------------------------------------------------------------------
     {

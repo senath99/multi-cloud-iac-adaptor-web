@@ -94,7 +94,7 @@ export default function DataListToolbar({
   ondeleteDataSet,
   onLoading,
   onClearSearchText,
-  user
+  onEditOpen
 }) {
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
@@ -117,11 +117,11 @@ export default function DataListToolbar({
         })
       }}
     >
-      {selected.id == -1 ? (
+      {selected.stack_name == -1 ? (
         <SearchStyle
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search by Description"
+          placeholder="Search by Stack"
           sx={{ width: 'max-content' }}
           startAdornment={
             <>
@@ -150,7 +150,7 @@ export default function DataListToolbar({
         />
       ) : (
         <Typography component="div" variant="subtitle1">
-          {selected.description}
+          {selected.stack_name}
         </Typography>
       )}
 
@@ -160,6 +160,7 @@ export default function DataListToolbar({
             disabled={onLoading}
             className={classes.iconButton}
             href={selected.filePath}
+            onClick={onEditOpen}
           >
             <Grid
               item

@@ -171,8 +171,9 @@ export const {
 export function getInstances() {
   return async (dispatch) => {
     try {
-      const response = await axios.get('/api/instances');
-      dispatch(slice.actions.getInstancesSuccess(response.data.data));
+      const response = await axios.get('http://127.0.0.1:8000/stacks');
+      console.log(JSON.stringify(response));
+      dispatch(slice.actions.getInstancesSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

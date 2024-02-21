@@ -34,7 +34,7 @@ import { useHistory } from 'react-router';
 import { useTheme } from '@material-ui/core/styles';
 import DataList from '../utils/DataList';
 import { getInstances } from 'src/redux/slices/data-sets';
-import RuleAddEditForm from '../utils/RuleAddEditForm';
+import RuleAddEditForms from '../utils/RuleAddEditForms';
 
 // ----------------------------------------------------------------------
 
@@ -47,19 +47,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function InstanceList() {
   const dispatch = useDispatch();
-  const theme = useTheme();
+  const history = useHistory();
 
   const { esgData, isLoading } = useSelector((state) => state.datasets);
 
-  const [open, setOpen] = useState(false);
-
-  const [hover, setHover] = useState(null);
   const handleAddNewOpen = (event) => {
-    setOpen(true);
+    history.push(PATH_DASHBOARD.general.ruleAdd);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleEditNewOpen = (event) => {
+    history.push(PATH_DASHBOARD.general.ruleEdit);
   };
 
   useEffect(() => {
@@ -77,13 +74,12 @@ export default function InstanceList() {
           Create Rule
         </Button>
       </Box>
-      <DataList ESGData={esgData} isLoading={isLoading} ondeleteDataSet={{}} />
-
-      <Dialog open={open} maxWidth={false} disableEscapeKeyDown={true}>
-        <Grid container sx={{ p: 4 }}>
-          <RuleAddEditForm />
-        </Grid>
-      </Dialog>
+      <DataList
+        ESGData={esgData}
+        isLoading={isLoading}
+        ondeleteDataSet={{}}
+        onEditOpen={handleEditNewOpen}
+      />
     </Box>
   );
 }

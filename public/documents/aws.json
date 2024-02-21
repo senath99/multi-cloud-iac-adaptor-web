@@ -1,0 +1,41 @@
+[
+  {
+    "provider": "aws",
+    "name": "Security Group Name",
+    "type": "text",
+    "size": 12
+  },
+  {
+    "provider": "aws",
+    "name": "Type",
+    "type": "dropdown",
+    "values": [],
+    "size": 12
+  },
+  {
+    "provider": "aws",
+    "name": "From Port",
+    "type": "text",
+    "size": 6
+  },
+  {
+    "provider": "aws",
+    "name": "To Port",
+    "type": "text",
+    "size": 6
+  },
+  {
+    "provider": "aws",
+    "name": "Protocol",
+    "type": "dropdown",
+    "values": [],
+    "size": 12
+  },
+  {
+    "provider": "aws",
+    "name": "CIDR Blocks",
+    "type": "addNew",
+    "values": [],
+    "size": 12
+  }
+]

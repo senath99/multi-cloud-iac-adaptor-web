@@ -18,7 +18,7 @@ import { apiBaseUrl } from '../config';
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({
-  baseURL: apiBaseUrl
+  // baseURL: apiBaseUrl
 });
 
 axiosInstance.interceptors.response.use(
