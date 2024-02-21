@@ -4,6 +4,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import RuleAddEditForms from './RuleAddEditForms';
 
 export default function RuleEditForm({}) {
   const [expanded, setExpanded] = React.useState(false);
@@ -31,10 +32,7 @@ export default function RuleEditForm({}) {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
-            Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat.
-            Aliquam eget maximus est, id dignissim quam.
-          </Typography>
+          <RuleAddEditForms />
         </AccordionDetails>
       </Accordion>
       <Accordion

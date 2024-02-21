@@ -55,6 +55,7 @@ export default function DropDownFilter({
   value,
   property = 'name',
   disabled,
+  defaultValue,
   ...other
 }) {
   return (
@@ -66,6 +67,7 @@ export default function DropDownFilter({
           id={label}
           value={value}
           onChange={onChange}
+          defaultValue={defaultValue}
           label={label}
           disabled={disabled}
           {...other}
