@@ -84,23 +84,66 @@ const AZURE_ACCESS = [
   { name: 'Deny', value: 'Deny' }
 ];
 
-function RuleAddEditForms({
-  onCreateUser,
-  onEditUser,
-  singleUser,
-  isEditMode,
-  permissions,
-  className,
-  countries,
-  groups,
-  dataRestrictions
-}) {
+const AWS_BODY = {
+  stackName: '',
+  provider: {
+    type: 'aws',
+    tfId: 'aws-provider-id',
+    region: 'us-east-1'
+  },
+  backend: {
+    type: 'local',
+    path: './terraform.tf-demo.tfstate'
+  },
+  modules: [
+    {
+      stackName: 'aws-stack',
+      provider: {
+        type: 'aws',
+        tfId: 'aws-provider-id-<<unique-id>>',
+        region: 'us-east-1'
+      },
+      backend: {
+        type: 'local',
+        path: './terraform.tf-demo.tfstate'
+      },
+      modules: [
+        {
+          moduleType: 'security-group',
+          tfId: 'sg-id-<<id>>',
+          name: 'my-security-group'
+        },
+        {
+          moduleType: 'security-group-rule',
+          tfId: 'sgr-id-<<id>>',
+          type: 'ingress',
+          fromPort: 80,
+          toPort: 80,
+          protocol: 'tcp',
+          cidrBlocks: ['10.0.3.0/32', '10.0.3.128/32'],
+          securityGroupId: 'sg-id.id'
+        }
+      ]
+    }
+  ]
+};
+
+function RuleAddEditForms({ className }) {
   const classes = useStyles();
   const [options, setOptions] = useState(['']);
   const [basicOpen, setBasicOpen] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [awsSecurityType, setawsSecurityType] = useState(AWS_SECURITY_TYPES[0]);
-  const formik = useFormik({});
+
+  const [cidrBlocks, setCidrBlocks] = useState(['']);
+  const [securityAWSGroups, setAWSSecurityGroups] = useState([]);
+  const formik = useFormik({
+    initialValues: {
+      security_group_name: '',
+      newPassword: '',
+      confirmNewPassword: ''
+    }
+  });
   const theme = useTheme();
   const {
     values,
@@ -126,6 +169,19 @@ function RuleAddEditForms({
     }
   };
 
+  const handleAddCIDROption = () => {
+    setCidrBlocks([...cidrBlocks, '']);
+  };
+
+  const handleDeleteCidrOption = (index) => {
+    let _options = [...cidrBlocks];
+    if (cidrBlocks.length !== 1) {
+      _options.splice(index, 1);
+      setCidrBlocks(_options);
+      setFieldValue('cidrBlocks', _options);
+    }
+  };
+
   const handleOptionChange = (event, index) => {
     let _options = [...options];
     _options.splice(index, 1, event.target.value);
@@ -136,6 +192,15 @@ function RuleAddEditForms({
   const onAwsType = (event) => {
     setawsSecurityType(event.target.value);
   };
+
+  const onchangeAwsSecurityGroups = (value, property, indexNo) => {
+    let group = securityAWSGroups.filter(
+      (item, index) => Object.keys(item)[0] == indexNo
+    );
+
+    setAWSSecurityGroups([{ [indexNo]: { [property]: value }, ...group }]);
+  };
+
   return (
     <React.Fragment>
       <Box container sx={{ minWidth: '60vw', maxWidth: '60vw', pt: '20px' }}>
@@ -151,18 +216,17 @@ function RuleAddEditForms({
               fullWidth
               size="small"
               label="Type the Stack Name"
-              // {...getFieldProps('firstName')}
+              {...getFieldProps('stack_name')}
               // error={Boolean(touched.firstName && errors.firstName)}
               // helperText={touched.firstName && errors.firstName}
               className={classes.margin}
-              data-testid={'firstName'}
+              data-testid={'stack_name'}
             />
             <Box sx={{ my: 3, height: 40, width: '60%' }}>
               <SwitchSelector
                 onChange={() => {
                   setBasicOpen(!basicOpen);
                   setAdvancedOpen(!advancedOpen);
-                  // setSearchCommand('');
                 }}
                 options={[
                   {
@@ -191,7 +255,7 @@ function RuleAddEditForms({
                 fullWidth
                 size="small"
                 label="Type the Security Group Name"
-                // {...getFieldProps('firstName')}
+                {...getFieldProps('security_group_name')}
                 // error={Boolean(touched.firstName && errors.firstName)}
                 // helperText={touched.firstName && errors.firstName}
                 className={classes.margin}
@@ -211,11 +275,10 @@ function RuleAddEditForms({
                       defaultValue={'ingress'}
                       size="small"
                       data={AWS_SECURITY_TYPES}
-                      // value={awsSecurityType}
+                      value={securityAWSGroups[index]?.type}
                       onChange={(event) => {
-                        const dateRange = event.target.value;
-                        // handleFilterChange('dateRange', dateRange);
-                        setawsSecurityType(dateRange);
+                        const securityType = event.target.value;
+                        onchangeAwsSecurityGroups(securityType, 'type', index);
                       }}
                     />
 
@@ -225,11 +288,15 @@ function RuleAddEditForms({
                       defaultValue={'tcp'}
                       size="small"
                       data={AWS_SECURITY_PROTOOCALS}
+                      value={securityAWSGroups[index]?.protocol}
                       // value={awsSecurityType}
                       onChange={(event) => {
-                        const dateRange = event.target.value;
-                        // handleFilterChange('dateRange', dateRange);
-                        setawsSecurityType(dateRange);
+                        const securityType = event.target.value;
+                        onchangeAwsSecurityGroups(
+                          securityType,
+                          'protocol',
+                          index
+                        );
                       }}
                     />
 
@@ -238,9 +305,14 @@ function RuleAddEditForms({
                         <TextField
                           fullWidth
                           size="small"
-                          value={options[index]}
+                          value={securityAWSGroups[index]?.fromPort}
                           onChange={(event) => {
-                            handleOptionChange(event, index);
+                            const securityType = event.target.value;
+                            onchangeAwsSecurityGroups(
+                              securityType,
+                              'fromPort',
+                              index
+                            );
                           }}
                           // error={!options[index]}
                           label={`From Port`}
@@ -250,9 +322,15 @@ function RuleAddEditForms({
                         <TextField
                           fullWidth
                           size="small"
-                          value={options[index]}
+                          type="number"
+                          value={securityAWSGroups[index]?.toPort}
                           onChange={(event) => {
-                            handleOptionChange(event, index);
+                            const securityType = event.target.value;
+                            onchangeAwsSecurityGroups(
+                              securityType,
+                              'toPort',
+                              index
+                            );
                           }}
                           // error={!options[index]}
                           label={`To Port`}
@@ -260,7 +338,7 @@ function RuleAddEditForms({
                       </Grid>
                     </Grid>
 
-                    {options.map((option, index) => {
+                    {cidrBlocks.map((option, index) => {
                       return (
                         <Box key={index} sx={{ mt: 2 }}>
                           <TextField
@@ -269,7 +347,12 @@ function RuleAddEditForms({
                             size="small"
                             value={options[index]}
                             onChange={(event) => {
-                              handleOptionChange(event, index);
+                              const securityType = event.target.value;
+                              onchangeAwsSecurityGroups(
+                                securityType,
+                                'toPort',
+                                index
+                              );
                             }}
                             // error={!options[index]}
                             label={`Type`}
@@ -279,7 +362,7 @@ function RuleAddEditForms({
                                   <IconButton
                                     data-testid={'pollDelete'}
                                     onClick={() => {
-                                      handleDeleteOption(index);
+                                      handleDeleteCidrOption(index);
                                     }}
                                   >
                                     <Icon icon={archiveOutline} />
@@ -294,26 +377,17 @@ function RuleAddEditForms({
                     <Button
                       size="small"
                       sx={{ my: 2 }}
-                      onClick={handleAddOption}
+                      onClick={handleAddCIDROption}
                       startIcon={<Icon icon={plusFill} />}
                       disabled={options.length >= 4}
                     >
                       Add CIDR Block
                     </Button>
                     <Box sx={{ display: 'flex', justifyContent: 'right' }}>
-                      {/* <IconButton
-                      data-testid={'pollDelete'}
-                      onClick={() => {
-                        handleDeleteOption(index);
-                      }}
-                    >
-                      <Icon icon={archiveOutline} />
-                    </IconButton> */}
-
                       <Button
                         size="small"
                         sx={{ my: 2 }}
-                        onClick={handleAddOption}
+                        onClick={handleDeleteCidrOption}
                         startIcon={<Icon icon={plusFill} />}
                         disabled={options.length >= 4}
                       >
@@ -545,15 +619,6 @@ function RuleAddEditForms({
                     </Grid>
 
                     <Box sx={{ display: 'flex', justifyContent: 'right' }}>
-                      {/* <IconButton
-                      data-testid={'pollDelete'}
-                      onClick={() => {
-                        handleDeleteOption(index);
-                      }}
-                    >
-                      <Icon icon={archiveOutline} />
-                    </IconButton> */}
-
                       <Button
                         size="small"
                         sx={{ my: 2 }}
