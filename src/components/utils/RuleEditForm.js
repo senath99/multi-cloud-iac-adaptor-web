@@ -32,14 +32,27 @@ export default function RuleEditForm({ stackName }) {
         {stack.map((stackItem) => {
           return (
             <Grid item xs={6}>
-              <Card sx={{ mb: 2, height: '50px' }}>
+              <Card
+                sx={{
+                  mb: 2,
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
                 <Container>
-                  <Typography variant="subtitle2">
-                    version :{stackItem.version}
-                  </Typography>
-                  <Typography variant="subtitle2">
-                    status :{stackItem.status}
-                  </Typography>
+                  <Grid container>
+                    <Grid item xs={5}>
+                      <Typography variant="subtitle2">
+                        version :{stackItem.version}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="subtitle2">
+                        status :{stackItem.status}
+                      </Typography>
+                    </Grid>
+                  </Grid>
                 </Container>
               </Card>
             </Grid>

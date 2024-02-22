@@ -200,12 +200,7 @@ function RuleAddEditForms({ className }) {
 
     if (property == 'cidrBlocks') {
       let cidrValues = [];
-      cidrValues = [...group['cidrBlocks']];
 
-      setAWSSecurityGroups([
-        { [indexNo]: { [property]: [...cidrValues, value] }, ...group }
-      ]);
-    } else {
       setAWSSecurityGroups([{ [indexNo]: { [property]: value }, ...group }]);
     }
   };
@@ -360,7 +355,7 @@ function RuleAddEditForms({ className }) {
                             onChange={(event) => {
                               const securityType = event.target.value;
                               onchangeAwsSecurityGroups(
-                                securityType,
+                                [securityType],
                                 'cidrBlocks',
                                 index
                               );
@@ -390,7 +385,7 @@ function RuleAddEditForms({ className }) {
                       sx={{ my: 2 }}
                       onClick={handleAddCIDROption}
                       startIcon={<Icon icon={plusFill} />}
-                      disabled={options.length >= 4}
+                      // disabled={options.length >= 4}
                     >
                       Add CIDR Block
                     </Button>
@@ -673,7 +668,6 @@ function RuleAddEditForms({ className }) {
                 size="small"
                 variant="contained"
                 onClick={handleAddOption}
-                startIcon={<Icon icon={plusFill} />}
                 disabled={options.length >= 4}
               >
                 Cancel
