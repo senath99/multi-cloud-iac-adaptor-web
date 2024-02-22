@@ -1,17 +1,16 @@
 import React from 'react';
 import { useTheme, Container } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { Card } from '@material-ui/core';
 
 import RuleAddEditForms from 'src/components/utils/RuleAddEditForms';
 import RuleEditForm from 'src/components/utils/RuleEditForm';
 
 export default function RuleEdit() {
+  const { stack } = useParams();
   return (
     <Container sx={{ mt: 15 }}>
-      <Card sx={{ display: 'flex', justifyContent: 'center' }}>
-        <RuleEditForm />
-      </Card>
+      <RuleEditForm stackName={stack} />
     </Container>
   );
 }

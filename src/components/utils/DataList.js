@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-
+import { useHistory } from 'react-router';
 import {
   Box,
   Card,
@@ -37,6 +37,7 @@ import DataListToolbar from './DataListToolbar';
 import DataListHead from './DataListHead';
 //constants
 import { CHECK_BOX_FONT_SIZE, DATA_SET_DOC_TYPE } from '../../utils/constants';
+import { PATH_DASHBOARD } from 'src/routes/paths';
 //slices
 // import { getESGDataSets } from 'src/redux/slices/data-sets';
 // ----------------------------------------------------------------------
@@ -69,11 +70,11 @@ export default function DataList({
   onEditOpen
 }) {
   const dispatch = useDispatch();
-
+  const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('desc');
-  const [selected, setSelected] = useState({ stack_name: -1 });
+  const [selected, setSelected] = useState({ stack_name: 'test' });
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [orderBy, setOrderBy] = useState('stack_name');
@@ -127,6 +128,12 @@ export default function DataList({
     }
   };
 
+  const handleEditNewOpen = () => {
+    history.push(
+      `${PATH_DASHBOARD.general.ruleEditPath}/${selected.stack_name}`
+    );
+  };
+
   const isESGDataNotFound = filteredESGData.length === 0;
 
   return (
@@ -139,7 +146,7 @@ export default function DataList({
           onLoading={isLoading}
           onClearSearchText={clearSearchText}
           ondeleteDataSet={handleDeleteDataSet}
-          onEditOpen={onEditOpen}
+          onEditOpen={handleEditNewOpen}
         />
 
         {isLoading ? (

@@ -5,8 +5,19 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RuleAddEditForms from './RuleAddEditForms';
+import { useDispatch, useSelector } from 'react-redux';
+import { getInstancesByStackName } from 'src/redux/slices/data-sets';
+import { useEffect } from 'react';
+import { Card, Container, Grid } from '@material-ui/core';
 
-export default function RuleEditForm({}) {
+export default function RuleEditForm({ stackName }) {
+  const dispatch = useDispatch();
+  const { stack } = useSelector((state) => state.datasets);
+
+  useEffect(() => {
+    dispatch(getInstancesByStackName(stackName));
+  }, []);
+
   const [expanded, setExpanded] = React.useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -15,7 +26,27 @@ export default function RuleEditForm({}) {
 
   return (
     <div>
-      <Accordion
+      <Typography variant="title">{stack[0].stack_name}</Typography>
+
+      <Grid container spacing={1}>
+        {stack.map((stackItem) => {
+          return (
+            <Grid item xs={6}>
+              <Card sx={{ mb: 2, height: '50px' }}>
+                <Container>
+                  <Typography variant="subtitle2">
+                    version :{stackItem.version}
+                  </Typography>
+                  <Typography variant="subtitle2">
+                    status :{stackItem.status}
+                  </Typography>
+                </Container>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
+      {/* <Accordion
         expanded={expanded === 'panel1'}
         onChange={handleChange('panel1')}
       >
@@ -99,7 +130,7 @@ export default function RuleEditForm({}) {
             sit amet egestas eros, vitae egestas augue. Duis vel est augue.
           </Typography>
         </AccordionDetails>
-      </Accordion>
+      </Accordion> */}
     </div>
   );
 }

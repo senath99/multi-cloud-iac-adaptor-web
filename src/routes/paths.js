@@ -47,7 +47,8 @@ export const PATH_DASHBOARD = {
   general: {
     dashboard: path(ROOTS_DASHBOARD, ''),
     ruleAdd: path('', '/rule-form'),
-    ruleEdit: path('', '/rule-edit')
+    ruleEditPath: path('', '/rule-edit'),
+    ruleEdit: path('', '/rule-edit/:stack')
   },
   dataSetManagement: {
     root: path('', '/esg-data'),

@@ -55,10 +55,6 @@ export default function InstanceList() {
     history.push(PATH_DASHBOARD.general.ruleAdd);
   };
 
-  const handleEditNewOpen = (event) => {
-    history.push(PATH_DASHBOARD.general.ruleEdit);
-  };
-
   useEffect(() => {
     dispatch(getInstances());
   }, []);
@@ -74,12 +70,7 @@ export default function InstanceList() {
           Create Rule
         </Button>
       </Box>
-      <DataList
-        ESGData={esgData}
-        isLoading={isLoading}
-        ondeleteDataSet={{}}
-        onEditOpen={handleEditNewOpen}
-      />
+      <DataList ESGData={esgData} isLoading={isLoading} ondeleteDataSet={{}} />
     </Box>
   );
 }

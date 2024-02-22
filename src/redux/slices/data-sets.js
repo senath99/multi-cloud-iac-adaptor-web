@@ -16,7 +16,7 @@ const initialState = {
   iscancelLoading: false,
   error: false,
   esgData: [],
-  validatedData: [],
+  stack: [],
   status: '',
   recordData: { id: null },
   statusData: {
@@ -51,14 +51,9 @@ const slice = createSlice({
       state.esgData = action.payload;
     },
 
-    // VALIDATE ESG Data
-    validateESGDataSuccess(state, action) {
-      state.recordData = action.payload;
+    getInstancesByStackNameSuccess(state, action) {
       state.isLoading = false;
-      state.statusData = {
-        ...state.statusData,
-        processState: DATA_FILE_STATUS.PROCESSING.HASH_CODE
-      };
+      state.stack = action.payload;
     },
 
     // VALIDATE ESG Data
@@ -184,12 +179,16 @@ export function getInstances() {
 
 // ----------------------------------------------------------------------
 
-export function getMetaDefaults() {
+export function getInstancesByStackName(stackName) {
   return async (dispatch) => {
     try {
-      const responseDefaults = await axios.get('/data-sets/defaults');
+      const responseDefaults = await axios.get(
+        `http://127.0.0.1:8000/stacks/${stackName}`
+      );
 
-      dispatch(slice.actions.getMetaDefaultSuccess(responseDefaults.data.data));
+      dispatch(
+        slice.actions.getInstancesByStackNameSuccess(responseDefaults.data)
+      );
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
