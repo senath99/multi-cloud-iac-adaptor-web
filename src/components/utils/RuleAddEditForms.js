@@ -198,7 +198,16 @@ function RuleAddEditForms({ className }) {
       (item, index) => Object.keys(item)[0] == indexNo
     );
 
-    setAWSSecurityGroups([{ [indexNo]: { [property]: value }, ...group }]);
+    if (property == 'cidrBlocks') {
+      let cidrValues = [];
+      cidrValues = [...group['cidrBlocks']];
+
+      setAWSSecurityGroups([
+        { [indexNo]: { [property]: [...cidrValues, value] }, ...group }
+      ]);
+    } else {
+      setAWSSecurityGroups([{ [indexNo]: { [property]: value }, ...group }]);
+    }
   };
 
   return (
@@ -338,19 +347,21 @@ function RuleAddEditForms({ className }) {
                       </Grid>
                     </Grid>
 
-                    {cidrBlocks.map((option, index) => {
+                    {cidrBlocks.map((option, thisIndex) => {
                       return (
                         <Box key={index} sx={{ mt: 2 }}>
                           <TextField
                             sx={{ width: '49%' }}
                             fullWidth
                             size="small"
-                            value={options[index]}
+                            value={
+                              securityAWSGroups[index]?.cidrBlocks[thisIndex]
+                            }
                             onChange={(event) => {
                               const securityType = event.target.value;
                               onchangeAwsSecurityGroups(
                                 securityType,
-                                'toPort',
+                                'cidrBlocks',
                                 index
                               );
                             }}
@@ -644,6 +655,30 @@ function RuleAddEditForms({ className }) {
                 Add Security Group Rule
               </Button>
             </Collapse>
+
+            <Box sx={{ display: 'flex', justifyContent: 'right' }}>
+              <Button
+                size="small"
+                variant="contained"
+                sx={{ my: 2 }}
+                onClick={handleAddOption}
+                startIcon={<Icon icon={plusFill} />}
+                disabled={options.length >= 4}
+              >
+                Create Rule
+              </Button>
+
+              <Button
+                sx={{ ml: 4, my: 2 }}
+                size="small"
+                variant="contained"
+                onClick={handleAddOption}
+                startIcon={<Icon icon={plusFill} />}
+                disabled={options.length >= 4}
+              >
+                Cancel
+              </Button>
+            </Box>
           </Form>
         </FormikProvider>
       </Box>
