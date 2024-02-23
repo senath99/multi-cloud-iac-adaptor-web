@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { isEqual, pick, sortBy } from 'lodash';
+
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import { capitalCase } from 'change-case';
-import * as Yup from 'yup';
+
 import { useFormik } from 'formik';
 import { Form, FormikProvider } from 'formik';
-import { useSnackbar } from 'notistack';
-import jwtDecode from 'jwt-decode';
 
 // material
 import {
@@ -17,23 +12,9 @@ import {
   Typography,
   Grid,
   Button,
-  Autocomplete,
-  ToggleButtonGroup,
-  Checkbox,
-  ToggleButton,
   InputAdornment,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  FormHelperText,
-  RadioGroup,
-  Radio,
-  FormControlLabel,
   Collapse,
-  Popover,
   IconButton,
-  Alert,
   Divider
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -46,6 +27,8 @@ import archiveOutline from '@iconify/icons-eva/archive-outline';
 import DropDownFilter from '../DropDownFilter';
 
 import { v4 as uuidv4 } from 'uuid';
+import ControlledTextField from './ProviderForms/ControlledTextField';
+import ControlledDropdown from './ProviderForms/ControlledDropdown';
 // ----------------------------------------------------------------------
 
 const useStyles = makeStyles((theme) => ({
@@ -121,9 +104,7 @@ function RuleAddEditForms({ className }) {
   const [options, setOptions] = useState(['']);
   const [basicOpen, setBasicOpen] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
-  const [awsSecurityType, setawsSecurityType] = useState(AWS_SECURITY_TYPES[0]);
 
-  const [cidrBlocks, setCidrBlocks] = useState(['']);
   const [azureGroups, setAzureGroups] = useState({
     0: {
       moduleType: 'network-security-rule',
@@ -354,75 +335,40 @@ function RuleAddEditForms({ className }) {
               {Object.values(securityAWSGroups).map((option, index) => {
                 return (
                   <Box key={index} sx={{ mb: 2, mt: 2 }}>
-                    <DropDownFilter
-                      sx={{ mb: 1 }}
-                      label="Type"
-                      defaultValue={'ingress'}
-                      size="small"
-                      data={AWS_SECURITY_TYPES}
+                    <ControlledDropdown
+                      options={AWS_SECURITY_TYPES}
                       value={option?.type}
-                      onChange={(event) => {
-                        const securityType = event.target.value;
-                        onchangeAwsSecurityGroups(
-                          securityType,
-                          'type',
-                          option?.id
-                        );
-                      }}
+                      property="protocol"
+                      tfid={option?.id}
+                      onChange={onchangeAwsSecurityGroups}
+                      defaultValue="ingress"
+                      label="Type"
                     />
 
-                    <DropDownFilter
-                      sx={{ mb: 1 }}
-                      label={`Protocol`}
-                      defaultValue={'tcp'}
-                      size="small"
-                      data={AWS_SECURITY_PROTOOCALS}
+                    <ControlledDropdown
+                      options={AWS_SECURITY_PROTOOCALS}
                       value={option?.protocol}
-                      // value={awsSecurityType}
-                      onChange={(event) => {
-                        const securityType = event.target.value;
-                        onchangeAwsSecurityGroups(
-                          securityType,
-                          'protocol',
-                          option?.id
-                        );
-                      }}
+                      property={'protocol'}
+                      tfid={option?.id}
+                      onChange={onchangeAwsSecurityGroups}
+                      defaultValue={'tcp'}
                     />
 
                     <Grid container direction="row" spacing={1}>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          size="small"
+                        <ControlledTextField
                           value={option?.fromPort}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAwsSecurityGroups(
-                              securityType,
-                              'fromPort',
-                              option?.id
-                            );
-                          }}
-                          // error={!options[index]}
-                          label={`From Port`}
+                          property={'fromPort'}
+                          tfid={option?.id}
+                          onChange={onchangeAwsSecurityGroups}
                         />
                       </Grid>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          size="small"
-                          type="number"
+                        <ControlledTextField
                           value={option?.toPort}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAwsSecurityGroups(
-                              securityType,
-                              'toPort',
-                              option?.id
-                            );
-                          }}
-                          // error={!options[index]}
-                          label={`To Port`}
+                          property={'toPort'}
+                          tfid={option?.id}
+                          onChange={onchangeAwsSecurityGroups}
                         />
                       </Grid>
                     </Grid>
@@ -452,7 +398,10 @@ function RuleAddEditForms({ className }) {
                                   <IconButton
                                     data-testid={'pollDelete'}
                                     onClick={() => {
-                                      handleDeleteCidrOption(index, thisIndex);
+                                      handleDeleteCidrOption(
+                                        option?.id,
+                                        thisIndex
+                                      );
                                     }}
                                   >
                                     <Icon icon={archiveOutline} />
@@ -554,205 +503,118 @@ function RuleAddEditForms({ className }) {
               {Object.values(azureGroups).map((option, indexAZ) => {
                 return (
                   <Box key={indexAZ} sx={{ mb: 2, mt: 2 }}>
-                    <TextField
-                      sx={{ mb: 1 }}
-                      fullWidth
-                      size="small"
+                    <ControlledTextField
                       value={option?.name}
-                      onChange={(event) => {
-                        const securityType = event.target.value;
-                        onchangeAzureSecurityGroups(
-                          securityType,
-                          'name',
-                          option?.id
-                        );
-                      }}
-                      // error={!options[index]}
-                      label={`Network Security Rule Name`}
+                      property="name"
+                      tfid={option?.id}
+                      onChange={onchangeAzureSecurityGroups}
+                      label="Network Security Rule Name"
                     />
 
                     <Grid container direction="row" spacing={1} mb={1}>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          type="number"
-                          size="small"
+                        <ControlledTextField
                           value={option?.priority}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'priority',
-                              option?.id
-                            );
-                          }}
-                          // error={!options[index]}
-                          label={`Priority`}
+                          property="priority"
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
+                          label="Priority"
                         />
                       </Grid>
                       <Grid item xs={6}>
-                        <DropDownFilter
-                          sx={{ mb: 1 }}
-                          label={`Direction`}
-                          defaultValue={'Inbound'}
-                          size="small"
-                          data={AZURE_DIRECTIONS}
+                        <ControlledDropdown
+                          options={AZURE_DIRECTIONS}
                           value={option?.direction}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'direction',
-                              option?.id
-                            );
-                          }}
+                          property={'direction'}
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
+                          defaultValue={'Inbound'}
+                          label={`Direction`}
                         />
                       </Grid>
                     </Grid>
 
                     <Grid container direction="row" spacing={1} mb={1}>
                       <Grid item xs={6}>
-                        <DropDownFilter
-                          sx={{ mb: 1 }}
-                          label={`Access`}
-                          defaultValue={'Allow'}
-                          size="small"
-                          data={AZURE_ACCESS}
+                        <ControlledDropdown
+                          options={AZURE_ACCESS}
                           value={option?.access}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'access',
-                              option?.id
-                            );
-                          }}
+                          property={'access'}
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
+                          defaultValue={'Allow'}
+                          label={`Access`}
                         />
                       </Grid>
                       <Grid item xs={6}>
-                        <DropDownFilter
-                          sx={{ mb: 1 }}
-                          label={`Protocol`}
-                          defaultValue={'tcp'}
-                          size="small"
-                          data={AWS_SECURITY_PROTOOCALS}
+                        <ControlledDropdown
+                          options={AWS_SECURITY_PROTOOCALS}
                           value={option?.protocol}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'protocol',
-                              option?.id
-                            );
-                          }}
+                          property={'protocol'}
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
+                          defaultValue={'tcp'}
+                          label={`Protocol`}
                         />
                       </Grid>
                     </Grid>
 
                     <Grid container direction="row" spacing={1} mb={1}>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          size="small"
+                        <ControlledTextField
                           value={option?.sourcePortRange}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'sourcePortRange',
-                              option?.id
-                            );
-                          }}
-                          // error={!options[index]}
+                          property="sourcePortRange"
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
                           label={`Source Port Range`}
                         />
                       </Grid>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          size="small"
+                        <ControlledTextField
                           value={option?.destinationPortRange}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'destinationPortRange',
-                              option?.id
-                            );
-                          }}
-                          // error={!options[index]}
+                          property="destinationPortRange"
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
                           label={`Destination Port Range`}
                         />
                       </Grid>
                     </Grid>
                     <Grid container direction="row" spacing={1} mb={1}>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          size="small"
+                        <ControlledTextField
                           value={option?.sourceAddressPrefix}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'sourceAddressPrefix',
-                              option?.id
-                            );
-                          }}
-                          // error={!options[index]}
+                          property="sourceAddressPrefix"
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
                           label={`Source Address Prefix`}
                         />
                       </Grid>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          size="small"
+                        <ControlledTextField
                           value={option?.destinationAddressPrefix}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'destinationAddressPrefixype',
-                              option?.id
-                            );
-                          }}
-                          // error={!options[index]}
+                          property="destinationAddressPrefixype"
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
                           label={`Destination Address Prefix`}
                         />
                       </Grid>
                     </Grid>
                     <Grid container direction="row" spacing={1}>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          size="small"
-                          value={option[indexAZ]}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'resourceGroupName',
-                              option?.id
-                            );
-                          }}
-                          // error={!options[index]}
+                        <ControlledTextField
+                          value={option?.resourceGroupName}
+                          property="resourceGroupName"
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
                           label={`Resource Group Name`}
                         />
                       </Grid>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          size="small"
-                          value={option?.resourceGroupName}
-                          onChange={(event) => {
-                            const securityType = event.target.value;
-                            onchangeAzureSecurityGroups(
-                              securityType,
-                              'networkSecurityGroupName',
-                              option?.id
-                            );
-                          }}
-                          // error={!options[index]}
+                        <ControlledTextField
+                          value={option?.networkSecurityGroupName}
+                          property="networkSecurityGroupName"
+                          tfid={option?.id}
+                          onChange={onchangeAzureSecurityGroups}
                           label={`Network Security Group Name`}
                         />
                       </Grid>

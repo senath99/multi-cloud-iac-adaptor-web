@@ -74,7 +74,7 @@ export default function DataList({
   const { enqueueSnackbar } = useSnackbar();
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('desc');
-  const [selected, setSelected] = useState({ stack_name: 'test' });
+  const [selected, setSelected] = useState({ stack_name: -1 });
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [orderBy, setOrderBy] = useState('stack_name');
