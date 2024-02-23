@@ -1,18 +1,3 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Friday July 2nd 2021
- * Author: Nalinda Wijayagunawardhane
- * -----
- * Last Modified: Friday July 2nd 2021 8:10:01 am
- * Modified By: Nalinda Wijayagunawardhane at <nwijayagunawardhane@mitrai.com>
- * -----
- * Copyright (c) 2021 Mitra Sparks
- * -----
- * HISTORY:
- *
- * 2021-11-02	SS	Added a clear field option to Drop down filter.
- */
-
 import PropTypes from 'prop-types';
 // material
 import {
@@ -21,11 +6,8 @@ import {
   Select,
   InputLabel,
   Box,
-  InputAdornment,
-  ButtonGroup,
-  Tooltip
+  InputAdornment
 } from '@material-ui/core';
-import { LoadingButton } from '@material-ui/lab';
 import { filter, uniq, map } from 'lodash';
 import { OVERALL } from '../utils/constants';
 

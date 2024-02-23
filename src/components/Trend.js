@@ -1,18 +1,3 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Thursday June 2nd 2022
- * Author: Senath Weerasinghe
- * -----
- * Last Modified: Wednesday July 20th 2022 11:46:39 pm
- * Modified By: Senath Weerasinghe at <sweerasinghe@mitrai.com>
- *              KasunSKarunasekara at <kkarunasekara@mitrai.com>
- * -----
- * Copyright (c) 2022 Mitra Sparks
- * -----
- * HISTORY:
- * 2022-07-21	KK Added inverted colors option to trend
- */
-
 import { Chip } from '@material-ui/core';
 import {
   experimentalStyled as styled,

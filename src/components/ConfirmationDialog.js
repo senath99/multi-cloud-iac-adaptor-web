@@ -1,16 +1,3 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Friday February 18th 2022
- * Author: Dinusha Madhuranga
- * -----
- * Last Modified: Friday February 18th 2022 7:00:35 am
- * Modified By: Dinusha Madhuranga at <dmadhuranga@mitrai.com>
- * -----
- * Copyright (c) 2022 Mitra Sparks
- * -----
- * HISTORY:
- */
-
 import PropTypes from 'prop-types';
 // material
 import {

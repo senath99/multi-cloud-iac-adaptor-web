@@ -1,22 +1,3 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Monday July 11th 2022
- * Author: Senath Weerasinghe
- * -----
- * Last Modified: Monday July 18th 2022 1:00:47 pm
- * Modified By: Senath Weerasinghe at <sweerasinghe@mitrai.com>
- *              KasunSKarunasekara at <kkarunasekara@mitrai.com>
- * -----
- * Copyright (c) 2022 Mitra Sparks
- * -----
- * HISTORY:
- * 2022-10-24	NRB	Added option for font size in Progress Radial Chart.
- * 2022-07-20	NRB	Added radial chart options for more formatting flexibility.
- * 2022-07-20	NRB	Added bar chart options including colors and bar width.
- * 2022-07-16	NRB	Changed styling to fit donut chart.
- * 2022-07-19	KK shortDescription for percentageRadial
- */
-
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useCubeQuery } from '@cubejs-client/react';
@@ -25,8 +6,6 @@ import { cloneDeep } from 'lodash';
 import { Box, CircularProgress, Typography } from '@material-ui/core';
 // components
 import EmptyContent from '../../../EmptyContent';
-import Scrollbar from '../../../Scrollbar';
-import MarkDown from '../../../Markdown';
 import { AnalyticsPercentageRadial } from '../components/analytics/AnalyticsPercentageRadial';
 //charts
 import {

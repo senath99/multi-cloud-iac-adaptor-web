@@ -1,16 +1,3 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Tuesday October 5th 2021
- * Author: Dinusha Madhuranga
- * -----
- * Last Modified: Tuesday October 5th 2021 2:40:15 am
- * Modified By: Dinusha Madhuranga at <you@you.you>
- * -----
- * Copyright (c) 2021 Mitra Sparks
- * -----
- * HISTORY:
- */
-
 import PropTypes from 'prop-types';
 // material
 import { useTheme } from '@material-ui/core/styles';

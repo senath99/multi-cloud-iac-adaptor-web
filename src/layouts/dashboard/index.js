@@ -1,16 +1,3 @@
-/*
- * Project: Dynamedics Supplier Portal Web
- * Created Date: Thursday April 13th 2023
- * Author: Senath Sadeesha
- * -----
- * Last Modified: Thursday April 13th 2023 12:04:27 am
- * Modified By: Senath Sadeesha at <sweerasinghe@mitrai.com>
- * -----
- * Copyright (c) 2023 Mitra Sparks
- * -----
- * HISTORY:
- */
-
 import PropTypes from 'prop-types';
 // material
 import { experimentalStyled as styled } from '@material-ui/core/styles';

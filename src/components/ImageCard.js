@@ -1,41 +1,8 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Wednesday August 18th 2021
- * Author: Dinusha Madhuranga
- * -----
- * Last Modified: Wednesday August 18th 2021 1:58:39 pm
- * Last Modified: Sunday May 22nd 2022 5:53:24 pm
- * Modified By: Dinusha Madhuranga at <dmadhuranga@mitrai.com>
- *              KasunSKarunasekara at <kkarunasekara@mitrai.com>
- * -----
- * Copyright (c) 2021 Mitra Sparks
- * -----
- * HISTORY:
- * 2022-05-22	Added secondary caption option
- */
-
 import PropTypes from 'prop-types';
-import { Icon } from '@iconify/react';
-import fileFill from '@iconify/icons-eva/file-fill';
-import closeFill from '@iconify/icons-eva/close-fill';
-import { motion, AnimatePresence } from 'framer-motion';
+
 // material
 import { experimentalStyled as styled } from '@material-ui/core/styles';
-import {
-  Box,
-  List,
-  Link,
-  ListItem,
-  Typography,
-  ListItemIcon,
-  ListItemText,
-  ListItemSecondaryAction
-} from '@material-ui/core';
-// utils
-import { fData } from '../utils/formatNumber';
-//
-import { MIconButton } from './@material-extend';
-import { varFadeInRight } from './animate';
+import { Box, Typography } from '@material-ui/core';
 
 // ----------------------------------------------------------------------
 

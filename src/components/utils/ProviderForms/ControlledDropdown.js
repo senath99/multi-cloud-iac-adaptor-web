@@ -1,4 +1,3 @@
-import { TextField } from '@material-ui/core';
 import DropDownFilter from 'src/components/DropDownFilter';
 
 export default function ControlledDropdown({

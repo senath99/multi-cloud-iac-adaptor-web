@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import RuleAddEditForms from './RuleAddEditForms';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { getInstancesByStackName } from 'src/redux/slices/data-sets';
 import { useEffect } from 'react';
@@ -17,12 +16,6 @@ export default function RuleEditForm({ stackName }) {
   useEffect(() => {
     dispatch(getInstancesByStackName(stackName));
   }, []);
-
-  const [expanded, setExpanded] = React.useState(false);
-
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
 
   const handleEditNewOpen = () => {
     history.push(`${PATH_DASHBOARD.general.ruleAdd}`);

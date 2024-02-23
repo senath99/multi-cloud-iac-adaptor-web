@@ -1,16 +1,3 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Sunday May 16th 2021
- * Author: Nalinda Wijayagunawardhane
- * -----
- * Last Modified: Sunday May 16th 2021 1:16:59 pm
- * Modified By: Nalinda Wijayagunawardhane at <nwijayagunawardhane@mitrai.com>
- * -----
- * Copyright (c) 2021 Mitra Sparks
- * -----
- * HISTORY:
- */
-
 import PropTypes from 'prop-types';
 import { matchPath } from 'react-router-dom';
 // material

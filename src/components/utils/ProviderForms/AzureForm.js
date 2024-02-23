@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
-
-import clsx from 'clsx';
+import React, { useState } from 'react';
 
 import { useFormik } from 'formik';
-import { Form, FormikProvider } from 'formik';
 
 // material
 import {
@@ -12,18 +9,13 @@ import {
   Typography,
   Grid,
   Button,
-  InputAdornment,
-  Collapse,
-  IconButton,
   Divider
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
-import SwitchSelector from 'react-switch-selector';
 
 import { Icon } from '@iconify/react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import archiveOutline from '@iconify/icons-eva/archive-outline';
 import DropDownFilter from '../DropDownFilter';
 
 import { v4 as uuidv4 } from 'uuid';

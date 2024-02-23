@@ -24,20 +24,15 @@ import SearchNotFound from '../SearchNotFound';
 import EmptyContent from '../EmptyContent';
 import LoadingScreen from '../LoadingScreen';
 
-import { fDate } from '../../utils/formatTime';
 import PropTypes from 'prop-types';
-import {
-  getComparator,
-  applySortFilter,
-  documentTypeFormater
-} from '../../utils/functions';
+import { getComparator, applySortFilter } from '../../utils/functions';
 //icons
 import CircleChecked from '@material-ui/icons/CheckCircleOutline';
 import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
 import DataListToolbar from './DataListToolbar';
 import DataListHead from './DataListHead';
 //constants
-import { CHECK_BOX_FONT_SIZE, DATA_SET_DOC_TYPE } from '../../utils/constants';
+import { CHECK_BOX_FONT_SIZE } from '../../utils/constants';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 //slices
 // import { getESGDataSets } from 'src/redux/slices/data-sets';

@@ -1,18 +1,3 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Thursday February 17th 2022
- * Author: Senath Weerasinghe
- * -----
- * Last Modified: Tuesday May 24th 2022 8:38:06 pm
- * Modified By: Senath Weerasinghe at <sweerasinghe@mitrai.com>
- *              KasunSKarunasekara at <kkarunasekara@mitrai.com>
- * -----
- * Copyright (c) 2022 Mitra Sparks
- * -----
- * HISTORY:
- * 2022-05-24 KK  Added search field clear text
- */
-
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 // material
@@ -31,8 +16,7 @@ import {
   DialogActions,
   DialogTitle,
   DialogContent,
-  DialogContentText,
-  Link
+  DialogContentText
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -47,7 +31,7 @@ import {
 } from '@material-ui/core/styles';
 
 import CancelIcon from '@iconify/icons-eva/close-fill';
-import { ROLE_DATA_SETS_WRITE } from 'src/utils/constants';
+
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({

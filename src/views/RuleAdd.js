@@ -1,6 +1,4 @@
 import React from 'react';
-import { useTheme, Container } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
 import { Box, Card } from '@material-ui/core';
 
 import RuleAddEditForms from 'src/components/utils/RuleAddEditForms';

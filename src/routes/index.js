@@ -1,14 +1,12 @@
 import NProgress from 'nprogress';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { Suspense, Fragment, lazy, useEffect, useMemo } from 'react';
+import { Suspense, Fragment, useEffect, useMemo } from 'react';
 // material
 import { makeStyles } from '@material-ui/core/styles';
-// guards
-import GuestGuard from '../guards/GuestGuard';
 // components
 import LoadingScreen from '../components/LoadingScreen';
 //
-import { PATH_PAGE, PATH_AUTH, PATH_DASHBOARD } from './paths';
+import { PATH_AUTH, PATH_DASHBOARD } from './paths';
 import DashboardRoutes from './dashboard.routes';
 
 // ----------------------------------------------------------------------
