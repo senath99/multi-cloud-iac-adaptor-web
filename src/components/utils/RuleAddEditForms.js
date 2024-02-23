@@ -122,6 +122,23 @@ function RuleAddEditForms({ className }) {
   const [awsSecurityType, setawsSecurityType] = useState(AWS_SECURITY_TYPES[0]);
 
   const [cidrBlocks, setCidrBlocks] = useState(['']);
+  const [azureGroups, setAzureGroups] = useState({
+    0: {
+      moduleType: 'network-security-rule',
+      tfId: '',
+      name: '',
+      priority: null,
+      direction: '',
+      access: '',
+      protocol: '',
+      sourcePortRange: '*',
+      destinationPortRange: '*',
+      sourceAddressPrefix: '*',
+      destinationAddressPrefix: '*',
+      resourceGroupName: '',
+      networkSecurityGroupName: ''
+    }
+  });
   const [securityAWSGroups, setAWSSecurityGroups] = useState({
     0: {
       moduleType: 'security-group-rule',
@@ -171,13 +188,9 @@ function RuleAddEditForms({ className }) {
   };
 
   const handleDeleteOption = (index) => {
-    console.log('SSSSSSSSSSS');
     let groupValues = securityAWSGroups;
-    console.log('SSSSSSSSSSS' + JSON.stringify(groupValues) + ' ' + index);
+
     delete groupValues[index];
-
-    console.log('TEST' + JSON.stringify(groupValues));
-
     setAWSSecurityGroups({ ...groupValues });
   };
 
@@ -205,17 +218,6 @@ function RuleAddEditForms({ className }) {
     }
   };
 
-  const handleOptionChange = (event, index) => {
-    let _options = [...options];
-    _options.splice(index, 1, event.target.value);
-    setOptions(_options);
-    setFieldValue('options', _options);
-  };
-
-  const onAwsType = (event) => {
-    setawsSecurityType(event.target.value);
-  };
-
   const onchangeAwsSecurityGroups = (value, property, indexNo, index) => {
     let group = securityAWSGroups[indexNo];
     let dataValue = value;
@@ -229,6 +231,47 @@ function RuleAddEditForms({ className }) {
 
     setAWSSecurityGroups({
       ...securityAWSGroups,
+      [indexNo]: { ...group, [property]: dataValue }
+    });
+    // console.log({ [indexNo]: { ...group, [property]: value } });
+  };
+
+  //AZURE
+
+  const handleAzureAddOption = () => {
+    setAzureGroups({
+      ...azureGroups,
+      [Object.values(azureGroups).length]: {
+        moduleType: 'network-security-rule',
+        tfId: '',
+        name: '',
+        priority: null,
+        direction: '',
+        access: '',
+        protocol: '',
+        sourcePortRange: '*',
+        destinationPortRange: '*',
+        sourceAddressPrefix: '*',
+        destinationAddressPrefix: '*',
+        resourceGroupName: '',
+        networkSecurityGroupName: ''
+      }
+    });
+  };
+
+  const handleAzureDeleteOption = (index) => {
+    let groupValues = azureGroups;
+
+    delete groupValues[index];
+    setAzureGroups({ ...groupValues });
+  };
+
+  const onchangeAzureSecurityGroups = (value, property, indexNo) => {
+    let group = azureGroups[indexNo];
+    let dataValue = value;
+
+    setAzureGroups({
+      ...azureGroups,
       [indexNo]: { ...group, [property]: dataValue }
     });
     // console.log({ [indexNo]: { ...group, [property]: value } });
@@ -455,7 +498,8 @@ function RuleAddEditForms({ className }) {
                 sx={{ my: 2 }}
                 // value={options[index]}
                 // onChange={(event) => {
-                //   handleOptionChange(event, index);
+                //   const securityType = event.target.value;
+                //   onchangeAwsSecurityGroups(securityType, 'type', index);
                 // }}
                 // error={!options[index]}
                 label={`NetWork Security Group Name`}
@@ -470,11 +514,10 @@ function RuleAddEditForms({ className }) {
                     size="small"
                     data={AZURE_LOCATIONS}
                     // value={awsSecurityType}
-                    onChange={(event) => {
-                      const dateRange = event.target.value;
-                      // handleFilterChange('dateRange', dateRange);
-                      setawsSecurityType(dateRange);
-                    }}
+                    // onChange={(event) => {
+                    //   const securityType = event.target.value;
+                    //   onchangeAwsSecurityGroups(securityType, 'type', index);
+                    // }}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -483,7 +526,8 @@ function RuleAddEditForms({ className }) {
                     size="small"
                     // value={options[index]}
                     // onChange={(event) => {
-                    //   handleOptionChange(event, index);
+                    //   const securityType = event.target.value;
+                    //   onchangeAwsSecurityGroups(securityType, 'type', index);
                     // }}
                     // error={!options[index]}
                     label={`Resource Group Name`}
@@ -494,16 +538,21 @@ function RuleAddEditForms({ className }) {
                 Create the Network Security Group Rule/Rules
               </Typography>
 
-              {options.map((option, index) => {
+              {Object.values(azureGroups).map((option, index) => {
                 return (
                   <Box key={index} sx={{ mb: 2, mt: 2 }}>
                     <TextField
                       sx={{ mb: 1 }}
                       fullWidth
                       size="small"
-                      value={options[index]}
+                      value={option?.name}
                       onChange={(event) => {
-                        handleOptionChange(event, index);
+                        const securityType = event.target.value;
+                        onchangeAzureSecurityGroups(
+                          securityType,
+                          'name',
+                          index
+                        );
                       }}
                       // error={!options[index]}
                       label={`Network Security Rule Name`}
@@ -515,9 +564,14 @@ function RuleAddEditForms({ className }) {
                           fullWidth
                           type="number"
                           size="small"
-                          value={options[index]}
+                          value={options?.priority}
                           onChange={(event) => {
-                            handleOptionChange(event, index);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'priority',
+                              index
+                            );
                           }}
                           // error={!options[index]}
                           label={`Priority`}
@@ -530,11 +584,14 @@ function RuleAddEditForms({ className }) {
                           defaultValue={'Inbound'}
                           size="small"
                           data={AZURE_DIRECTIONS}
-                          // value={awsSecurityType}
+                          value={option?.direction}
                           onChange={(event) => {
-                            const dateRange = event.target.value;
-                            // handleFilterChange('dateRange', dateRange);
-                            setawsSecurityType(dateRange);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'direction',
+                              index
+                            );
                           }}
                         />
                       </Grid>
@@ -548,11 +605,14 @@ function RuleAddEditForms({ className }) {
                           defaultValue={'Allow'}
                           size="small"
                           data={AZURE_ACCESS}
-                          // value={awsSecurityType}
+                          value={option?.access}
                           onChange={(event) => {
-                            const dateRange = event.target.value;
-                            // handleFilterChange('dateRange', dateRange);
-                            setawsSecurityType(dateRange);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'access',
+                              index
+                            );
                           }}
                         />
                       </Grid>
@@ -563,11 +623,14 @@ function RuleAddEditForms({ className }) {
                           defaultValue={'tcp'}
                           size="small"
                           data={AWS_SECURITY_PROTOOCALS}
-                          // value={awsSecurityType}
+                          value={option?.protocol}
                           onChange={(event) => {
-                            const dateRange = event.target.value;
-                            // handleFilterChange('dateRange', dateRange);
-                            setawsSecurityType(dateRange);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'protocol',
+                              index
+                            );
                           }}
                         />
                       </Grid>
@@ -578,9 +641,14 @@ function RuleAddEditForms({ className }) {
                         <TextField
                           fullWidth
                           size="small"
-                          value={options[index]}
+                          value={option?.sourcePortRange}
                           onChange={(event) => {
-                            handleOptionChange(event, index);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'sourcePortRange',
+                              index
+                            );
                           }}
                           // error={!options[index]}
                           label={`Source Port Range`}
@@ -590,9 +658,14 @@ function RuleAddEditForms({ className }) {
                         <TextField
                           fullWidth
                           size="small"
-                          value={options[index]}
+                          value={option?.destinationPortRange}
                           onChange={(event) => {
-                            handleOptionChange(event, index);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'destinationPortRange',
+                              index
+                            );
                           }}
                           // error={!options[index]}
                           label={`Destination Port Range`}
@@ -604,9 +677,14 @@ function RuleAddEditForms({ className }) {
                         <TextField
                           fullWidth
                           size="small"
-                          value={options[index]}
+                          value={option?.sourceAddressPrefix}
                           onChange={(event) => {
-                            handleOptionChange(event, index);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'sourceAddressPrefix',
+                              index
+                            );
                           }}
                           // error={!options[index]}
                           label={`Source Address Prefix`}
@@ -616,9 +694,14 @@ function RuleAddEditForms({ className }) {
                         <TextField
                           fullWidth
                           size="small"
-                          value={options[index]}
+                          value={option?.destinationAddressPrefix}
                           onChange={(event) => {
-                            handleOptionChange(event, index);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'destinationAddressPrefixype',
+                              index
+                            );
                           }}
                           // error={!options[index]}
                           label={`Destination Address Prefix`}
@@ -632,7 +715,12 @@ function RuleAddEditForms({ className }) {
                           size="small"
                           value={options[index]}
                           onChange={(event) => {
-                            handleOptionChange(event, index);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'type',
+                              index
+                            );
                           }}
                           // error={!options[index]}
                           label={`Resource Group Name`}
@@ -642,9 +730,14 @@ function RuleAddEditForms({ className }) {
                         <TextField
                           fullWidth
                           size="small"
-                          value={options[index]}
+                          value={option?.resourceGroupName}
                           onChange={(event) => {
-                            handleOptionChange(event, index);
+                            const securityType = event.target.value;
+                            onchangeAzureSecurityGroups(
+                              securityType,
+                              'resourceGroupName',
+                              index
+                            );
                           }}
                           // error={!options[index]}
                           label={`Network Security Group Name`}
@@ -656,7 +749,7 @@ function RuleAddEditForms({ className }) {
                       <Button
                         size="small"
                         sx={{ my: 2 }}
-                        onClick={() => handleDeleteOption(index)}
+                        onClick={() => handleAzureDeleteOption(index)}
                         startIcon={<Icon icon={plusFill} />}
                         disabled={options.length >= 4}
                       >
@@ -671,7 +764,7 @@ function RuleAddEditForms({ className }) {
               <Button
                 size="small"
                 sx={{ my: 2 }}
-                onClick={handleAddOption}
+                onClick={handleAzureAddOption}
                 startIcon={<Icon icon={plusFill} />}
                 disabled={options.length >= 4}
               >
