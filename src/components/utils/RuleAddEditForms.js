@@ -85,7 +85,7 @@ const AZURE_ACCESS = [
 ];
 
 const AWS_BODY = {
-  stackName: '',
+  stackName: 'aws-stack',
   provider: {
     type: 'aws',
     tfId: 'aws-provider-id',
@@ -97,33 +97,19 @@ const AWS_BODY = {
   },
   modules: [
     {
-      stackName: 'aws-stack',
-      provider: {
-        type: 'aws',
-        tfId: 'aws-provider-id-<<unique-id>>',
-        region: 'us-east-1'
-      },
-      backend: {
-        type: 'local',
-        path: './terraform.tf-demo.tfstate'
-      },
-      modules: [
-        {
-          moduleType: 'security-group',
-          tfId: 'sg-id-<<id>>',
-          name: 'my-security-group'
-        },
-        {
-          moduleType: 'security-group-rule',
-          tfId: 'sgr-id-<<id>>',
-          type: 'ingress',
-          fromPort: 80,
-          toPort: 80,
-          protocol: 'tcp',
-          cidrBlocks: ['10.0.3.0/32', '10.0.3.128/32'],
-          securityGroupId: 'sg-id.id'
-        }
-      ]
+      moduleType: 'security-group',
+      tfId: '',
+      name: ''
+    },
+    {
+      moduleType: 'security-group-rule',
+      tfId: '',
+      type: '',
+      fromPort: 0,
+      toPort: 0,
+      protocol: '',
+      cidrBlocks: [],
+      securityGroupId: ''
     }
   ]
 };
@@ -136,7 +122,19 @@ function RuleAddEditForms({ className }) {
   const [awsSecurityType, setawsSecurityType] = useState(AWS_SECURITY_TYPES[0]);
 
   const [cidrBlocks, setCidrBlocks] = useState(['']);
-  const [securityAWSGroups, setAWSSecurityGroups] = useState([]);
+  const [securityAWSGroups, setAWSSecurityGroups] = useState({
+    0: {
+      moduleType: 'security-group-rule',
+      tfId: '334434334333434',
+      type: 'ingress',
+      fromPort: 0,
+      toPort: 0,
+      protocol: 'tcp',
+      cidrBlocks: [''],
+      securityGroupId: ''
+    }
+  });
+
   const formik = useFormik({
     initialValues: {
       security_group_name: '',
@@ -157,28 +155,53 @@ function RuleAddEditForms({ className }) {
   } = formik;
 
   const handleAddOption = () => {
-    setOptions([...options, '']);
+    setAWSSecurityGroups({
+      ...securityAWSGroups,
+      [Object.values(securityAWSGroups).length]: {
+        moduleType: 'security-group-rule',
+        tfId: '334434334333434',
+        type: 'ingress',
+        fromPort: 0,
+        toPort: 0,
+        protocol: 'tcp',
+        cidrBlocks: [''],
+        securityGroupId: ''
+      }
+    });
   };
 
   const handleDeleteOption = (index) => {
-    let _options = [...options];
-    if (options.length !== 1) {
-      _options.splice(index, 1);
-      setOptions(_options);
-      setFieldValue('options', _options);
-    }
+    console.log('SSSSSSSSSSS');
+    let groupValues = securityAWSGroups;
+    console.log('SSSSSSSSSSS' + JSON.stringify(groupValues) + ' ' + index);
+    delete groupValues[index];
+
+    console.log('TEST' + JSON.stringify(groupValues));
+
+    setAWSSecurityGroups({ ...groupValues });
   };
 
-  const handleAddCIDROption = () => {
-    setCidrBlocks([...cidrBlocks, '']);
+  const handleAddCIDROption = (indexNo) => {
+    let group = securityAWSGroups[indexNo];
+    let cidrValues = group.cidrBlocks;
+
+    setAWSSecurityGroups({
+      ...securityAWSGroups,
+      [indexNo]: { ...group, ['cidrBlocks']: [...cidrValues, ''] }
+    });
   };
 
-  const handleDeleteCidrOption = (index) => {
-    let _options = [...cidrBlocks];
-    if (cidrBlocks.length !== 1) {
-      _options.splice(index, 1);
-      setCidrBlocks(_options);
-      setFieldValue('cidrBlocks', _options);
+  const handleDeleteCidrOption = (index, indexNo) => {
+    let group = securityAWSGroups[index];
+    let cidrValues = group.cidrBlocks;
+
+    if (cidrValues.length !== 1) {
+      cidrValues.splice(indexNo, 1);
+
+      setAWSSecurityGroups({
+        ...securityAWSGroups,
+        [index]: { ...group, ['cidrBlocks']: [...cidrValues] }
+      });
     }
   };
 
@@ -193,16 +216,22 @@ function RuleAddEditForms({ className }) {
     setawsSecurityType(event.target.value);
   };
 
-  const onchangeAwsSecurityGroups = (value, property, indexNo) => {
-    let group = securityAWSGroups.filter(
-      (item, index) => Object.keys(item)[0] == indexNo
-    );
+  const onchangeAwsSecurityGroups = (value, property, indexNo, index) => {
+    let group = securityAWSGroups[indexNo];
+    let dataValue = value;
 
     if (property == 'cidrBlocks') {
-      let cidrValues = [];
+      let cidrValues = [...group.cidrBlocks];
+      cidrValues.splice(index, 1, value);
 
-      setAWSSecurityGroups([{ [indexNo]: { [property]: value }, ...group }]);
+      dataValue = cidrValues;
     }
+
+    setAWSSecurityGroups({
+      ...securityAWSGroups,
+      [indexNo]: { ...group, [property]: dataValue }
+    });
+    // console.log({ [indexNo]: { ...group, [property]: value } });
   };
 
   return (
@@ -270,7 +299,7 @@ function RuleAddEditForms({ className }) {
                 Create the Security Group Rule/Rules
               </Typography>
 
-              {options.map((option, index) => {
+              {Object.values(securityAWSGroups).map((option, index) => {
                 return (
                   <Box key={index} sx={{ mb: 2, mt: 2 }}>
                     <DropDownFilter
@@ -279,7 +308,7 @@ function RuleAddEditForms({ className }) {
                       defaultValue={'ingress'}
                       size="small"
                       data={AWS_SECURITY_TYPES}
-                      value={securityAWSGroups[index]?.type}
+                      value={option?.type}
                       onChange={(event) => {
                         const securityType = event.target.value;
                         onchangeAwsSecurityGroups(securityType, 'type', index);
@@ -292,7 +321,7 @@ function RuleAddEditForms({ className }) {
                       defaultValue={'tcp'}
                       size="small"
                       data={AWS_SECURITY_PROTOOCALS}
-                      value={securityAWSGroups[index]?.protocol}
+                      value={option?.protocol}
                       // value={awsSecurityType}
                       onChange={(event) => {
                         const securityType = event.target.value;
@@ -309,7 +338,7 @@ function RuleAddEditForms({ className }) {
                         <TextField
                           fullWidth
                           size="small"
-                          value={securityAWSGroups[index]?.fromPort}
+                          value={option?.fromPort}
                           onChange={(event) => {
                             const securityType = event.target.value;
                             onchangeAwsSecurityGroups(
@@ -327,7 +356,7 @@ function RuleAddEditForms({ className }) {
                           fullWidth
                           size="small"
                           type="number"
-                          value={securityAWSGroups[index]?.toPort}
+                          value={option?.toPort}
                           onChange={(event) => {
                             const securityType = event.target.value;
                             onchangeAwsSecurityGroups(
@@ -342,22 +371,21 @@ function RuleAddEditForms({ className }) {
                       </Grid>
                     </Grid>
 
-                    {cidrBlocks.map((option, thisIndex) => {
+                    {option?.cidrBlocks.map((optionCidr, thisIndex) => {
                       return (
                         <Box key={index} sx={{ mt: 2 }}>
                           <TextField
                             sx={{ width: '49%' }}
                             fullWidth
                             size="small"
-                            value={
-                              securityAWSGroups[index]?.cidrBlocks[thisIndex]
-                            }
+                            value={optionCidr}
                             onChange={(event) => {
                               const securityType = event.target.value;
                               onchangeAwsSecurityGroups(
-                                [securityType],
+                                securityType,
                                 'cidrBlocks',
-                                index
+                                index,
+                                thisIndex
                               );
                             }}
                             // error={!options[index]}
@@ -368,7 +396,7 @@ function RuleAddEditForms({ className }) {
                                   <IconButton
                                     data-testid={'pollDelete'}
                                     onClick={() => {
-                                      handleDeleteCidrOption(index);
+                                      handleDeleteCidrOption(index, thisIndex);
                                     }}
                                   >
                                     <Icon icon={archiveOutline} />
@@ -383,7 +411,7 @@ function RuleAddEditForms({ className }) {
                     <Button
                       size="small"
                       sx={{ my: 2 }}
-                      onClick={handleAddCIDROption}
+                      onClick={() => handleAddCIDROption(index)}
                       startIcon={<Icon icon={plusFill} />}
                       // disabled={options.length >= 4}
                     >
@@ -393,7 +421,7 @@ function RuleAddEditForms({ className }) {
                       <Button
                         size="small"
                         sx={{ my: 2 }}
-                        onClick={handleDeleteCidrOption}
+                        onClick={() => handleDeleteOption(index)}
                         startIcon={<Icon icon={plusFill} />}
                         disabled={options.length >= 4}
                       >
@@ -628,7 +656,7 @@ function RuleAddEditForms({ className }) {
                       <Button
                         size="small"
                         sx={{ my: 2 }}
-                        onClick={handleAddOption}
+                        onClick={() => handleDeleteOption(index)}
                         startIcon={<Icon icon={plusFill} />}
                         disabled={options.length >= 4}
                       >
