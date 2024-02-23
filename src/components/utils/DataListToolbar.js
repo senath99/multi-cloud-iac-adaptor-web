@@ -153,61 +153,61 @@ export default function DataListToolbar({
           {selected.stack_name}
         </Typography>
       )}
-
-      <Box display="flex">
-        <Tooltip title="View">
-          <IconButton
-            disabled={onLoading}
-            className={classes.iconButton}
-            href={selected.filePath}
-            onClick={onEditOpen}
-          >
-            <Grid
-              item
-              container
-              sx={{
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
+      {selected.stack_name != -1 && (
+        <Box display="flex">
+          <Tooltip title="View">
+            <IconButton
+              disabled={onLoading}
+              className={classes.iconButton}
+              href={selected.filePath}
+              onClick={onEditOpen}
             >
-              <Icon icon={downloadOutline} />
-              <Typography
-                variant="caption"
+              <Grid
+                item
+                container
                 sx={{
-                  px: 1,
-                  display: 'block'
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
               >
-                Update
-              </Typography>
-            </Grid>
-          </IconButton>
-        </Tooltip>
+                <Icon icon={downloadOutline} />
+                <Typography
+                  variant="caption"
+                  sx={{
+                    px: 1,
+                    display: 'block'
+                  }}
+                >
+                  Update
+                </Typography>
+              </Grid>
+            </IconButton>
+          </Tooltip>
 
-        <Divider orientation="vertical" flexItem />
-        <Tooltip title="Delete">
-          <IconButton
-            onClick={handleOpenDeleteConfirmation}
-            disabled={onLoading}
-            className={classes.iconButton}
-          >
-            <Grid
-              item
-              container
-              sx={{
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
+          <Divider orientation="vertical" flexItem />
+          <Tooltip title="Delete">
+            <IconButton
+              onClick={handleOpenDeleteConfirmation}
+              disabled={onLoading}
+              className={classes.iconButton}
             >
-              <Icon icon={archiveOutline} />
-              <Typography variant="caption" sx={{ px: 1, display: 'block' }}>
-                Delete
-              </Typography>
-            </Grid>
-          </IconButton>
-        </Tooltip>
-      </Box>
-
+              <Grid
+                item
+                container
+                sx={{
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Icon icon={archiveOutline} />
+                <Typography variant="caption" sx={{ px: 1, display: 'block' }}>
+                  Delete
+                </Typography>
+              </Grid>
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
       <Dialog
         open={openDialogConfirmation}
         onClose={handleCloseDeleteConfirmation}
@@ -218,7 +218,7 @@ export default function DataListToolbar({
         <DialogContent sx={{ width: 600 }}>
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete{' '}
-            <strong>{' ' + selected.description}</strong>?
+            <strong>{' ' + selected.stack_name}</strong>?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

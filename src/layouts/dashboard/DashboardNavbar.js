@@ -66,21 +66,10 @@ export default function DashboardNavbar() {
             }
           }}
         >
-          <HeaderStyle sx={{ mt: 2 }}>Multi Cloud IAC Adapter</HeaderStyle>
+          <RouterLink to="/" style={{ color: 'white', textDecoration: 'none' }}>
+            <HeaderStyle sx={{ mt: 2 }}>Multi Cloud IAC Adapter</HeaderStyle>
+          </RouterLink>
         </Box>
-
-        {/* <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            ml: 3,
-            '& > *:not(:first-of-type)': {
-              ml: { xs: 1.5, sm: 5, lg: 6 }
-            }
-          }}
-        >
-          <AccountPopover />
-        </Box> */}
       </ToolbarStyle>
     </RootStyle>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import { useHistory } from 'react-router';
 import clsx from 'clsx';
 
 import { useFormik } from 'formik';
@@ -29,6 +29,8 @@ import DropDownFilter from '../DropDownFilter';
 import { v4 as uuidv4 } from 'uuid';
 import ControlledTextField from './ProviderForms/ControlledTextField';
 import ControlledDropdown from './ProviderForms/ControlledDropdown';
+import { PATH_DASHBOARD } from 'src/routes/paths';
+
 // ----------------------------------------------------------------------
 
 const useStyles = makeStyles((theme) => ({
@@ -101,6 +103,7 @@ const AWS_BODY = {
 
 function RuleAddEditForms({ className }) {
   const classes = useStyles();
+  const history = useHistory();
   const [options, setOptions] = useState(['']);
   const [basicOpen, setBasicOpen] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -267,9 +270,13 @@ function RuleAddEditForms({ className }) {
     // console.log({ [indexNo]: { ...group, [property]: value } });
   };
 
+  const handleCancel = () => {
+    history.push(`${PATH_DASHBOARD.general.dashboard}`);
+  };
+
   return (
     <React.Fragment>
-      <Box container sx={{ minWidth: '60vw', maxWidth: '60vw', pt: '20px' }}>
+      <Box container sx={{ minWidth: '60vw', maxWidth: '60vw', pt: '40px' }}>
         <FormikProvider value={formik}>
           <Form
             noValidate
@@ -663,7 +670,7 @@ function RuleAddEditForms({ className }) {
                 sx={{ ml: 4, my: 2 }}
                 size="small"
                 variant="contained"
-                onClick={handleAddOption}
+                onClick={handleCancel}
                 disabled={options.length >= 4}
               >
                 Cancel
