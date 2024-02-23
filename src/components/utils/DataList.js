@@ -11,7 +11,8 @@ import {
   TableCell,
   Typography,
   TableContainer,
-  TablePagination
+  TablePagination,
+  Chip
 } from '@material-ui/core';
 
 import { experimentalStyled as styled } from '@material-ui/core/styles';
@@ -54,6 +55,7 @@ const RootStyle = styled('div')(({ theme }) => ({
 
 const TABLE_HEAD = [
   { id: 'stack_name', label: 'Stack Name', alignRight: false },
+  { id: 'provider', label: 'Provider', alignRight: false },
   { id: 'version', label: 'version', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false }
 ];
@@ -169,7 +171,7 @@ export default function DataList({
                   {filteredESGData
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { stack_name, version, status, provider } = row;
+                      const { stack_name, version, status, config } = row;
 
                       const isItemSelected = selected.stack_name === stack_name;
 
@@ -207,7 +209,11 @@ export default function DataList({
                               {stack_name}
                             </Typography>
                           </TableCell>
-
+                          <TableCell>
+                            <Typography variant="caption" noWrap>
+                              {config?.provider?.type}
+                            </Typography>
+                          </TableCell>
                           <TableCell>
                             <Typography variant="caption" noWrap>
                               {version}
@@ -215,9 +221,13 @@ export default function DataList({
                           </TableCell>
 
                           <TableCell>
-                            <Typography variant="caption" noWrap>
-                              {status}
-                            </Typography>
+                            <Chip
+                              label={status}
+                              variant="outlined"
+                              color={
+                                status == 'destroyed' ? 'error' : 'success'
+                              }
+                            />
                           </TableCell>
                         </TableRow>
                       );
