@@ -44,6 +44,8 @@ import { Icon } from '@iconify/react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import archiveOutline from '@iconify/icons-eva/archive-outline';
 import DropDownFilter from '../DropDownFilter';
+
+import { v4 as uuidv4 } from 'uuid';
 // ----------------------------------------------------------------------
 
 const useStyles = makeStyles((theme) => ({
@@ -136,7 +138,8 @@ function RuleAddEditForms({ className }) {
       sourceAddressPrefix: '*',
       destinationAddressPrefix: '*',
       resourceGroupName: '',
-      networkSecurityGroupName: ''
+      networkSecurityGroupName: '',
+      id: 0
     }
   });
   const [securityAWSGroups, setAWSSecurityGroups] = useState({
@@ -148,7 +151,8 @@ function RuleAddEditForms({ className }) {
       toPort: 0,
       protocol: 'tcp',
       cidrBlocks: [''],
-      securityGroupId: ''
+      securityGroupId: '',
+      id: 0
     }
   });
 
@@ -172,9 +176,11 @@ function RuleAddEditForms({ className }) {
   } = formik;
 
   const handleAddOption = () => {
+    const gui = uuidv4();
+
     setAWSSecurityGroups({
       ...securityAWSGroups,
-      [Object.values(securityAWSGroups).length]: {
+      [gui]: {
         moduleType: 'security-group-rule',
         tfId: '334434334333434',
         type: 'ingress',
@@ -182,7 +188,8 @@ function RuleAddEditForms({ className }) {
         toPort: 0,
         protocol: 'tcp',
         cidrBlocks: [''],
-        securityGroupId: ''
+        securityGroupId: '',
+        id: gui
       }
     });
   };
@@ -238,14 +245,15 @@ function RuleAddEditForms({ className }) {
 
   //AZURE
 
-  const handleAzureAddOption = () => {
+  const handleAzureAddOption = (index) => {
+    const gui = uuidv4();
     setAzureGroups({
       ...azureGroups,
-      [Object.values(azureGroups).length]: {
+      [gui]: {
         moduleType: 'network-security-rule',
         tfId: '',
         name: '',
-        priority: null,
+        priority: 0,
         direction: '',
         access: '',
         protocol: '',
@@ -254,16 +262,17 @@ function RuleAddEditForms({ className }) {
         sourceAddressPrefix: '*',
         destinationAddressPrefix: '*',
         resourceGroupName: '',
-        networkSecurityGroupName: ''
+        networkSecurityGroupName: '',
+        id: gui
       }
     });
   };
 
   const handleAzureDeleteOption = (index) => {
-    let groupValues = azureGroups;
+    let groupValue = azureGroups;
 
-    delete groupValues[index];
-    setAzureGroups({ ...groupValues });
+    delete groupValue[index];
+    setAzureGroups({ ...groupValue });
   };
 
   const onchangeAzureSecurityGroups = (value, property, indexNo) => {
@@ -354,7 +363,11 @@ function RuleAddEditForms({ className }) {
                       value={option?.type}
                       onChange={(event) => {
                         const securityType = event.target.value;
-                        onchangeAwsSecurityGroups(securityType, 'type', index);
+                        onchangeAwsSecurityGroups(
+                          securityType,
+                          'type',
+                          option?.id
+                        );
                       }}
                     />
 
@@ -371,7 +384,7 @@ function RuleAddEditForms({ className }) {
                         onchangeAwsSecurityGroups(
                           securityType,
                           'protocol',
-                          index
+                          option?.id
                         );
                       }}
                     />
@@ -387,7 +400,7 @@ function RuleAddEditForms({ className }) {
                             onchangeAwsSecurityGroups(
                               securityType,
                               'fromPort',
-                              index
+                              option?.id
                             );
                           }}
                           // error={!options[index]}
@@ -405,7 +418,7 @@ function RuleAddEditForms({ className }) {
                             onchangeAwsSecurityGroups(
                               securityType,
                               'toPort',
-                              index
+                              option?.id
                             );
                           }}
                           // error={!options[index]}
@@ -427,7 +440,7 @@ function RuleAddEditForms({ className }) {
                               onchangeAwsSecurityGroups(
                                 securityType,
                                 'cidrBlocks',
-                                index,
+                                option?.id,
                                 thisIndex
                               );
                             }}
@@ -454,7 +467,7 @@ function RuleAddEditForms({ className }) {
                     <Button
                       size="small"
                       sx={{ my: 2 }}
-                      onClick={() => handleAddCIDROption(index)}
+                      onClick={() => handleAddCIDROption(option?.id)}
                       startIcon={<Icon icon={plusFill} />}
                       // disabled={options.length >= 4}
                     >
@@ -464,7 +477,7 @@ function RuleAddEditForms({ className }) {
                       <Button
                         size="small"
                         sx={{ my: 2 }}
-                        onClick={() => handleDeleteOption(index)}
+                        onClick={() => handleDeleteOption(option?.id)}
                         startIcon={<Icon icon={plusFill} />}
                         disabled={options.length >= 4}
                       >
@@ -538,9 +551,9 @@ function RuleAddEditForms({ className }) {
                 Create the Network Security Group Rule/Rules
               </Typography>
 
-              {Object.values(azureGroups).map((option, index) => {
+              {Object.values(azureGroups).map((option, indexAZ) => {
                 return (
-                  <Box key={index} sx={{ mb: 2, mt: 2 }}>
+                  <Box key={indexAZ} sx={{ mb: 2, mt: 2 }}>
                     <TextField
                       sx={{ mb: 1 }}
                       fullWidth
@@ -551,7 +564,7 @@ function RuleAddEditForms({ className }) {
                         onchangeAzureSecurityGroups(
                           securityType,
                           'name',
-                          index
+                          option?.id
                         );
                       }}
                       // error={!options[index]}
@@ -564,13 +577,13 @@ function RuleAddEditForms({ className }) {
                           fullWidth
                           type="number"
                           size="small"
-                          value={options?.priority}
+                          value={option?.priority}
                           onChange={(event) => {
                             const securityType = event.target.value;
                             onchangeAzureSecurityGroups(
                               securityType,
                               'priority',
-                              index
+                              option?.id
                             );
                           }}
                           // error={!options[index]}
@@ -590,7 +603,7 @@ function RuleAddEditForms({ className }) {
                             onchangeAzureSecurityGroups(
                               securityType,
                               'direction',
-                              index
+                              option?.id
                             );
                           }}
                         />
@@ -611,7 +624,7 @@ function RuleAddEditForms({ className }) {
                             onchangeAzureSecurityGroups(
                               securityType,
                               'access',
-                              index
+                              option?.id
                             );
                           }}
                         />
@@ -629,7 +642,7 @@ function RuleAddEditForms({ className }) {
                             onchangeAzureSecurityGroups(
                               securityType,
                               'protocol',
-                              index
+                              option?.id
                             );
                           }}
                         />
@@ -647,7 +660,7 @@ function RuleAddEditForms({ className }) {
                             onchangeAzureSecurityGroups(
                               securityType,
                               'sourcePortRange',
-                              index
+                              option?.id
                             );
                           }}
                           // error={!options[index]}
@@ -664,7 +677,7 @@ function RuleAddEditForms({ className }) {
                             onchangeAzureSecurityGroups(
                               securityType,
                               'destinationPortRange',
-                              index
+                              option?.id
                             );
                           }}
                           // error={!options[index]}
@@ -683,7 +696,7 @@ function RuleAddEditForms({ className }) {
                             onchangeAzureSecurityGroups(
                               securityType,
                               'sourceAddressPrefix',
-                              index
+                              option?.id
                             );
                           }}
                           // error={!options[index]}
@@ -700,7 +713,7 @@ function RuleAddEditForms({ className }) {
                             onchangeAzureSecurityGroups(
                               securityType,
                               'destinationAddressPrefixype',
-                              index
+                              option?.id
                             );
                           }}
                           // error={!options[index]}
@@ -713,13 +726,13 @@ function RuleAddEditForms({ className }) {
                         <TextField
                           fullWidth
                           size="small"
-                          value={options[index]}
+                          value={option[indexAZ]}
                           onChange={(event) => {
                             const securityType = event.target.value;
                             onchangeAzureSecurityGroups(
                               securityType,
-                              'type',
-                              index
+                              'resourceGroupName',
+                              option?.id
                             );
                           }}
                           // error={!options[index]}
@@ -735,8 +748,8 @@ function RuleAddEditForms({ className }) {
                             const securityType = event.target.value;
                             onchangeAzureSecurityGroups(
                               securityType,
-                              'resourceGroupName',
-                              index
+                              'networkSecurityGroupName',
+                              option?.id
                             );
                           }}
                           // error={!options[index]}
@@ -749,7 +762,7 @@ function RuleAddEditForms({ className }) {
                       <Button
                         size="small"
                         sx={{ my: 2 }}
-                        onClick={() => handleAzureDeleteOption(index)}
+                        onClick={() => handleAzureDeleteOption(option?.id)}
                         startIcon={<Icon icon={plusFill} />}
                         disabled={options.length >= 4}
                       >
@@ -764,7 +777,7 @@ function RuleAddEditForms({ className }) {
               <Button
                 size="small"
                 sx={{ my: 2 }}
-                onClick={handleAzureAddOption}
+                onClick={() => handleAzureAddOption()}
                 startIcon={<Icon icon={plusFill} />}
                 disabled={options.length >= 4}
               >
