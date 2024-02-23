@@ -1,29 +1,8 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Friday June 25th 2021
- * Author: Nalinda Wijayagunawardhane
- * -----
- * Last Modified: Tuesday July 5th 2022 9:09:15 pm
- * Modified By: Nalinda Wijayagunawardhane at <nwijayagunawardhane@mitrai.com>
- * Modified By: Dinusha Madhuranga at <dmadhuranga@mitrai.com>
- *              KasunSKarunasekara at <kkarunasekara@mitrai.com>
- * -----
- * Copyright (c) 2021 Mitra Sparks
- * -----
- * HISTORY:
- * 2022-07-23	NRB	Added support for shorten rounded off numeric formatting.
- * 2022-05-19	NRB	Added get access token properties function.
- * 2022-05-06	added heatmap color pallet
- * 2021-07-02	NRB	Added the constants for Overall
- * 2022-07-05	KK Added percentage option to pie chart
- */
-
-import { first, filter, orderBy, sum } from 'lodash';
+import { first, filter, orderBy } from 'lodash';
 import { capitalCase } from 'change-case';
 import moment from 'moment';
 import {
   OVERALL,
-  TEXT_DIMENSIONS,
   DATA_SET_DOC_TYPE,
   ACCESS_TOKEN,
   EMPTY_STRING,

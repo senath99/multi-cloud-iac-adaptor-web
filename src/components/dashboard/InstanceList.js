@@ -12,14 +12,6 @@ import { makeStyles } from '@material-ui/core/styles';
 
 //constants
 
-// slices
-// import {
-//   deleteDataSet,
-//   resetStepperStatus,
-//   cancelDataSet,
-//   getESGDataSets,
-//   emptyDataRecords
-// } from '../../../../redux/slices/data-sets';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 import { useHistory } from 'react-router';
 
@@ -27,13 +19,6 @@ import DataList from '../utils/DataList';
 import { getInstances } from 'src/redux/slices/data-sets';
 
 // ----------------------------------------------------------------------
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    alignItems: 'center'
-  }
-}));
 
 export default function InstanceList() {
   const dispatch = useDispatch();

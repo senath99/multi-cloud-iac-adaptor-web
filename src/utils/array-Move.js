@@ -1,17 +1,3 @@
-/*
- * Project: Dynamedics Portal Web
- * Created Date: Friday, August 17th 2021, 4:30:28 am
- * Author: Senath Weerasinghe
- * -----
-
- * Modified By: Senath Weerasinghe at <sweerasinghe@mitrai.com>
- * -----
- * Copyright (c) 2021 Mitra Sparks
- * -----
- * HISTORY:
- * 
- */
-
 export function arrayMoveMutable(array, fromIndex, toIndex) {
   const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex;
 
