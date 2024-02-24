@@ -165,7 +165,10 @@ export default function DataList({
 
                 <TableBody>
                   {filteredESGData
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    ?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
                     .map((row) => {
                       const { stack_name, version, status, config } = row;
 

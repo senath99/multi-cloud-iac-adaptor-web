@@ -42,8 +42,8 @@ const slice = createSlice({
 
     // GET ESG Data
     getInstancesSuccess(state, action) {
-      state.isLoading = false;
       state.esgData = action.payload;
+      state.isLoading = false;
     },
 
     getInstancesByStackNameSuccess(state, action) {
@@ -91,6 +91,7 @@ export const {
 export function getInstances() {
   return async (dispatch) => {
     try {
+      dispatch(slice.actions.startLoading());
       const response = await axios.get('http://127.0.0.1:8000/stacks');
       console.log(JSON.stringify(response));
       dispatch(slice.actions.getInstancesSuccess(response.data));

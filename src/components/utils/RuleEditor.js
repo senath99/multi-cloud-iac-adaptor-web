@@ -81,15 +81,15 @@ const AZURE_ACCESS = [
   { name: 'Deny', value: 'Deny' }
 ];
 
-function RuleEditor({ id, editStack, provider, className }) {
+function RuleEditor({ id, editStack, className, provider }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const [options, setOptions] = useState(['']);
+  // const [options, setOptions] = useState(['']);
   const [basicOpen, setBasicOpen] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [groupTfid, setSecurityTfid] = useState('');
-
+  const [selectorIndex, setSelectorIndex] = useState(0);
   //azure states
 
   const [azureGroupName, setAzureGroupName] = useState('');
@@ -103,10 +103,17 @@ function RuleEditor({ id, editStack, provider, className }) {
   useEffect(() => {
     if (provider == 'aws') {
       setAWSSecurityGroups(editStack?.securityModules);
+      setSelectorIndex(0);
+      setAdvancedOpen(false);
+      setBasicOpen(true);
     } else {
+      setSelectorIndex(1);
+      setAdvancedOpen(true);
+      setBasicOpen(false);
+      setAzureGroups(editStack?.networkModules);
       const networkGroup = editStack?.networkGroup;
       setAzureGroupLocation(networkGroup?.location);
-      setAzureResourceGroup_name();
+      setAzureResourceGroup_name(networkGroup?.resourceGroupName);
       setAzureGroups(editStack?.networkModules);
     }
   }, []);
@@ -171,8 +178,7 @@ function RuleEditor({ id, editStack, provider, className }) {
         toPort: '',
         protocol: 'tcp',
         cidrBlocks: [''],
-        securityGroupId: `${groupTfid}.id`,
-        id: gui
+        securityGroupId: `${groupTfid}.id`
       }
     });
   };
@@ -270,7 +276,7 @@ function RuleEditor({ id, editStack, provider, className }) {
   const handleCancel = () => {
     history.push(`${PATH_DASHBOARD.general.dashboard}`);
   };
-
+  console.log('RES222' + JSON.stringify(azureGroups));
   return (
     <React.Fragment>
       <Box container sx={{ minWidth: '60vw', maxWidth: '60vw', pt: '40px' }}>
@@ -306,11 +312,11 @@ function RuleEditor({ id, editStack, provider, className }) {
                   },
                   {
                     label: 'Azure',
-                    value: 'advanced',
+                    value: 'azure',
                     selectedBackgroundColor: '#098380'
                   }
                 ]}
-                // initialSelectedIndex={Boolean(singleChart) ? 1 : 0}
+                forcedSelectedIndex={selectorIndex}
                 backgroundColor={'#EDEFF1'}
                 fontSize={'large'}
               />
@@ -337,120 +343,121 @@ function RuleEditor({ id, editStack, provider, className }) {
                 Create the Security Group Rule/Rules
               </Typography>
 
-              {Object.values(securityAWSGroups).map((option, index) => {
-                return (
-                  <Box key={index} sx={{ mb: 2, mt: 2 }}>
-                    <ControlledDropdown
-                      options={AWS_SECURITY_TYPES}
-                      value={option?.type}
-                      property="protocol"
-                      tfid={option?.tfId}
-                      onChange={onchangeAwsSecurityGroups}
-                      defaultValue="ingress"
-                      label="Type"
-                    />
+              {Object.values(securityAWSGroups).length > 0 &&
+                Object.values(securityAWSGroups).map((option, index) => {
+                  return (
+                    <Box key={index} sx={{ mb: 2, mt: 2 }}>
+                      <ControlledDropdown
+                        options={AWS_SECURITY_TYPES}
+                        value={option?.type}
+                        property="type"
+                        tfid={option?.tfId}
+                        onChange={onchangeAwsSecurityGroups}
+                        defaultValue="ingress"
+                        label="Type"
+                      />
 
-                    <ControlledDropdown
-                      options={AWS_SECURITY_PROTOOCALS}
-                      value={option?.protocol}
-                      property={'protocol'}
-                      tfid={option?.tfId}
-                      onChange={onchangeAwsSecurityGroups}
-                      defaultValue={'tcp'}
-                    />
+                      <ControlledDropdown
+                        options={AWS_SECURITY_PROTOOCALS}
+                        value={option?.protocol}
+                        property={'protocol'}
+                        tfid={option?.tfId}
+                        onChange={onchangeAwsSecurityGroups}
+                        defaultValue={'tcp'}
+                      />
 
-                    <Grid container direction="row" spacing={1}>
-                      <Grid item xs={6}>
-                        <ControlledTextField
-                          value={option?.fromPort}
-                          property={'fromPort'}
-                          tfid={option?.tfId}
-                          onChange={onchangeAwsSecurityGroups}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <ControlledTextField
-                          value={option?.toPort}
-                          property={'toPort'}
-                          tfid={option?.tfId}
-                          onChange={onchangeAwsSecurityGroups}
-                        />
-                      </Grid>
-                    </Grid>
-
-                    {option?.cidrBlocks.map((optionCidr, thisIndex) => {
-                      return (
-                        <Box key={index} sx={{ mt: 2 }}>
-                          <TextField
-                            sx={{ width: '49%' }}
-                            fullWidth
-                            size="small"
-                            value={optionCidr}
-                            onChange={(event) => {
-                              const securityType = event.target.value;
-                              onchangeAwsSecurityGroups(
-                                securityType,
-                                'cidrBlocks',
-                                option?.tfId,
-                                thisIndex
-                              );
-                            }}
-                            // error={!options[index]}
-                            label={`Type`}
-                            InputProps={{
-                              endAdornment: (
-                                <InputAdornment>
-                                  <IconButton
-                                    data-testid={'pollDelete'}
-                                    onClick={() => {
-                                      handleDeleteCidrOption(
-                                        option?.tfId,
-                                        thisIndex
-                                      );
-                                    }}
-                                  >
-                                    <Icon icon={archiveOutline} />
-                                  </IconButton>
-                                </InputAdornment>
-                              )
-                            }}
+                      <Grid container direction="row" spacing={1}>
+                        <Grid item xs={6}>
+                          <ControlledTextField
+                            value={option?.fromPort}
+                            property={'fromPort'}
+                            tfid={option?.tfId}
+                            onChange={onchangeAwsSecurityGroups}
                           />
-                        </Box>
-                      );
-                    })}
-                    <Button
-                      size="small"
-                      sx={{ my: 2 }}
-                      onClick={() => handleAddCIDROption(option?.tfId)}
-                      startIcon={<Icon icon={plusFill} />}
-                      // disabled={options.length >= 4}
-                    >
-                      Add CIDR Block
-                    </Button>
-                    {Object.values(securityAWSGroups).length > 1 && (
-                      <Box sx={{ display: 'flex', justifyContent: 'right' }}>
-                        <Button
-                          size="small"
-                          sx={{ my: 2 }}
-                          onClick={() => handleDeleteOption(option?.tfId)}
-                          startIcon={<Icon icon={plusFill} />}
-                          disabled={options.length >= 4}
-                        >
-                          Remove Security Group Rule
-                        </Button>
-                      </Box>
-                    )}
+                        </Grid>
+                        <Grid item xs={6}>
+                          <ControlledTextField
+                            value={option?.toPort}
+                            property={'toPort'}
+                            tfid={option?.tfId}
+                            onChange={onchangeAwsSecurityGroups}
+                          />
+                        </Grid>
+                      </Grid>
 
-                    <Divider orientation="horizontal" sx={{ mt: 2 }} />
-                  </Box>
-                );
-              })}
+                      {option?.cidrBlocks.map((optionCidr, thisIndex) => {
+                        return (
+                          <Box key={index} sx={{ mt: 2 }}>
+                            <TextField
+                              sx={{ width: '49%' }}
+                              fullWidth
+                              size="small"
+                              value={optionCidr}
+                              onChange={(event) => {
+                                const securityType = event.target.value;
+                                onchangeAwsSecurityGroups(
+                                  securityType,
+                                  'cidrBlocks',
+                                  option?.tfId,
+                                  thisIndex
+                                );
+                              }}
+                              // error={!options[index]}
+                              label={`Type`}
+                              InputProps={{
+                                endAdornment: (
+                                  <InputAdornment>
+                                    <IconButton
+                                      data-testid={'pollDelete'}
+                                      onClick={() => {
+                                        handleDeleteCidrOption(
+                                          option?.tfId,
+                                          thisIndex
+                                        );
+                                      }}
+                                    >
+                                      <Icon icon={archiveOutline} />
+                                    </IconButton>
+                                  </InputAdornment>
+                                )
+                              }}
+                            />
+                          </Box>
+                        );
+                      })}
+                      <Button
+                        size="small"
+                        sx={{ my: 2 }}
+                        onClick={() => handleAddCIDROption(option?.tfId)}
+                        startIcon={<Icon icon={plusFill} />}
+                        // disabled={options.length >= 4}
+                      >
+                        Add CIDR Block
+                      </Button>
+                      {Object.values(securityAWSGroups).length > 1 && (
+                        <Box sx={{ display: 'flex', justifyContent: 'right' }}>
+                          <Button
+                            size="small"
+                            sx={{ my: 2 }}
+                            onClick={() => handleDeleteOption(option?.tfId)}
+                            startIcon={<Icon icon={plusFill} />}
+                            // disabled={options.length >= 4}
+                          >
+                            Remove Security Group Rule
+                          </Button>
+                        </Box>
+                      )}
+
+                      <Divider orientation="horizontal" sx={{ mt: 2 }} />
+                    </Box>
+                  );
+                })}
               <Button
                 size="small"
                 sx={{ my: 2 }}
                 onClick={handleAddOption}
                 startIcon={<Icon icon={plusFill} />}
-                disabled={options.length >= 4}
+                // disabled={options.length >= 4}
               >
                 Add Security Group Rule
               </Button>
@@ -517,129 +524,132 @@ function RuleEditor({ id, editStack, provider, className }) {
                 Create the Network Security Group Rule/Rules
               </Typography>
 
-              {Object.values(azureGroups).map((option, indexAZ) => {
-                return (
-                  <Box key={indexAZ} sx={{ mb: 2, mt: 2 }}>
-                    <Grid container direction="row" spacing={1} mb={1}>
-                      <Grid item xs={6}>
-                        <ControlledTextField
-                          value={option?.priority}
-                          property="priority"
-                          tfid={option?.tfId}
-                          onChange={onchangeAzureSecurityGroups}
-                          label="Priority"
-                        />
+              {Object.values(azureGroups).length > 0 &&
+                Object.values(azureGroups)?.map((option, indexAZ) => {
+                  return (
+                    <Box key={indexAZ} sx={{ mb: 2, mt: 2 }}>
+                      <Grid container direction="row" spacing={1} mb={1}>
+                        <Grid item xs={6}>
+                          <ControlledTextField
+                            value={option?.priority}
+                            property="priority"
+                            tfid={option?.tfId}
+                            onChange={onchangeAzureSecurityGroups}
+                            label="Priority"
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <ControlledDropdown
+                            options={AZURE_DIRECTIONS}
+                            value={option?.direction}
+                            property={'direction'}
+                            tfid={option?.tfId}
+                            onChange={onchangeAzureSecurityGroups}
+                            defaultValue={'Inbound'}
+                            label={`Direction`}
+                          />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={6}>
-                        <ControlledDropdown
-                          options={AZURE_DIRECTIONS}
-                          value={option?.direction}
-                          property={'direction'}
-                          tfid={option?.id}
-                          onChange={onchangeAzureSecurityGroups}
-                          defaultValue={'Inbound'}
-                          label={`Direction`}
-                        />
-                      </Grid>
-                    </Grid>
 
-                    <Grid container direction="row" spacing={1} mb={1}>
-                      <Grid item xs={6}>
-                        <ControlledDropdown
-                          options={AZURE_ACCESS}
-                          value={option?.access}
-                          property={'access'}
-                          tfid={option?.id}
-                          onChange={onchangeAzureSecurityGroups}
-                          defaultValue={'Allow'}
-                          label={`Access`}
-                        />
+                      <Grid container direction="row" spacing={1} mb={1}>
+                        <Grid item xs={6}>
+                          <ControlledDropdown
+                            options={AZURE_ACCESS}
+                            value={option?.access}
+                            property={'access'}
+                            tfid={option?.tfId}
+                            onChange={onchangeAzureSecurityGroups}
+                            defaultValue={'Allow'}
+                            label={`Access`}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <ControlledDropdown
+                            options={AWS_SECURITY_PROTOOCALS}
+                            value={option?.protocol}
+                            property={'protocol'}
+                            tfid={option?.tfId}
+                            onChange={onchangeAzureSecurityGroups}
+                            defaultValue={'tcp'}
+                            label={`Protocol`}
+                          />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={6}>
-                        <ControlledDropdown
-                          options={AWS_SECURITY_PROTOOCALS}
-                          value={option?.protocol}
-                          property={'protocol'}
-                          tfid={option?.id}
-                          onChange={onchangeAzureSecurityGroups}
-                          defaultValue={'tcp'}
-                          label={`Protocol`}
-                        />
-                      </Grid>
-                    </Grid>
 
-                    <Grid container direction="row" spacing={1} mb={1}>
-                      <Grid item xs={6}>
-                        <ControlledTextField
-                          value={option?.sourcePortRange}
-                          property="sourcePortRange"
-                          tfid={option?.id}
-                          onChange={onchangeAzureSecurityGroups}
-                          label={`Source Port Range`}
-                        />
+                      <Grid container direction="row" spacing={1} mb={1}>
+                        <Grid item xs={6}>
+                          <ControlledTextField
+                            value={option?.sourcePortRange}
+                            property="sourcePortRange"
+                            tfid={option?.tfId}
+                            onChange={onchangeAzureSecurityGroups}
+                            label={`Source Port Range`}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <ControlledTextField
+                            value={option?.destinationPortRange}
+                            property="destinationPortRange"
+                            tfid={option?.tfId}
+                            onChange={onchangeAzureSecurityGroups}
+                            label={`Destination Port Range`}
+                          />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={6}>
-                        <ControlledTextField
-                          value={option?.destinationPortRange}
-                          property="destinationPortRange"
-                          tfid={option?.id}
-                          onChange={onchangeAzureSecurityGroups}
-                          label={`Destination Port Range`}
-                        />
+                      <Grid container direction="row" spacing={1} mb={1}>
+                        <Grid item xs={6}>
+                          <ControlledTextField
+                            value={option?.sourceAddressPrefix}
+                            property="sourceAddressPrefix"
+                            tfid={option?.tfId}
+                            onChange={onchangeAzureSecurityGroups}
+                            label={`Source Address Prefix`}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <ControlledTextField
+                            value={option?.destinationAddressPrefix}
+                            property="destinationAddressPrefixype"
+                            tfid={option?.tfId}
+                            onChange={onchangeAzureSecurityGroups}
+                            label={`Destination Address Prefix`}
+                          />
+                        </Grid>
                       </Grid>
-                    </Grid>
-                    <Grid container direction="row" spacing={1} mb={1}>
-                      <Grid item xs={6}>
-                        <ControlledTextField
-                          value={option?.sourceAddressPrefix}
-                          property="sourceAddressPrefix"
-                          tfid={option?.id}
-                          onChange={onchangeAzureSecurityGroups}
-                          label={`Source Address Prefix`}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <ControlledTextField
-                          value={option?.destinationAddressPrefix}
-                          property="destinationAddressPrefixype"
-                          tfid={option?.id}
-                          onChange={onchangeAzureSecurityGroups}
-                          label={`Destination Address Prefix`}
-                        />
-                      </Grid>
-                    </Grid>
 
-                    <ControlledTextField
-                      value={option?.networkSecurityGroupName}
-                      property="networkSecurityGroupName"
-                      tfid={option?.id}
-                      onChange={onchangeAzureSecurityGroups}
-                      label={`Network Security Group Name`}
-                      disabled
-                    />
-                    {Object.values(azureGroups).length > 1 && (
-                      <Box sx={{ display: 'flex', justifyContent: 'right' }}>
-                        <Button
-                          size="small"
-                          sx={{ my: 2 }}
-                          onClick={() => handleAzureDeleteOption(option?.id)}
-                          startIcon={<Icon icon={plusFill} />}
-                          disabled={options.length >= 4}
-                        >
-                          Remove Security Group Rule
-                        </Button>
-                      </Box>
-                    )}
-                    <Divider orientation="horizontal" sx={{ mt: 2 }} />
-                  </Box>
-                );
-              })}
+                      <ControlledTextField
+                        value={option?.networkSecurityGroupName}
+                        property="networkSecurityGroupName"
+                        tfid={option?.tfId}
+                        onChange={onchangeAzureSecurityGroups}
+                        label={`Network Security Group Name`}
+                        disabled
+                      />
+                      {Object.values(azureGroups).length > 1 && (
+                        <Box sx={{ display: 'flex', justifyContent: 'right' }}>
+                          <Button
+                            size="small"
+                            sx={{ my: 2 }}
+                            onClick={() =>
+                              handleAzureDeleteOption(option?.tfId)
+                            }
+                            startIcon={<Icon icon={plusFill} />}
+                            // disabled={options.length >= 4}
+                          >
+                            Remove Security Group Rule
+                          </Button>
+                        </Box>
+                      )}
+                      <Divider orientation="horizontal" sx={{ mt: 2 }} />
+                    </Box>
+                  );
+                })}
               <Button
                 size="small"
                 sx={{ my: 2 }}
                 onClick={() => handleAzureAddOption()}
                 startIcon={<Icon icon={plusFill} />}
-                disabled={options.length >= 4}
+                // disabled={options.length >= 4}
               >
                 Add Security Group Rule
               </Button>
@@ -652,7 +662,7 @@ function RuleEditor({ id, editStack, provider, className }) {
                 variant="contained"
                 sx={{ my: 2 }}
                 startIcon={<Icon icon={plusFill} />}
-                disabled={options.length >= 4}
+                // disabled={options.length >= 4}
               >
                 Create Rule
               </Button>
@@ -662,7 +672,7 @@ function RuleEditor({ id, editStack, provider, className }) {
                 size="small"
                 variant="contained"
                 onClick={handleCancel}
-                disabled={options.length >= 4}
+                // disabled={options.length >= 4}
               >
                 Cancel
               </Button>

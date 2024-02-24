@@ -113,47 +113,62 @@ const getAzureNetworkGroups = (securityGroupRules, resourceGroupName) => {
   return securityGroups;
 };
 
-export const getAWSRefactorModel = (awsModel) => {
-  let securityModules = {};
+export const getAWSRefactorModel = async (awsModel) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let securityModules = {};
+      console.log('ssss' + JSON.stringify(awsModel));
+      awsModel?.config?.modules.forEach((item) => {
+        if (item.moduleType !== 'security-group') {
+          securityModules = {
+            ...securityModules,
+            [item?.tfId]: { ...item }
+          };
+        }
+      });
 
-  awsModel?.config?.modules.forEach((item) => {
-    if (item.moduleType != 'security-group') {
-      securityModules = {
-        ...securityModules,
-        [item?.tfId]: { ...item }
+      const result = {
+        stack_name: awsModel?.stack_name,
+        securityGroup: {
+          name: awsModel?.config?.modules[0]?.name,
+          tfId: 'sg-id'
+        },
+        securityModules: { ...securityModules }
       };
+
+      resolve(result);
+    } catch (error) {
+      reject(error);
     }
   });
-  return {
-    stack_name: awsModel?.stack_name,
-    securityGroup: {
-      name: awsModel?.config?.modules[0]?.name,
-      tfId: 'sg-id'
-    },
-    securityModules: { ...securityModules }
-  };
 };
 
-export const getAzureRefactorModel = (azureModel) => {
-  let networkGroup = {};
-  let networkModules = {};
+export const getAzureRefactorModel = async (azureModel) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let networkGroup = {};
+      let networkModules = {};
 
-  azureModel?.modules?.forEach((item) => {
-    if (item.moduleType != 'network-security-group') {
-      networkModules = {
-        ...networkModules,
-        [item?.tfId]: { ...item }
+      azureModel?.config?.modules?.forEach((item) => {
+        if (item.moduleType !== 'network-security-group') {
+          networkModules = {
+            ...networkModules,
+            [item?.tfId]: { ...item }
+          };
+        } else {
+          networkGroup = item;
+        }
+      });
+
+      const result = {
+        stack_name: azureModel?.stack_name,
+        networkGroup: networkGroup,
+        networkModules: { ...networkModules }
       };
-    } else {
-      networkGroup = item;
+
+      resolve(result);
+    } catch (error) {
+      reject(error);
     }
   });
-
-  return {
-    stack_name: azureModel?.stackName,
-    networkGroup: networkGroup,
-    networkModules: {
-      ...networkModules
-    }
-  };
 };
