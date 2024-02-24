@@ -92,38 +92,8 @@ function RuleAddEditForms({ className }) {
     const tfid = uuidv4();
     setSecurityTfid(tfid);
 
-    setAWSSecurityGroups({
-      0: {
-        moduleType: 'security-group-rule',
-        tfId: '334434334333434',
-        type: 'ingress',
-        fromPort: '',
-        toPort: '',
-        protocol: 'tcp',
-        cidrBlocks: [''],
-        securityGroupId: `${tfid}.id`,
-        id: 0
-      }
-    });
-
-    setAzureGroups({
-      0: {
-        moduleType: 'network-security-rule',
-        tfId: '',
-        name: '',
-        priority: null,
-        direction: '',
-        access: '',
-        protocol: '',
-        sourcePortRange: '*',
-        destinationPortRange: '*',
-        sourceAddressPrefix: '*',
-        destinationAddressPrefix: '*',
-        resourceGroupName: '',
-        networkSecurityGroupName: `${tfid}.name`,
-        id: 0
-      }
-    });
+    handleAddOption(tfid);
+    handleAzureAddOption(tfid);
   }, []);
 
   const [azureGroups, setAzureGroups] = useState({});
@@ -176,7 +146,7 @@ function RuleAddEditForms({ className }) {
     isSubmitting
   } = formik;
 
-  const handleAddOption = () => {
+  const handleAddOption = (tfid) => {
     const gui = uuidv4();
 
     setAWSSecurityGroups({
@@ -189,7 +159,7 @@ function RuleAddEditForms({ className }) {
         toPort: '',
         protocol: 'tcp',
         cidrBlocks: [''],
-        securityGroupId: `${groupTfid}.id`,
+        securityGroupId: `${tfid}.id`,
         id: gui
       }
     });
@@ -246,7 +216,7 @@ function RuleAddEditForms({ className }) {
 
   //AZURE
 
-  const handleAzureAddOption = (index) => {
+  const handleAzureAddOption = (tfid) => {
     const gui = uuidv4();
     setAzureGroups({
       ...azureGroups,
@@ -263,8 +233,7 @@ function RuleAddEditForms({ className }) {
         sourceAddressPrefix: '*',
         destinationAddressPrefix: '*',
         resourceGroupName: '',
-        networkSecurityGroupName: `${groupTfid}.name`,
-        id: gui
+        networkSecurityGroupName: `${tfid}.name`
       }
     });
   };
@@ -304,7 +273,7 @@ function RuleAddEditForms({ className }) {
             <TextField
               fullWidth
               size="small"
-              label="Type the Stack Name"
+              label="Stack Name"
               {...getFieldProps('stack_name')}
               error={Boolean(touched.stack_name && errors.stack_name)}
               helperText={touched.stack_name && errors.stack_name}
@@ -344,7 +313,7 @@ function RuleAddEditForms({ className }) {
               <TextField
                 fullWidth
                 size="small"
-                label="Type the Security Group Name"
+                label="Security Group Name"
                 {...getFieldProps('security_group_name')}
                 // error={Boolean(touched.firstName && errors.firstName)}
                 // helperText={touched.firstName && errors.firstName}
@@ -363,7 +332,7 @@ function RuleAddEditForms({ className }) {
                       options={AWS_SECURITY_TYPES}
                       value={option?.type}
                       property="protocol"
-                      tfid={option?.id}
+                      tfid={option?.tfId}
                       onChange={onchangeAwsSecurityGroups}
                       defaultValue="ingress"
                       label="Type"
@@ -373,9 +342,10 @@ function RuleAddEditForms({ className }) {
                       options={AWS_SECURITY_PROTOOCALS}
                       value={option?.protocol}
                       property={'protocol'}
-                      tfid={option?.id}
+                      tfid={option?.tfId}
                       onChange={onchangeAwsSecurityGroups}
                       defaultValue={'tcp'}
+                      label={'Protocol'}
                     />
 
                     <Grid container direction="row" spacing={1}>
@@ -383,16 +353,18 @@ function RuleAddEditForms({ className }) {
                         <ControlledTextField
                           value={option?.fromPort}
                           property={'fromPort'}
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAwsSecurityGroups}
+                          label={'From Port'}
                         />
                       </Grid>
                       <Grid item xs={6}>
                         <ControlledTextField
                           value={option?.toPort}
                           property={'toPort'}
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAwsSecurityGroups}
+                          label={'To Port'}
                         />
                       </Grid>
                     </Grid>
@@ -410,12 +382,12 @@ function RuleAddEditForms({ className }) {
                               onchangeAwsSecurityGroups(
                                 securityType,
                                 'cidrBlocks',
-                                option?.id,
+                                option?.tfId,
                                 thisIndex
                               );
                             }}
                             // error={!options[index]}
-                            label={`Type`}
+                            label={`Cidr ${thisIndex + 1}`}
                             InputProps={{
                               endAdornment: (
                                 <InputAdornment>
@@ -423,7 +395,7 @@ function RuleAddEditForms({ className }) {
                                     data-testid={'pollDelete'}
                                     onClick={() => {
                                       handleDeleteCidrOption(
-                                        option?.id,
+                                        option?.tfId,
                                         thisIndex
                                       );
                                     }}
@@ -440,7 +412,7 @@ function RuleAddEditForms({ className }) {
                     <Button
                       size="small"
                       sx={{ my: 2 }}
-                      onClick={() => handleAddCIDROption(option?.id)}
+                      onClick={() => handleAddCIDROption(option?.tfId)}
                       startIcon={<Icon icon={plusFill} />}
                       // disabled={options.length >= 4}
                     >
@@ -451,7 +423,7 @@ function RuleAddEditForms({ className }) {
                         <Button
                           size="small"
                           sx={{ my: 2 }}
-                          onClick={() => handleDeleteOption(option?.id)}
+                          onClick={() => handleDeleteOption(option?.tfId)}
                           startIcon={<Icon icon={plusFill} />}
                           disabled={options.length >= 4}
                         >
@@ -467,7 +439,7 @@ function RuleAddEditForms({ className }) {
               <Button
                 size="small"
                 sx={{ my: 2 }}
-                onClick={handleAddOption}
+                onClick={() => handleAddOption(groupTfid)}
                 startIcon={<Icon icon={plusFill} />}
                 disabled={options.length >= 4}
               >
@@ -544,7 +516,7 @@ function RuleAddEditForms({ className }) {
                         <ControlledTextField
                           value={option?.priority}
                           property="priority"
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAzureSecurityGroups}
                           label="Priority"
                         />
@@ -554,7 +526,7 @@ function RuleAddEditForms({ className }) {
                           options={AZURE_DIRECTIONS}
                           value={option?.direction}
                           property={'direction'}
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAzureSecurityGroups}
                           defaultValue={'Inbound'}
                           label={`Direction`}
@@ -568,7 +540,7 @@ function RuleAddEditForms({ className }) {
                           options={AZURE_ACCESS}
                           value={option?.access}
                           property={'access'}
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAzureSecurityGroups}
                           defaultValue={'Allow'}
                           label={`Access`}
@@ -579,7 +551,7 @@ function RuleAddEditForms({ className }) {
                           options={AWS_SECURITY_PROTOOCALS}
                           value={option?.protocol}
                           property={'protocol'}
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAzureSecurityGroups}
                           defaultValue={'tcp'}
                           label={`Protocol`}
@@ -592,7 +564,7 @@ function RuleAddEditForms({ className }) {
                         <ControlledTextField
                           value={option?.sourcePortRange}
                           property="sourcePortRange"
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAzureSecurityGroups}
                           label={`Source Port Range`}
                         />
@@ -601,7 +573,7 @@ function RuleAddEditForms({ className }) {
                         <ControlledTextField
                           value={option?.destinationPortRange}
                           property="destinationPortRange"
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAzureSecurityGroups}
                           label={`Destination Port Range`}
                         />
@@ -612,7 +584,7 @@ function RuleAddEditForms({ className }) {
                         <ControlledTextField
                           value={option?.sourceAddressPrefix}
                           property="sourceAddressPrefix"
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAzureSecurityGroups}
                           label={`Source Address Prefix`}
                         />
@@ -621,7 +593,7 @@ function RuleAddEditForms({ className }) {
                         <ControlledTextField
                           value={option?.destinationAddressPrefix}
                           property="destinationAddressPrefixype"
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAzureSecurityGroups}
                           label={`Destination Address Prefix`}
                         />
@@ -631,17 +603,18 @@ function RuleAddEditForms({ className }) {
                     <ControlledTextField
                       value={option?.networkSecurityGroupName}
                       property="networkSecurityGroupName"
-                      tfid={option?.id}
+                      tfid={option?.tfId}
                       onChange={onchangeAzureSecurityGroups}
                       label={`Network Security Group Name`}
                       disabled
+                      // disabled
                     />
                     {Object.values(azureGroups).length > 1 && (
                       <Box sx={{ display: 'flex', justifyContent: 'right' }}>
                         <Button
                           size="small"
                           sx={{ my: 2 }}
-                          onClick={() => handleAzureDeleteOption(option?.id)}
+                          onClick={() => handleAzureDeleteOption(option?.tfId)}
                           startIcon={<Icon icon={plusFill} />}
                           disabled={options.length >= 4}
                         >
@@ -656,7 +629,7 @@ function RuleAddEditForms({ className }) {
               <Button
                 size="small"
                 sx={{ my: 2 }}
-                onClick={() => handleAzureAddOption()}
+                onClick={() => handleAzureAddOption(groupTfid)}
                 startIcon={<Icon icon={plusFill} />}
                 disabled={options.length >= 4}
               >

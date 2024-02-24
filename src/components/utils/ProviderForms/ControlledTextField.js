@@ -13,7 +13,6 @@ export default function ControlledTextField({
       sx={{ mb: 1 }}
       fullWidth
       size="small"
-      type="number"
       value={value}
       onChange={(event) => {
         const securityType = event.target.value;

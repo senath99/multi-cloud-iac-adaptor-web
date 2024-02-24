@@ -84,10 +84,7 @@ const AZURE_ACCESS = [
 function RuleEditor({ id, editStack, className, provider }) {
   const classes = useStyles();
   const history = useHistory();
-  const dispatch = useDispatch();
-  // const [options, setOptions] = useState(['']);
-  const [basicOpen, setBasicOpen] = useState(true);
-  const [advancedOpen, setAdvancedOpen] = useState(false);
+
   const [groupTfid, setSecurityTfid] = useState('');
   const [selectorIndex, setSelectorIndex] = useState(0);
   //azure states
@@ -103,13 +100,11 @@ function RuleEditor({ id, editStack, className, provider }) {
   useEffect(() => {
     if (provider == 'aws') {
       setAWSSecurityGroups(editStack?.securityModules);
+      handleAzureAddOption();
       setSelectorIndex(0);
-      setAdvancedOpen(false);
-      setBasicOpen(true);
     } else {
       setSelectorIndex(1);
-      setAdvancedOpen(true);
-      setBasicOpen(false);
+      handleAddOption();
       setAzureGroups(editStack?.networkModules);
       const networkGroup = editStack?.networkGroup;
       setAzureGroupLocation(networkGroup?.location);
@@ -131,7 +126,7 @@ function RuleEditor({ id, editStack, className, provider }) {
       let awsModel = {};
       let azureModel = {};
       let response = {};
-      if (basicOpen) {
+      if (selectorIndex == 0) {
         awsModel = getAwsModel(
           values.stack_name,
           groupTfid,
@@ -174,8 +169,8 @@ function RuleEditor({ id, editStack, className, provider }) {
         moduleType: 'security-group-rule',
         tfId: `${gui}-id`,
         type: 'ingress',
-        fromPort: '',
-        toPort: '',
+        fromPort: null,
+        toPort: null,
         protocol: 'tcp',
         cidrBlocks: [''],
         securityGroupId: `${groupTfid}.id`
@@ -301,8 +296,7 @@ function RuleEditor({ id, editStack, className, provider }) {
             <Box sx={{ my: 3, height: 40, width: '60%' }}>
               <SwitchSelector
                 onChange={() => {
-                  setBasicOpen(!basicOpen);
-                  setAdvancedOpen(!advancedOpen);
+                  setSelectorIndex((prev) => (prev == 0 ? 1 : 0));
                 }}
                 options={[
                   {
@@ -323,7 +317,7 @@ function RuleEditor({ id, editStack, className, provider }) {
             </Box>
 
             <Collapse
-              in={basicOpen}
+              in={selectorIndex == 0}
               sx={{
                 mx: theme.spacing(3)
               }}
@@ -385,7 +379,7 @@ function RuleEditor({ id, editStack, className, provider }) {
                         </Grid>
                       </Grid>
 
-                      {option?.cidrBlocks.map((optionCidr, thisIndex) => {
+                      {option?.cidrBlocks?.map((optionCidr, thisIndex) => {
                         return (
                           <Box key={index} sx={{ mt: 2 }}>
                             <TextField
@@ -463,7 +457,7 @@ function RuleEditor({ id, editStack, className, provider }) {
               </Button>
             </Collapse>
             <Collapse
-              in={advancedOpen}
+              in={selectorIndex == 1}
               sx={{
                 mx: theme.spacing(3)
               }}

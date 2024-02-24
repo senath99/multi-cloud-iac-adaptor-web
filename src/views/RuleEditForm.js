@@ -27,12 +27,11 @@ export default function RuleEditForm() {
         // Dispatch action to get instances by stack id and await its completion
         const response = await dispatch(getInstancesByStackId(id));
 
-        let stackData = {};
-        if (response.status === 200) {
+        if (response?.status === 200) {
           // Now that dispatch is complete, fetch stack data synchronously
           let result = {};
-          console.log('WEssSR' + JSON.stringify(singleStack.config.modules));
-          const providerType = response.data.config.provider.type;
+
+          const providerType = response.data?.config?.provider?.type;
           setProvider(providerType);
 
           if (providerType == 'aws') {
@@ -57,7 +56,7 @@ export default function RuleEditForm() {
   if (isLoading) {
     return <LoadingScreen />;
   }
-  console.log('AAAAAAA' + JSON.stringify(editStack));
+
   return (
     <Box sx={{ mt: 15, mb: 10, px: 30 }}>
       <Card sx={{ display: 'flex', justifyContent: 'center' }}>
