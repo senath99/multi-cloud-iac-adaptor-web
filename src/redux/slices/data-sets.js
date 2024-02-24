@@ -19,7 +19,7 @@ const initialState = {
   stack: [],
   status: '',
   datasetData: [],
-  metaDefaults: []
+  singleStack: {}
 };
 
 const slice = createSlice({
@@ -52,17 +52,12 @@ const slice = createSlice({
       state.isLoading = false;
     },
 
-    // VALIDATE ESG Data
-    addDataSuccess(state, action) {
-      state.statusData = {
-        ...state.statusData,
-        webformState: WEB_FORMS_STATUS.SECOND_STEP
-      };
-      state.description = action.payload.description;
-      state.documentType = action.payload.documentType;
-      state.fileType = action.payload.fileType;
+    getInstancesByStackIdSuccess(state, action) {
+      state.singleStack = {};
+      state.singleStack = action.payload;
+      state.isLoading = false;
     },
-    // DELETE DATA
+
     deleteDataSuccess(state, action) {
       state.isLoading = false;
     },
@@ -176,64 +171,19 @@ export async function saveInstance(dataModel) {
   }
 }
 
-export function checkStatus(id, executionArn) {
+export function getInstancesByStackId(Id) {
   return async (dispatch) => {
     try {
-      const response = await axios.get(`/data-sets/status/${id}`, {
-        params: { executionArn: executionArn }
-      });
-      dispatch(slice.actions.checkStatus(response.data.data));
-    } catch (error) {
-      dispatch(slice.actions.hasError(error));
-    }
-  };
-}
+      dispatch(slice.actions.startLoading());
+      const response = await axios.get(
+        `http://127.0.0.1:8000/stacks/id/${encodeURIComponent(Id)}`
+      );
 
-export function cancelDataSet(id, confirmType) {
-  return async (dispatch) => {
-    try {
-      dispatch(slice.actions.startCancelLoading());
-      const response = await axios.put(`/data-sets/confirm/${id}`, {
-        confirmType: confirmType
-      });
-      dispatch(slice.actions.cancelDataSets());
+      dispatch(slice.actions.getInstancesByStackIdSuccess(response.data));
       return response;
     } catch (error) {
       dispatch(slice.actions.hasError(error));
       return error;
-    }
-  };
-}
-
-export function getMetaDataSets(cubejsApi) {
-  return async (dispatch) => {
-    let fOptions = [];
-    try {
-      const meta = await cubejsApi.meta();
-      //check for esg meta schema
-      let schema = meta.cubes.find(
-        (schema) => schema.name.toLowerCase() === 'esgmeta'
-      );
-
-      if (schema) {
-        schema.dimensions.forEach((dimension) => {
-          fOptions.push(dimension.name);
-        });
-        let results = [];
-        const filterQuery = { dimensions: fOptions };
-        const queryResult = await cubejsApi.load(filterQuery);
-        fOptions.forEach((filterName) => {
-          const options = uniq(
-            map(queryResult.loadResponses[0].data, filterName)
-          ).filter((val) => val != null);
-
-          results.push({ name: filterName.split('.')[1], options: options });
-        });
-
-        dispatch(slice.actions.getMetaDataSuccess(results));
-      }
-    } catch (error) {
-      dispatch(slice.actions.hasError(error));
     }
   };
 }

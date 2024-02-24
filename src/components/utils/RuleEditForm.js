@@ -18,8 +18,8 @@ export default function RuleEditForm({ stackName }) {
     dispatch(getInstancesByStackName(stackName));
   }, []);
 
-  const handleEditNewOpen = () => {
-    history.push(`${PATH_DASHBOARD.general.ruleAdd}`);
+  const handleEditNewOpen = (id) => {
+    history.push(`${PATH_DASHBOARD.general.ruleEditPath}/${stackName}/${id}`);
   };
 
   return (
@@ -39,7 +39,7 @@ export default function RuleEditForm({ stackName }) {
                 return (
                   <Grid item xs={12} md={6} lg={6}>
                     <Card
-                      onClick={handleEditNewOpen}
+                      onClick={() => handleEditNewOpen(stackItem?._id?.$oid)}
                       sx={{
                         mb: 2,
                         height: '50px',

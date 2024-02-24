@@ -24,6 +24,11 @@ const DashboardRoutes = {
     },
     {
       exact: true,
+      path: PATH_DASHBOARD.general.ruleEditPage,
+      component: lazy(() => import('../views/RuleEditForm'))
+    },
+    {
+      exact: true,
       path: PATH_DASHBOARD.general.ruleEdit,
       component: lazy(() => import('../views/RuleEdit'))
     },

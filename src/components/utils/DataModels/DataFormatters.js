@@ -113,13 +113,47 @@ const getAzureNetworkGroups = (securityGroupRules, resourceGroupName) => {
   return securityGroups;
 };
 
-const getAWSRefactorModel = (awsModel) => {
+export const getAWSRefactorModel = (awsModel) => {
+  let securityModules = {};
+
+  awsModel?.config?.modules.forEach((item) => {
+    if (item.moduleType != 'security-group') {
+      securityModules = {
+        ...securityModules,
+        [item?.tfId]: { ...item }
+      };
+    }
+  });
   return {
-    stack_name: awsModel.stack_name,
+    stack_name: awsModel?.stack_name,
     securityGroup: {
-      name: 'my-security-group',
+      name: awsModel?.config?.modules[0]?.name,
       tfId: 'sg-id'
     },
-    securityModules: [...awsModel.config.modules]
+    securityModules: { ...securityModules }
+  };
+};
+
+export const getAzureRefactorModel = (azureModel) => {
+  let networkGroup = {};
+  let networkModules = {};
+
+  azureModel?.modules?.forEach((item) => {
+    if (item.moduleType != 'network-security-group') {
+      networkModules = {
+        ...networkModules,
+        [item?.tfId]: { ...item }
+      };
+    } else {
+      networkGroup = item;
+    }
+  });
+
+  return {
+    stack_name: azureModel?.stackName,
+    networkGroup: networkGroup,
+    networkModules: {
+      ...networkModules
+    }
   };
 };

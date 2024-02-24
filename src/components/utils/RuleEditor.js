@@ -30,8 +30,16 @@ import { v4 as uuidv4 } from 'uuid';
 import ControlledTextField from './ProviderForms/ControlledTextField';
 import ControlledDropdown from './ProviderForms/ControlledDropdown';
 import { PATH_DASHBOARD } from 'src/routes/paths';
-import { getAwsModel, getAzureModel } from './DataModels/DataFormatters';
-import { saveInstance } from 'src/redux/slices/data-sets';
+import {
+  getAWSRefactorModel,
+  getAwsModel,
+  getAzureModel
+} from './DataModels/DataFormatters';
+import {
+  getInstancesByStackId,
+  saveInstance
+} from 'src/redux/slices/data-sets';
+import { useDispatch, useSelector } from 'react-redux';
 
 // ----------------------------------------------------------------------
 
@@ -73,9 +81,10 @@ const AZURE_ACCESS = [
   { name: 'Deny', value: 'Deny' }
 ];
 
-function RuleEditor({ className }) {
+function RuleEditor({ id, editStack, provider, className }) {
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
   const [options, setOptions] = useState(['']);
   const [basicOpen, setBasicOpen] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -88,54 +97,27 @@ function RuleEditor({ className }) {
   const [azureResourceGroup_name, setAzureResourceGroup_name] = useState('');
   const [azureSecurityRule_name, setAzureSecurityRuleName] = useState('');
 
-  useEffect(() => {
-    const tfid = uuidv4();
-    setSecurityTfid(tfid);
-
-    setAWSSecurityGroups({
-      0: {
-        moduleType: 'security-group-rule',
-        tfId: '334434334333434',
-        type: 'ingress',
-        fromPort: '',
-        toPort: '',
-        protocol: 'tcp',
-        cidrBlocks: [''],
-        securityGroupId: `${tfid}.id`,
-        id: 0
-      }
-    });
-
-    setAzureGroups({
-      0: {
-        moduleType: 'network-security-rule',
-        tfId: '',
-        name: '',
-        priority: null,
-        direction: '',
-        access: '',
-        protocol: '',
-        sourcePortRange: '*',
-        destinationPortRange: '*',
-        sourceAddressPrefix: '*',
-        destinationAddressPrefix: '*',
-        resourceGroupName: '',
-        networkSecurityGroupName: `${tfid}.name`,
-        id: 0
-      }
-    });
-  }, []);
-
   const [azureGroups, setAzureGroups] = useState({});
   const [securityAWSGroups, setAWSSecurityGroups] = useState({});
+
+  useEffect(() => {
+    if (provider == 'aws') {
+      setAWSSecurityGroups(editStack?.securityModules);
+    } else {
+      const networkGroup = editStack?.networkGroup;
+      setAzureGroupLocation(networkGroup?.location);
+      setAzureResourceGroup_name();
+      setAzureGroups(editStack?.networkModules);
+    }
+  }, []);
 
   const theme = useTheme();
 
   const formik = useFormik({
     initialValues: {
-      stack_name: '',
-      security_group_name: '',
-      network_security_group_name: ''
+      stack_name: editStack?.stack_name,
+      security_group_name: editStack?.securityGroup?.name,
+      network_security_group_name: editStack?.networkGroup?.name
     },
 
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -181,9 +163,9 @@ function RuleEditor({ className }) {
 
     setAWSSecurityGroups({
       ...securityAWSGroups,
-      [gui]: {
+      [`${gui}-id`]: {
         moduleType: 'security-group-rule',
-        tfId: `${gui}.id`,
+        tfId: `${gui}-id`,
         type: 'ingress',
         fromPort: '',
         toPort: '',
@@ -214,7 +196,7 @@ function RuleEditor({ className }) {
 
   const handleDeleteCidrOption = (index, indexNo) => {
     let group = securityAWSGroups[index];
-    let cidrValues = group.cidrBlocks;
+    let cidrValues = group?.cidrBlocks;
 
     if (cidrValues.length !== 1) {
       cidrValues.splice(indexNo, 1);
@@ -250,9 +232,9 @@ function RuleEditor({ className }) {
     const gui = uuidv4();
     setAzureGroups({
       ...azureGroups,
-      [gui]: {
+      [`${gui}-id`]: {
         moduleType: 'network-security-rule',
-        tfId: `${gui}`,
+        tfId: `${gui}-id`,
         name: '',
         priority: 0,
         direction: '',
@@ -263,8 +245,7 @@ function RuleEditor({ className }) {
         sourceAddressPrefix: '*',
         destinationAddressPrefix: '*',
         resourceGroupName: '',
-        networkSecurityGroupName: `${groupTfid}.name`,
-        id: gui
+        networkSecurityGroupName: `${groupTfid}.name`
       }
     });
   };
@@ -363,7 +344,7 @@ function RuleEditor({ className }) {
                       options={AWS_SECURITY_TYPES}
                       value={option?.type}
                       property="protocol"
-                      tfid={option?.id}
+                      tfid={option?.tfId}
                       onChange={onchangeAwsSecurityGroups}
                       defaultValue="ingress"
                       label="Type"
@@ -373,7 +354,7 @@ function RuleEditor({ className }) {
                       options={AWS_SECURITY_PROTOOCALS}
                       value={option?.protocol}
                       property={'protocol'}
-                      tfid={option?.id}
+                      tfid={option?.tfId}
                       onChange={onchangeAwsSecurityGroups}
                       defaultValue={'tcp'}
                     />
@@ -383,7 +364,7 @@ function RuleEditor({ className }) {
                         <ControlledTextField
                           value={option?.fromPort}
                           property={'fromPort'}
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAwsSecurityGroups}
                         />
                       </Grid>
@@ -391,7 +372,7 @@ function RuleEditor({ className }) {
                         <ControlledTextField
                           value={option?.toPort}
                           property={'toPort'}
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAwsSecurityGroups}
                         />
                       </Grid>
@@ -410,7 +391,7 @@ function RuleEditor({ className }) {
                               onchangeAwsSecurityGroups(
                                 securityType,
                                 'cidrBlocks',
-                                option?.id,
+                                option?.tfId,
                                 thisIndex
                               );
                             }}
@@ -423,7 +404,7 @@ function RuleEditor({ className }) {
                                     data-testid={'pollDelete'}
                                     onClick={() => {
                                       handleDeleteCidrOption(
-                                        option?.id,
+                                        option?.tfId,
                                         thisIndex
                                       );
                                     }}
@@ -440,7 +421,7 @@ function RuleEditor({ className }) {
                     <Button
                       size="small"
                       sx={{ my: 2 }}
-                      onClick={() => handleAddCIDROption(option?.id)}
+                      onClick={() => handleAddCIDROption(option?.tfId)}
                       startIcon={<Icon icon={plusFill} />}
                       // disabled={options.length >= 4}
                     >
@@ -451,7 +432,7 @@ function RuleEditor({ className }) {
                         <Button
                           size="small"
                           sx={{ my: 2 }}
-                          onClick={() => handleDeleteOption(option?.id)}
+                          onClick={() => handleDeleteOption(option?.tfId)}
                           startIcon={<Icon icon={plusFill} />}
                           disabled={options.length >= 4}
                         >
@@ -544,7 +525,7 @@ function RuleEditor({ className }) {
                         <ControlledTextField
                           value={option?.priority}
                           property="priority"
-                          tfid={option?.id}
+                          tfid={option?.tfId}
                           onChange={onchangeAzureSecurityGroups}
                           label="Priority"
                         />
