@@ -16,7 +16,7 @@ import { PATH_DASHBOARD } from 'src/routes/paths';
 import { useHistory } from 'react-router';
 
 import DataList from '../utils/DataList';
-import { getInstances } from 'src/redux/slices/data-sets';
+import { getInstances, deleteDataSet } from 'src/redux/slices/data-sets';
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +45,11 @@ export default function InstanceList() {
           Create Rule
         </Button>
       </Box>
-      <DataList ESGData={esgData} isLoading={isLoading} ondeleteDataSet={{}} />
+      <DataList
+        instanceData={esgData}
+        isLoading={isLoading}
+        ondeleteDataSet={deleteDataSet}
+      />
     </Box>
   );
 }

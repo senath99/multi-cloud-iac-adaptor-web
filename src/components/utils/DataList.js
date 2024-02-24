@@ -34,6 +34,7 @@ import DataListHead from './DataListHead';
 //constants
 import { CHECK_BOX_FONT_SIZE } from '../../utils/constants';
 import { PATH_DASHBOARD } from 'src/routes/paths';
+import { getInstances } from 'src/redux/slices/data-sets';
 //slices
 // import { getESGDataSets } from 'src/redux/slices/data-sets';
 // ----------------------------------------------------------------------
@@ -56,12 +57,12 @@ const TABLE_HEAD = [
 ];
 
 DataList.propTypes = {
-  ESGData: PropTypes.array,
+  instanceData: PropTypes.array,
   onupdateUser: PropTypes.func,
   isLoading: PropTypes.bool
 };
 export default function DataList({
-  ESGData = [],
+  instanceData = [],
   isLoading,
   ondeleteDataSet,
   onEditOpen
@@ -97,7 +98,7 @@ export default function DataList({
   };
 
   const filteredESGData = applySortFilter(
-    ESGData,
+    instanceData,
     getComparator(order, orderBy),
     filterName,
     'stack_name'
@@ -108,18 +109,18 @@ export default function DataList({
   };
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ESGData.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - instanceData.length) : 0;
 
   const handleDeleteDataSet = async () => {
-    const response = await dispatch(ondeleteDataSet(selected.id));
+    const response = await dispatch(ondeleteDataSet(selected.stack_name));
     if (response.status === 200) {
-      enqueueSnackbar('Data file deleted successfully.', {
+      enqueueSnackbar('Instance destroyed successfully.', {
         variant: 'success'
       });
-      // dispatch(getESGDataSets());
-      setSelected({ id: -1, uploadedBy: '' });
+      dispatch(getInstances());
+      setSelected({ stack_name: -1 });
     } else {
-      enqueueSnackbar('Data file not deleted successfully.', {
+      enqueueSnackbar('Instance not destroyed successfully.', {
         variant: 'error'
       });
     }
@@ -168,7 +169,8 @@ export default function DataList({
                     .map((row) => {
                       const { stack_name, version, status, config } = row;
 
-                      const isItemSelected = selected.stack_name === stack_name;
+                      const isItemSelected =
+                        selected?.stack_name === stack_name;
 
                       return (
                         <TableRow
@@ -182,7 +184,8 @@ export default function DataList({
                             stack_name == selected.stack_name
                               ? setSelected({ stack_name: stack_name })
                               : setSelected({
-                                  stack_name: stack_name
+                                  stack_name: stack_name,
+                                  status: status
                                 })
                           }
                         >
@@ -237,14 +240,14 @@ export default function DataList({
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6}>
-                        {ESGData.length > 0 ? (
+                        {instanceData.length > 0 ? (
                           <Box sx={{ py: 3 }}>
                             <SearchNotFound searchQuery={filterName} />
                           </Box>
                         ) : (
                           <EmptyContent
-                            title="ESG Data Sets Not Found"
-                            description="We are unable to retrieve any ESG Data Sets at the moment."
+                            title="Instance Data Not Found"
+                            description="We are unable to retrieve any Instance Data at the moment."
                           />
                         )}
                       </TableCell>

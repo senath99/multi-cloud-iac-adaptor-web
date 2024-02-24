@@ -5,7 +5,8 @@ export default function ControlledTextField({
   property,
   tfid,
   onChange,
-  label
+  label,
+  ...other
 }) {
   return (
     <TextField
@@ -20,6 +21,7 @@ export default function ControlledTextField({
       }}
       // error={!options[index]}
       label={label}
+      {...other}
     />
   );
 }

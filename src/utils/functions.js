@@ -1,8 +1,9 @@
-import { first, filter, orderBy } from 'lodash';
+import { first, filter, orderBy, sum } from 'lodash';
 import { capitalCase } from 'change-case';
 import moment from 'moment';
 import {
   OVERALL,
+  TEXT_DIMENSIONS,
   DATA_SET_DOC_TYPE,
   ACCESS_TOKEN,
   EMPTY_STRING,

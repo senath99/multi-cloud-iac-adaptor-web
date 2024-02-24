@@ -18,11 +18,6 @@ const initialState = {
   esgData: [],
   stack: [],
   status: '',
-  recordData: { id: null },
-  statusData: {
-    stateMachineStatus: PROCESS_STATUS.INITIAL,
-    processState: DATA_FILE_STATUS.INITIAL.HASH_CODE
-  },
   datasetData: [],
   metaDefaults: []
 };
@@ -52,8 +47,9 @@ const slice = createSlice({
     },
 
     getInstancesByStackNameSuccess(state, action) {
-      state.isLoading = false;
+      state.stack = {};
       state.stack = action.payload;
+      state.isLoading = false;
     },
 
     // VALIDATE ESG Data
@@ -70,77 +66,11 @@ const slice = createSlice({
     deleteDataSuccess(state, action) {
       state.isLoading = false;
     },
-    // SAVE DATA
-    saveDataSuccess(state, action) {
-      state.isLoading = false;
-      state.statusData = {
-        ...state.statusData,
-        processState: DATA_FILE_STATUS.INITIAL.HASH_CODE,
-        stateMachineStatus: PROCESS_STATUS.INITIAL
-      };
-    },
-    checkStatus(state, action) {
-      state.statusData = action.payload;
-    },
-    resetStepperStatus(state) {
-      state.statusData = {
-        ...state.statusData,
-        processState: DATA_FILE_STATUS.INITIAL.HASH_CODE,
-        stateMachineStatus: PROCESS_STATUS.INITIAL,
-        webformState: WEB_FORMS_STATUS.LOADING
-      };
-    },
-    cancelDataSets(state, action) {
-      state.iscancelLoading = false;
-      state.statusData = {
-        ...state.statusData,
-        stateMachineStatus: PROCESS_STATUS.INITIAL
-      };
-    },
-    saveDataSets(state, action) {
-      state.statusData = {
-        ...state.statusData,
-        stateMachineStatus: PROCESS_STATUS.INITIAL
-      };
-      state.datasetData = [];
-    },
-    // GET META Data
-    getMetaDataSuccess(state, action) {
-      state.isLoading = false;
-      state.metaData = action.payload;
-    },
-    // GET META Data
-    loadDataSetData(state, action) {
-      state.isLoading = false;
-      state.datasetData = action.payload;
-    },
-    addNewRecord(state, action) {
-      let data = action.payload;
-      let newData = data.map((item) => {
-        return { id: uuidv4() + new Date(), ...item };
-      });
-      state.datasetData = [...state.datasetData, ...newData];
-      state.success = !state.success;
-    },
-    removeRow(state, action) {
-      let index = action.payload;
-      state.datasetData.splice(index, 1);
-      state.success = !state.success;
-    },
-    updateRecord(state, action) {
-      const index = action.payload.id;
-      const record = action.payload.record;
-      state.datasetData.splice(index, 1, record);
-      state.success = !state.success;
-    },
 
-    emptyDataRecords(state) {
+    saveInstance(state, action) {
       state.datasetData = [];
-    },
-
-    getMetaDefaultSuccess(state, action) {
-      state.metaDefaults = action.payload;
     }
+    // GET META Data
   }
 });
 
@@ -182,6 +112,7 @@ export function getInstances() {
 export function getInstancesByStackName(stackName) {
   return async (dispatch) => {
     try {
+      dispatch(slice.actions.startLoading());
       const responseDefaults = await axios.get(
         `http://127.0.0.1:8000/stacks/${stackName}`
       );
@@ -216,11 +147,13 @@ export async function uploadESGDataSets(dataSet, customerId) {
 
 //---------------------------------------------------------------------------
 
-export function deleteDataSet(id) {
+export function deleteDataSet(stack_name) {
   return async (dispatch) => {
     try {
       dispatch(slice.actions.startLoading());
-      const response = await axios.put(`/data-sets/${id}`);
+      const response = await axios.delete(
+        `http://127.0.0.1:8000/destroy/${encodeURIComponent(stack_name)}`
+      );
       return response;
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -231,19 +164,16 @@ export function deleteDataSet(id) {
 
 //--------------------------------------------
 
-export function saveDataSet(id, confirmType) {
-  return async (dispatch) => {
-    try {
-      const response = await axios.put(`/data-sets/confirm/${id}`, {
-        confirmType: confirmType
-      });
-      dispatch(slice.actions.saveDataSets(response.data.data));
-      return response;
-    } catch (error) {
-      dispatch(slice.actions.hasError(error));
-      return error;
-    }
-  };
+export async function saveInstance(dataModel) {
+  try {
+    const response = await axios.put(`http://127.0.0.1:8000/synth`, {
+      ...dataModel
+    });
+
+    return response;
+  } catch (error) {
+    return error;
+  }
 }
 
 export function checkStatus(id, executionArn) {

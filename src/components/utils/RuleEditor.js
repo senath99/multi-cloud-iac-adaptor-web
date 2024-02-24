@@ -73,7 +73,7 @@ const AZURE_ACCESS = [
   { name: 'Deny', value: 'Deny' }
 ];
 
-function RuleAddEditForms({ className }) {
+function RuleEditor({ className }) {
   const classes = useStyles();
   const history = useHistory();
   const [options, setOptions] = useState(['']);
@@ -157,7 +157,7 @@ function RuleAddEditForms({ className }) {
           values.security_group_name,
           azureNetworkLocation,
           azureResourceGroup_name,
-          azureGroups
+          securityAWSGroups
         );
 
         response = await saveInstance(azureModel);
@@ -693,4 +693,4 @@ function RuleAddEditForms({ className }) {
   );
 }
 
-export default RuleAddEditForms;
+export default RuleEditor;

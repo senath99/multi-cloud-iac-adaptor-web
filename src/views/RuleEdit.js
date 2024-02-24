@@ -2,13 +2,13 @@ import React from 'react';
 import { Container } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 
-import RuleEditForm from 'src/components/utils/RuleEditForm';
+import RuleEditor from 'src/components/utils/RuleEditor';
 
 export default function RuleEdit() {
   const { stack } = useParams();
   return (
     <Container sx={{ mt: 15 }}>
-      <RuleEditForm stackName={stack} />
+      <RuleEditor stackName={stack} />
     </Container>
   );
 }

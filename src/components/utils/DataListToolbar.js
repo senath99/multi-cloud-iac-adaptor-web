@@ -167,29 +167,35 @@ export default function DataListToolbar({
               </Grid>
             </IconButton>
           </Tooltip>
-
-          <Divider orientation="vertical" flexItem />
-          <Tooltip title="Delete">
-            <IconButton
-              onClick={handleOpenDeleteConfirmation}
-              disabled={onLoading}
-              className={classes.iconButton}
-            >
-              <Grid
-                item
-                container
-                sx={{
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <Icon icon={archiveOutline} />
-                <Typography variant="caption" sx={{ px: 1, display: 'block' }}>
-                  Delete
-                </Typography>
-              </Grid>
-            </IconButton>
-          </Tooltip>
+          {selected.status == 'applied' && (
+            <Box>
+              <Divider orientation="vertical" flexItem />
+              <Tooltip title="Delete">
+                <IconButton
+                  onClick={handleOpenDeleteConfirmation}
+                  disabled={onLoading}
+                  className={classes.iconButton}
+                >
+                  <Grid
+                    item
+                    container
+                    sx={{
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Icon icon={archiveOutline} />
+                    <Typography
+                      variant="caption"
+                      sx={{ px: 1, display: 'block' }}
+                    >
+                      Delete
+                    </Typography>
+                  </Grid>
+                </IconButton>
+              </Tooltip>
+            </Box>
+          )}
         </Box>
       )}
       <Dialog
