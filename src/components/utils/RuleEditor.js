@@ -37,9 +37,11 @@ import {
 } from './DataModels/DataFormatters';
 import {
   getInstancesByStackId,
-  saveInstance
+  saveInstance,
+  saveInstanceMock
 } from 'src/redux/slices/data-sets';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
@@ -97,6 +99,9 @@ function RuleEditor({ id, editStack, className, provider }) {
   const [azureGroups, setAzureGroups] = useState({});
   const [securityAWSGroups, setAWSSecurityGroups] = useState({});
 
+  const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setLoading] = useState(false);
+
   useEffect(() => {
     if (provider == 'aws') {
       setAWSSecurityGroups(editStack?.securityModules);
@@ -133,7 +138,7 @@ function RuleEditor({ id, editStack, className, provider }) {
           values.security_group_name,
           securityAWSGroups
         );
-        response = await saveInstance(awsModel);
+        response = await saveInstanceMock(awsModel);
       } else {
         azureModel = getAzureModel(
           values.stack_name,
@@ -144,8 +149,19 @@ function RuleEditor({ id, editStack, className, provider }) {
           securityAWSGroups
         );
 
-        response = await saveInstance(azureModel);
+        response = await saveInstanceMock(azureModel);
       }
+      if (response.status == 200) {
+        enqueueSnackbar('Instance create was successful.', {
+          variant: 'success'
+        });
+        history.push(`${PATH_DASHBOARD.general.dashboard}`);
+      } else {
+        enqueueSnackbar('Instance create was unsuccessful.', {
+          variant: 'error'
+        });
+      }
+      setLoading(false);
     }
   });
 

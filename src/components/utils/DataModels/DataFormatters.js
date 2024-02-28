@@ -1,3 +1,5 @@
+import * as yup from 'yup';
+
 export function getAwsModel(stackName, groupId, groupName, groupRules) {
   return {
     stackName: stackName,
@@ -171,4 +173,37 @@ export const getAzureRefactorModel = async (azureModel) => {
       reject(error);
     }
   });
+};
+
+export const validateSchema = () => {
+  const networkSecurityRuleSchema = yup.object().shape({
+    moduleType: yup.string().equals(['network-security-rule']).required(),
+    tfId: yup.string().required(),
+    name: yup.string().required(),
+    priority: yup.number().positive().integer().required(),
+    direction: yup.string().oneOf(['Inbound', 'Outbound']).required(),
+    access: yup.string().oneOf(['Allow', 'Deny']).required(),
+    protocol: yup.string().required(),
+    fromPort: yup.string().required('From Port is required'),
+    toPort: yup.string().required(),
+    sourcePortRange: yup.string().required(),
+    destinationPortRange: yup.string().required(),
+    sourceAddressPrefix: yup.string().required(),
+    destinationAddressPrefix: yup.string().required(),
+    resourceGroupName: yup.string().required(),
+    networkSecurityGroupName: yup.string().required()
+  });
+
+  const schema = yup.object().shape({
+    stack_name: yup.string().label('Stack Name').required(),
+    security_group_name: yup.string().label('Stack Group Name').required(),
+    securityRules: yup.object().shape(
+      Object.keys(yup.object().required()).reduce((acc, key) => {
+        acc[key] = networkSecurityRuleSchema;
+        return acc;
+      }, {})
+    )
+  });
+
+  return schema;
 };

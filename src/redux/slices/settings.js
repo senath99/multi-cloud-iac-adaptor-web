@@ -28,8 +28,5 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Actions
-export const {
-  switchMode,
-  switchDirection,
-  toggleTutorialView
-} = slice.actions;
+export const { switchMode, switchDirection, toggleTutorialView } =
+  slice.actions;

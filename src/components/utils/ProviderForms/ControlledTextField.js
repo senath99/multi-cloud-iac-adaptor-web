@@ -18,7 +18,6 @@ export default function ControlledTextField({
         const securityType = event.target.value;
         onChange(securityType, property, tfid);
       }}
-      // error={!options[index]}
       label={label}
       {...other}
     />

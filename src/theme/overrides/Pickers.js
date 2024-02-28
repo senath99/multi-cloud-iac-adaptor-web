@@ -92,9 +92,10 @@ export default function Pickers(theme) {
         root: {
           boxShadow: theme.customShadows.z24,
           borderRadius: theme.shape.borderRadiusMd,
-          '& .MuiDateRangePickerViewDesktop-rangeCalendarContainer:not(:last-child)': {
-            borderRightWidth: 1
-          }
+          '& .MuiDateRangePickerViewDesktop-rangeCalendarContainer:not(:last-child)':
+            {
+              borderRightWidth: 1
+            }
         }
       }
     },

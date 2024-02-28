@@ -172,6 +172,18 @@ export async function saveInstance(dataModel) {
   }
 }
 
+export async function saveInstanceMock(dataModel) {
+  try {
+    const response = await axios.put(`/api/data-sets/instance/save`, {
+      ...dataModel
+    });
+
+    return response;
+  } catch (error) {
+    return error;
+  }
+}
+
 export function getInstancesByStackId(Id) {
   return async (dispatch) => {
     try {
