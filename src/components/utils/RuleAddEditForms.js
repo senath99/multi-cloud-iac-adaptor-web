@@ -277,7 +277,7 @@ function RuleAddEditForms({ className }) {
         sourceAddressPrefix: '*',
         destinationAddressPrefix: '*',
         resourceGroupName: '',
-        networkSecurityGroupName: `${groupTfid}.name`
+        networkSecurityGroupName: `${tfid}.name`
       }
     });
   };
