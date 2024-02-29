@@ -103,7 +103,7 @@ const getAzureNetworkGroups = (securityGroupRules, resourceGroupName) => {
         moduleType: 'network-security-rule',
         tfId: tfId,
         name: ruleName,
-        priority: priority,
+        priority: parseInt(priority),
         direction: direction,
         access: access,
         protocol: protocol,
@@ -227,7 +227,7 @@ const refactorTags = (tags) => {
 const decodeTags = (tags) => {
   let updatedTags = {};
 
-  if (tags.length > 0) {
+  if (tags?.length > 0) {
     tags.forEach((item) => {
       const guid = uuidv4();
       const element = Object.entries(item)[0];

@@ -65,6 +65,12 @@ const AWS_SECURITY_PROTOOCALS = [
   { name: 'icmpv6', value: 'icmpv6' }
 ];
 
+const AZURE_PROTOCALS = [
+  { name: 'Tcp', value: 'Tcp' },
+  { name: 'Udp', value: 'Udp' },
+  { name: 'Icmp', value: 'Icmp' },
+  { name: 'Icmpv6', value: 'Icmpv6' }
+];
 const AZURE_LOCATIONS = [
   { name: 'East US', value: 'East US' },
   { name: 'West Europe', value: 'West Europe' }
@@ -262,15 +268,15 @@ function RuleAddEditForms({ className }) {
         tfId: `${gui}`,
         name: '',
         priority: '',
-        direction: '',
-        access: '',
-        protocol: '',
+        direction: 'Outbound',
+        access: 'Allow',
+        protocol: 'Tcp',
         sourcePortRange: '*',
         destinationPortRange: '*',
         sourceAddressPrefix: '*',
         destinationAddressPrefix: '*',
         resourceGroupName: '',
-        networkSecurityGroupName: `${tfid}.name`
+        networkSecurityGroupName: `${values?.network_security_group_name}.name`
       }
     });
   };
@@ -433,7 +439,9 @@ function RuleAddEditForms({ className }) {
                   className={classes.margin}
                   data-testid={'firstName'}
                 />
-
+                <Typography variant="caption">
+                  Create the Security Group Tags
+                </Typography>
                 {Object.values(awsTags).map((item, thisIndex) => {
                   return (
                     <Box sx={{ mt: 2 }}>
@@ -498,10 +506,10 @@ function RuleAddEditForms({ className }) {
                       <ControlledDropdown
                         options={AWS_SECURITY_TYPES}
                         value={option?.type}
-                        property="protocol"
+                        property="type"
                         tfid={option?.tfId}
                         onChange={onchangeAwsSecurityGroups}
-                        defaultValue="ingress"
+                        defaultValue={'ingress'}
                         label="Type"
                       />
 
@@ -627,11 +635,11 @@ function RuleAddEditForms({ className }) {
                   {...getFieldProps('network_security_group_name')}
                   // error={Boolean(touched.firstName && errors.firstName)}
                   // helperText={touched.firstName && errors.firstName}
-                  className={classes.margin}
+                  sx={{ mb: 1 }}
                   data-testid={'firstName'}
                 />
 
-                <Grid container direction="row" spacing={1}>
+                <Grid container direction="row" spacing={1} sx={{ mb: 1 }}>
                   <Grid item xs={6}>
                     <DropDownFilter
                       sx={{ mb: 1 }}
@@ -672,7 +680,9 @@ function RuleAddEditForms({ className }) {
                   label="Network Security Rule Name"
                   sx={{ mb: 1 }}
                 />
-
+                <Typography variant="caption">
+                  Create the Security Group Tags
+                </Typography>
                 {Object.values(azureTags).map((item, thisIndex) => {
                   return (
                     <Box>
@@ -776,12 +786,12 @@ function RuleAddEditForms({ className }) {
                         </Grid>
                         <Grid item xs={6}>
                           <ControlledDropdown
-                            options={AWS_SECURITY_PROTOOCALS}
+                            options={AZURE_PROTOCALS}
                             value={option?.protocol}
                             property={'protocol'}
                             tfid={option?.tfId}
                             onChange={onchangeAzureSecurityGroups}
-                            defaultValue={'tcp'}
+                            defaultValue={'Tcp'}
                             label={`Protocol`}
                           />
                         </Grid>

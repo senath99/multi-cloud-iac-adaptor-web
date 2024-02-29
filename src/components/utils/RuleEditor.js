@@ -80,6 +80,13 @@ const AZURE_ACCESS = [
   { name: 'Deny', value: 'Deny' }
 ];
 
+const AZURE_PROTOCALS = [
+  { name: 'Tcp', value: 'Tcp' },
+  { name: 'Udp', value: 'Udp' },
+  { name: 'Icmp', value: 'Icmp' },
+  { name: 'Icmpv6', value: 'Icmpv6' }
+];
+
 function RuleEditor({ id, editStack, className, provider }) {
   const classes = useStyles();
   const history = useHistory();
@@ -157,7 +164,7 @@ function RuleEditor({ id, editStack, className, provider }) {
           values.network_security_group_name,
           azureNetworkLocation,
           azureResourceGroup_name,
-          securityAWSGroups,
+          azureGroups,
           azureTags
         );
 
@@ -265,16 +272,16 @@ function RuleEditor({ id, editStack, className, provider }) {
         moduleType: 'network-security-rule',
         tfId: `${gui}`,
         name: '',
-        priority: 0,
-        direction: '',
-        access: '',
-        protocol: '',
+        priority: '',
+        direction: 'Outbound',
+        access: 'Allow',
+        protocol: 'Tcp',
         sourcePortRange: '*',
         destinationPortRange: '*',
         sourceAddressPrefix: '*',
         destinationAddressPrefix: '*',
         resourceGroupName: '',
-        networkSecurityGroupName: `${groupTfid}.name`
+        networkSecurityGroupName: `${values?.network_security_group_name}.name`
       }
     });
   };
@@ -418,7 +425,9 @@ function RuleEditor({ id, editStack, className, provider }) {
                   data-testid={'firstName'}
                   sx={{ mb: 1 }}
                 />
-
+                <Typography variant="caption">
+                  Create the Security Group Tags
+                </Typography>
                 {Object.values(awsTags).map((item, thisIndex) => {
                   return (
                     <Box sx={{ mt: 2 }}>
@@ -612,7 +621,7 @@ function RuleEditor({ id, editStack, className, provider }) {
                   {...getFieldProps('network_security_group_name')}
                   // error={Boolean(touched.firstName && errors.firstName)}
                   // helperText={touched.firstName && errors.firstName}
-                  className={classes.margin}
+                  sx={{ mb: 1 }}
                   data-testid={'firstName'}
                 />
 
@@ -657,6 +666,9 @@ function RuleEditor({ id, editStack, className, provider }) {
                   label="Network Security Rule Name"
                   sx={{ mb: 1 }}
                 />
+                <Typography variant="caption">
+                  Create the Security Group Tags
+                </Typography>
                 {Object.values(azureTags).map((item, thisIndex) => {
                   return (
                     <Box>
@@ -761,12 +773,12 @@ function RuleEditor({ id, editStack, className, provider }) {
                           </Grid>
                           <Grid item xs={6}>
                             <ControlledDropdown
-                              options={AWS_SECURITY_PROTOOCALS}
+                              options={AZURE_PROTOCALS}
                               value={option?.protocol}
                               property={'protocol'}
                               tfid={option?.tfId}
                               onChange={onchangeAzureSecurityGroups}
-                              defaultValue={'tcp'}
+                              defaultValue={'Tcp'}
                               label={`Protocol`}
                             />
                           </Grid>
