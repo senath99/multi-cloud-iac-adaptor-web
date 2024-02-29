@@ -88,7 +88,7 @@ const getAzureNetworkGroups = (securityGroupRules, resourceGroupName) => {
   let securityGroups = Object.values(securityGroupRules).map(
     ({
       tfId,
-      ruleName,
+      name,
       priority,
       direction,
       access,
@@ -102,7 +102,7 @@ const getAzureNetworkGroups = (securityGroupRules, resourceGroupName) => {
       return {
         moduleType: 'network-security-rule',
         tfId: tfId,
-        name: ruleName,
+        name: name,
         priority: parseInt(priority),
         direction: direction,
         access: access,
