@@ -1,6 +1,7 @@
 import * as yup from 'yup';
+import { v4 as uuidv4 } from 'uuid';
 
-export function getAwsModel(stackName, groupId, groupName, groupRules) {
+export function getAwsModel(stackName, groupId, groupName, groupRules, tags) {
   return {
     stackName: stackName,
     provider: {
@@ -16,7 +17,8 @@ export function getAwsModel(stackName, groupId, groupName, groupRules) {
       {
         moduleType: 'security-group',
         tfId: groupId,
-        name: groupName
+        name: groupName,
+        tags: refactorTags(tags)
       },
       ...getAwsSecurityGroups(groupRules)
     ]
@@ -26,7 +28,7 @@ export function getAwsModel(stackName, groupId, groupName, groupRules) {
 const getAwsSecurityGroups = (securityGroupRules) => {
   let securityGroups = Object.values(securityGroupRules).map(
     ({
-      tfid,
+      tfId,
       type,
       fromPort,
       toPort,
@@ -36,10 +38,10 @@ const getAwsSecurityGroups = (securityGroupRules) => {
     }) => {
       return {
         moduleType: 'security-group-rule',
-        tfId: tfid,
+        tfId: tfId,
         type: type,
-        fromPort: fromPort,
-        toPort: toPort,
+        fromPort: parseInt(fromPort),
+        toPort: parseInt(toPort),
         protocol: protocol,
         cidrBlocks: cidrBlocks,
         securityGroupId: securityGroupId
@@ -55,7 +57,8 @@ export function getAzureModel(
   groupName,
   groupLocation,
   resourceGroupName,
-  networkRules
+  networkRules,
+  tags
 ) {
   return {
     stackName: stackName,
@@ -73,7 +76,8 @@ export function getAzureModel(
         tfId: groupId,
         name: groupName,
         location: groupLocation,
-        resourceGroupName: resourceGroupName
+        resourceGroupName: resourceGroupName,
+        tags: refactorTags(tags)
       },
       ...getAzureNetworkGroups(networkRules, resourceGroupName)
     ]
@@ -83,7 +87,7 @@ export function getAzureModel(
 const getAzureNetworkGroups = (securityGroupRules, resourceGroupName) => {
   let securityGroups = Object.values(securityGroupRules).map(
     ({
-      tfid,
+      tfId,
       ruleName,
       priority,
       direction,
@@ -97,7 +101,7 @@ const getAzureNetworkGroups = (securityGroupRules, resourceGroupName) => {
     }) => {
       return {
         moduleType: 'network-security-rule',
-        tfId: tfid,
+        tfId: tfId,
         name: ruleName,
         priority: priority,
         direction: direction,
@@ -119,7 +123,7 @@ export const getAWSRefactorModel = async (awsModel) => {
   return new Promise((resolve, reject) => {
     try {
       let securityModules = {};
-      console.log('ssss' + JSON.stringify(awsModel));
+
       awsModel?.config?.modules.forEach((item) => {
         if (item.moduleType !== 'security-group') {
           securityModules = {
@@ -128,12 +132,13 @@ export const getAWSRefactorModel = async (awsModel) => {
           };
         }
       });
-
+      console.log(JSON.stringify(awsModel?.config?.modules[0]));
       const result = {
         stack_name: awsModel?.stack_name,
         securityGroup: {
           name: awsModel?.config?.modules[0]?.name,
-          tfId: 'sg-id'
+          tfId: awsModel?.config?.modules[0]?.tfId,
+          tags: decodeTags(awsModel?.config?.modules[0]?.tags)
         },
         securityModules: { ...securityModules }
       };
@@ -164,7 +169,7 @@ export const getAzureRefactorModel = async (azureModel) => {
 
       const result = {
         stack_name: azureModel?.stack_name,
-        networkGroup: networkGroup,
+        networkGroup: { ...networkGroup, tags: decodeTags(networkGroup?.tags) },
         networkModules: { ...networkModules }
       };
 
@@ -206,4 +211,34 @@ export const validateSchema = () => {
   });
 
   return schema;
+};
+
+const refactorTags = (tags) => {
+  const processedTags = Object.values(tags);
+  let updatedTags = {};
+
+  processedTags.forEach((item) => {
+    updatedTags = { ...updatedTags, [item.key]: item.value };
+  });
+
+  return updatedTags;
+};
+
+const decodeTags = (tags) => {
+  let updatedTags = {};
+
+  if (tags.length > 0) {
+    tags.forEach((item) => {
+      const guid = uuidv4();
+      const element = Object.entries(item)[0];
+      updatedTags = {
+        ...updatedTags,
+        [guid]: { key: element[0], value: element[1], id: guid }
+      };
+    });
+  } else {
+    updatedTags = { 0: { key: '', value: '', id: 0 } };
+  }
+
+  return updatedTags;
 };

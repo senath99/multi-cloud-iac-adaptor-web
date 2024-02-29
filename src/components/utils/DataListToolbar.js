@@ -139,7 +139,7 @@ export default function DataListToolbar({
       )}
       {selected.stack_name != -1 && (
         <Box display="flex">
-          <Tooltip title="View">
+          <Tooltip title="Update">
             <IconButton
               disabled={onLoading}
               className={classes.iconButton}
@@ -170,7 +170,7 @@ export default function DataListToolbar({
           {selected.status == 'applied' && (
             <Box>
               <Divider orientation="vertical" flexItem />
-              <Tooltip title="Delete">
+              <Tooltip title="Destroy">
                 <IconButton
                   onClick={handleOpenDeleteConfirmation}
                   disabled={onLoading}
@@ -189,7 +189,7 @@ export default function DataListToolbar({
                       variant="caption"
                       sx={{ px: 1, display: 'block' }}
                     >
-                      Delete
+                      Destroy
                     </Typography>
                   </Grid>
                 </IconButton>

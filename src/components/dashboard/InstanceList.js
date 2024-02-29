@@ -7,9 +7,6 @@ import { Box, Button } from '@material-ui/core';
 //icons
 import { Icon } from '@iconify/react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-
-import { makeStyles } from '@material-ui/core/styles';
-
 //constants
 
 import { PATH_DASHBOARD } from 'src/routes/paths';
@@ -42,7 +39,7 @@ export default function InstanceList() {
           startIcon={<Icon icon={plusFill} />}
           onClick={handleAddNewOpen}
         >
-          Create Rule
+          Create Resource
         </Button>
       </Box>
       <DataList

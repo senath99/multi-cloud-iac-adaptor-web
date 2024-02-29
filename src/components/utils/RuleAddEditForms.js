@@ -93,6 +93,9 @@ function RuleAddEditForms({ className }) {
     key1: { key: '', value: '', id: 'key1' }
   });
   //azure states
+  const [azureTags, setAzureTags] = useState({
+    key1: { key: '', value: '', id: 'key1' }
+  });
 
   const [azureGroupName, setAzureGroupName] = useState('');
   const [azureNetworkLocation, setAzureGroupLocation] = useState('');
@@ -130,33 +133,36 @@ function RuleAddEditForms({ className }) {
       let awsModel = {};
       let azureModel = {};
       let response = {};
+
       if (basicOpen) {
         awsModel = getAwsModel(
           values.stack_name,
           groupTfid,
           values.security_group_name,
-          securityAWSGroups
+          securityAWSGroups,
+          awsTags
         );
-        response = await saveInstanceMock(awsModel);
+        response = await saveInstance(awsModel);
       } else {
         azureModel = getAzureModel(
           values.stack_name,
           groupTfid,
-          values.security_group_name,
+          values.network_security_group_name,
           azureNetworkLocation,
           azureResourceGroup_name,
-          azureGroups
+          azureGroups,
+          azureTags
         );
 
-        response = await saveInstanceMock(azureModel);
+        response = await saveInstance(azureModel);
       }
       if (response.status == 200) {
-        enqueueSnackbar('Instance create was successful.', {
+        enqueueSnackbar('Resource create was successful.', {
           variant: 'success'
         });
         history.push(`${PATH_DASHBOARD.general.dashboard}`);
       } else {
-        enqueueSnackbar('Instance create was unsuccessful.', {
+        enqueueSnackbar('Resource create was unsuccessful.', {
           variant: 'error'
         });
       }
@@ -180,9 +186,9 @@ function RuleAddEditForms({ className }) {
 
     setAWSSecurityGroups({
       ...securityAWSGroups,
-      [`${gui}.id`]: {
+      [`${gui}`]: {
         moduleType: 'security-group-rule',
-        tfId: `${gui}.id`,
+        tfId: `${gui}`,
         type: 'ingress',
         fromPort: '',
         toPort: '',
@@ -255,7 +261,7 @@ function RuleAddEditForms({ className }) {
         moduleType: 'network-security-rule',
         tfId: `${gui}`,
         name: '',
-        priority: 0,
+        priority: '',
         direction: '',
         access: '',
         protocol: '',
@@ -331,7 +337,32 @@ function RuleAddEditForms({ className }) {
     setAwsTags({ ...tags });
   };
 
-  console.log('ERRORS' + JSON.stringify(ruleErrors));
+  const onCreateAzureTag = () => {
+    const id = uuidv4();
+    setAzureTags({ ...azureTags, [id]: { key: '', value: '', id: id } });
+  };
+
+  const onChangeAzureTags = (value, property, indexNo) => {
+    let group = azureTags[indexNo];
+
+    let dataValue = value;
+
+    setAzureTags({
+      ...azureTags,
+      [indexNo]: { ...group, [property]: dataValue, id: indexNo }
+    });
+
+    setFieldValue('azureTags', azureTags);
+    // console.log({ [indexNo]: { ...group, [property]: value } });
+  };
+
+  const handleremoveAzureTags = (index) => {
+    let tags = azureTags;
+
+    delete tags[index];
+    setAzureTags({ ...tags });
+  };
+
   return (
     <React.Fragment>
       {isLoading ? (
@@ -639,9 +670,10 @@ function RuleAddEditForms({ className }) {
                   }}
                   // error={!options[index]}
                   label="Network Security Rule Name"
+                  sx={{ mb: 1 }}
                 />
 
-                {Object.values(awsTags).map((optionCidr, thisIndex) => {
+                {Object.values(azureTags).map((item, thisIndex) => {
                   return (
                     <Box>
                       <Grid container direction="row" spacing={1}>
@@ -652,12 +684,7 @@ function RuleAddEditForms({ className }) {
                             // value={optionCidr}
                             onChange={(event) => {
                               const securityType = event.target.value;
-                              onchangeAwsSecurityGroups(
-                                securityType,
-                                'cidrBlocks',
-                                // option?.tfId,
-                                thisIndex
-                              );
+                              onChangeAzureTags(securityType, 'key', item?.id);
                             }}
                             // error={!options[index]}
                             label={`Key ${thisIndex + 1}`}
@@ -670,11 +697,10 @@ function RuleAddEditForms({ className }) {
                             // value={optionCidr}
                             onChange={(event) => {
                               const securityType = event.target.value;
-                              onchangeAwsSecurityGroups(
+                              onChangeAzureTags(
                                 securityType,
-                                'cidrBlocks',
-                                // option?.tfId,
-                                thisIndex
+                                'value',
+                                item?.id
                               );
                             }}
                             // error={!options[index]}
@@ -685,7 +711,7 @@ function RuleAddEditForms({ className }) {
                           <IconButton
                             data-testid={'pollDelete'}
                             onClick={() => {
-                              // handleDeleteCidrOption(option?.tfId, thisIndex);
+                              handleremoveAzureTags(item?.id);
                             }}
                           >
                             <Icon icon={archiveOutline} />
@@ -698,7 +724,7 @@ function RuleAddEditForms({ className }) {
                 <Box display="block" sx={{ my: 2 }}>
                   <Button
                     size="small"
-                    // onClick={() => handleAddCIDROption(option?.tfId)}
+                    onClick={() => onCreateAzureTag()}
                     startIcon={<Icon icon={plusFill} />}
                     // disabled={options.length >= 4}
                   >
@@ -850,7 +876,7 @@ function RuleAddEditForms({ className }) {
                   startIcon={<Icon icon={plusFill} />}
                   disabled={options.length >= 4}
                 >
-                  Create Rule
+                  Create Resource
                 </Button>
 
                 <Button

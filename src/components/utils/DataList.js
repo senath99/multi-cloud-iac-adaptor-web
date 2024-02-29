@@ -114,13 +114,13 @@ export default function DataList({
   const handleDeleteDataSet = async () => {
     const response = await dispatch(ondeleteDataSet(selected.stack_name));
     if (response.status === 200) {
-      enqueueSnackbar('Instance destroyed successfully.', {
+      enqueueSnackbar('Resource destroyed successfully.', {
         variant: 'success'
       });
       dispatch(getInstances());
       setSelected({ stack_name: -1 });
     } else {
-      enqueueSnackbar('Instance not destroyed successfully.', {
+      enqueueSnackbar('Resource not destroyed successfully.', {
         variant: 'error'
       });
     }

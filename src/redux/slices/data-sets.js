@@ -162,7 +162,7 @@ export function deleteDataSet(stack_name) {
 
 export async function saveInstance(dataModel) {
   try {
-    const response = await axios.put(`http://127.0.0.1:8000/synth`, {
+    const response = await axios.post(`http://127.0.0.1:8000/synth`, {
       ...dataModel
     });
 
