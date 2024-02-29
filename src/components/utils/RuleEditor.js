@@ -659,7 +659,7 @@ function RuleEditor({ id, editStack, className, provider }) {
                     />
                   </Grid>
                 </Grid>
-                <TextField
+                {/* <TextField
                   fullWidth
                   size="small"
                   value={azureResourceGroup_name}
@@ -670,7 +670,7 @@ function RuleEditor({ id, editStack, className, provider }) {
                   // error={!options[index]}
                   label="Network Security Rule Name"
                   sx={{ mb: 1 }}
-                />
+                /> */}
                 <Typography variant="caption">
                   Create the Security Group Tags
                 </Typography>
@@ -741,6 +741,14 @@ function RuleEditor({ id, editStack, className, provider }) {
                   Object.values(azureGroups)?.map((option, indexAZ) => {
                     return (
                       <Box key={indexAZ} sx={{ mb: 2, mt: 2 }}>
+                        <ControlledTextField
+                          value={option?.name}
+                          property="name"
+                          tfid={option?.tfId}
+                          onChange={onchangeAzureSecurityGroups}
+                          label="Network Security Rule Name"
+                          sx={{ mb: 1 }}
+                        />
                         <Grid container direction="row" spacing={1} mb={1}>
                           <Grid item xs={6}>
                             <ControlledTextField
