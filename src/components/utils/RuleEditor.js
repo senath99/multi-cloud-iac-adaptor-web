@@ -286,7 +286,7 @@ function RuleEditor({ id, editStack, className, provider }) {
         sourceAddressPrefix: '*',
         destinationAddressPrefix: '*',
         resourceGroupName: '',
-        networkSecurityGroupName: `${values?.network_security_group_name}.name`
+        networkSecurityGroupName: `${groupTfid}.name`
       }
     });
   };

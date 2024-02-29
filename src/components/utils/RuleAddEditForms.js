@@ -112,7 +112,7 @@ function RuleAddEditForms({ className }) {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    const tfid = uuidv4();
+    const tfid = getUniqueId;
     setSecurityTfid(tfid);
 
     handleAddOption(tfid);
@@ -154,7 +154,7 @@ function RuleAddEditForms({ className }) {
         azureModel = getAzureModel(
           values.stack_name,
           groupTfid,
-          values.network_security_group_name,
+          values?.network_security_group_name,
           azureNetworkLocation,
           azureResourceGroup_name,
           azureGroups,
@@ -277,7 +277,7 @@ function RuleAddEditForms({ className }) {
         sourceAddressPrefix: '*',
         destinationAddressPrefix: '*',
         resourceGroupName: '',
-        networkSecurityGroupName: `${values?.network_security_group_name}.name`
+        networkSecurityGroupName: `${groupTfid}.name`
       }
     });
   };
