@@ -23,6 +23,7 @@ import SwitchSelector from 'react-switch-selector';
 
 import { Icon } from '@iconify/react';
 import plusFill from '@iconify/icons-eva/plus-fill';
+import minusFill from '@iconify/icons-eva/minus-outline';
 import archiveOutline from '@iconify/icons-eva/archive-outline';
 import DropDownFilter from '../DropDownFilter';
 
@@ -600,7 +601,7 @@ function RuleAddEditForms({ className }) {
                             size="small"
                             sx={{ my: 2 }}
                             onClick={() => handleDeleteOption(option?.tfId)}
-                            startIcon={<Icon icon={plusFill} />}
+                            startIcon={<Icon icon={minusFill} />}
                             disabled={options.length >= 4}
                           >
                             Remove Security Group Rule
@@ -855,7 +856,7 @@ function RuleAddEditForms({ className }) {
                             onClick={() =>
                               handleAzureDeleteOption(option?.tfId)
                             }
-                            startIcon={<Icon icon={plusFill} />}
+                            startIcon={<Icon icon={minusFill} />}
                             disabled={options.length >= 4}
                           >
                             Remove Security Group Rule
