@@ -242,3 +242,9 @@ const decodeTags = (tags) => {
 
   return updatedTags;
 };
+
+export const getUniqueId = () => {
+  const uuid = uuidv4();
+
+  return `_${uuid}`;
+};

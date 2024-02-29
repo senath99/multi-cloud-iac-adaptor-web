@@ -31,7 +31,11 @@ import { v4 as uuidv4 } from 'uuid';
 import ControlledTextField from './ProviderForms/ControlledTextField';
 import ControlledDropdown from './ProviderForms/ControlledDropdown';
 import { PATH_DASHBOARD } from 'src/routes/paths';
-import { getAwsModel, getAzureModel } from './DataModels/DataFormatters';
+import {
+  getAwsModel,
+  getAzureModel,
+  getUniqueId
+} from './DataModels/DataFormatters';
 import {
   getInstancesByStackId,
   saveInstance,
@@ -197,7 +201,7 @@ function RuleEditor({ id, editStack, className, provider }) {
   } = formik;
 
   const handleAddOption = () => {
-    const gui = uuidv4();
+    const gui = getUniqueId();
 
     setAWSSecurityGroups({
       ...securityAWSGroups,
@@ -266,7 +270,7 @@ function RuleEditor({ id, editStack, className, provider }) {
   //AZURE
 
   const handleAzureAddOption = (index) => {
-    const gui = uuidv4();
+    const gui = getUniqueId();
     setAzureGroups({
       ...azureGroups,
       [`${gui}`]: {

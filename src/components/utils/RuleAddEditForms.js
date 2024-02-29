@@ -34,7 +34,7 @@ import { PATH_DASHBOARD } from 'src/routes/paths';
 import {
   getAwsModel,
   getAzureModel,
-  validateSchema
+  getUniqueId
 } from './DataModels/DataFormatters';
 import { saveInstance, saveInstanceMock } from 'src/redux/slices/data-sets';
 import { useSnackbar } from 'notistack';
@@ -189,7 +189,7 @@ function RuleAddEditForms({ className }) {
   } = formik;
 
   const handleAddOption = (tfid) => {
-    const gui = uuidv4();
+    const gui = getUniqueId();
 
     setAWSSecurityGroups({
       ...securityAWSGroups,
@@ -261,7 +261,7 @@ function RuleAddEditForms({ className }) {
   //AZURE
 
   const handleAzureAddOption = (tfid) => {
-    const gui = uuidv4();
+    const gui = getUniqueId();
     setAzureGroups({
       ...azureGroups,
       [gui]: {
