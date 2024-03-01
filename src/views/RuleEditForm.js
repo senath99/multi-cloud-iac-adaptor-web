@@ -33,14 +33,6 @@ export default function RuleEditForm() {
 
           const providerType = response.data?.config?.provider?.type;
           setProvider(providerType);
-
-          if (providerType == 'aws') {
-            result = await getAWSRefactorModel(singleStack);
-            setSingleStack(result);
-          } else {
-            result = await getAzureRefactorModel(singleStack);
-            setSingleStack(result);
-          }
         }
       } catch (error) {
         // Handle error if dispatch or any other async operation fails
@@ -60,7 +52,7 @@ export default function RuleEditForm() {
   return (
     <Box sx={{ mt: 15, mb: 10, px: 30 }}>
       <Card sx={{ display: 'flex', justifyContent: 'center' }}>
-        <RuleEditor id={id} editStack={editStack} provider={provider} />
+        <RuleEditor id={id} stackData={singleStack} provider={provider} />
       </Card>
     </Box>
   );

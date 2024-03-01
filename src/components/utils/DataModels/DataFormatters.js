@@ -157,7 +157,7 @@ export const getAzureRefactorModel = async (azureModel) => {
       let networkModules = {};
 
       azureModel?.config?.modules?.forEach((item) => {
-        if (item.moduleType !== 'network-security-group') {
+        if (item?.moduleType !== 'network-security-group') {
           networkModules = {
             ...networkModules,
             [item?.tfId]: { ...item }
@@ -169,7 +169,7 @@ export const getAzureRefactorModel = async (azureModel) => {
 
       const result = {
         stack_name: azureModel?.stack_name,
-        networkGroup: { ...networkGroup, tags: decodeTags(networkGroup?.tags) },
+        networkGroup: { ...networkGroup, tags: decodeTags(networkGroup.tags) },
         networkModules: { ...networkModules }
       };
 
@@ -226,11 +226,15 @@ const refactorTags = (tags) => {
 
 const decodeTags = (tags) => {
   let updatedTags = {};
-
-  if (tags?.length > 0) {
-    tags.forEach((item) => {
+  let tag = Object.entries(tags); //[[key ,value],[]]
+  console.log('TTTTT' + JSON.stringify(tag));
+  if (tag == [['', '']]) {
+    tag = [];
+  }
+  if (tag.length > 0) {
+    tag.forEach((item) => {
       const guid = uuidv4();
-      const element = Object.entries(item)[0];
+      const element = item;
       updatedTags = {
         ...updatedTags,
         [guid]: { key: element[0], value: element[1], id: guid }

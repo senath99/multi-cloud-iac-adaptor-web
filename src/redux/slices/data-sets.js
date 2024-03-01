@@ -42,12 +42,14 @@ const slice = createSlice({
 
     // GET ESG Data
     getInstancesSuccess(state, action) {
+      state.singleStack = {};
       state.esgData = action.payload;
       state.isLoading = false;
     },
 
     getInstancesByStackNameSuccess(state, action) {
       state.stack = {};
+      state.singleStack = {};
       state.stack = action.payload;
       state.isLoading = false;
     },

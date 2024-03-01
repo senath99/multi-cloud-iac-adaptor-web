@@ -32,8 +32,10 @@ import ControlledTextField from './ProviderForms/ControlledTextField';
 import ControlledDropdown from './ProviderForms/ControlledDropdown';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 import {
+  getAWSRefactorModel,
   getAwsModel,
   getAzureModel,
+  getAzureRefactorModel,
   getUniqueId
 } from './DataModels/DataFormatters';
 import {
@@ -44,6 +46,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import ComingSoon from './ProviderForms/ComingSoon';
+import { result } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -92,7 +95,7 @@ const AZURE_PROTOCALS = [
   { name: 'Icmpv6', value: 'Icmpv6' }
 ];
 
-function RuleEditor({ id, editStack, className, provider }) {
+function RuleEditor({ id, stackData, className, provider }) {
   const classes = useStyles();
   const history = useHistory();
 
@@ -104,7 +107,7 @@ function RuleEditor({ id, editStack, className, provider }) {
   const [azureNetworkLocation, setAzureGroupLocation] = useState('');
   const [azureResourceGroup_name, setAzureResourceGroup_name] = useState('');
   const [azureSecurityRule_name, setAzureSecurityRuleName] = useState('');
-
+  const [editStack, setSingleStack] = useState({});
   const [azureGroups, setAzureGroups] = useState({});
   const [securityAWSGroups, setAWSSecurityGroups] = useState({});
 
@@ -117,33 +120,46 @@ function RuleEditor({ id, editStack, className, provider }) {
   });
 
   const { enqueueSnackbar } = useSnackbar();
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useEffect(async () => {
+    setLoading(true);
+    let result = {};
     if (provider == 'aws') {
-      setSecurityTfid(editStack?.securityGroup?.tfId);
-      setAWSSecurityGroups(editStack?.securityModules);
-      handleAzureAddOption();
-      setAwsTags(editStack?.securityGroup?.tags);
+      result = await getAWSRefactorModel(stackData);
+      setSingleStack(result);
+    } else {
+      result = await getAzureRefactorModel(stackData);
+      setSingleStack(result);
+    }
+    if (provider == 'aws') {
+      setSecurityTfid(result?.securityGroup?.tfId);
+      setAWSSecurityGroups(result?.securityModules);
+      setAwsTags(result?.securityGroup?.tags);
+      setFieldValue('stack_name', result?.stack_name);
+      setFieldValue('security_group_name', result?.securityGroup?.name);
+
       setSelectorIndex(0);
     } else {
       setSelectorIndex(1);
-      handleAddOption();
-      setSecurityTfid(editStack?.networkGroup?.tfId);
-      setAzureGroups(editStack?.networkModules);
-      setAzureTags(editStack?.networkGroup?.tags);
-      const networkGroup = editStack?.networkGroup;
+      setFieldValue('stack_name', result?.stack_name);
+      setFieldValue('network_security_group_name', result?.networkGroup?.name);
+      setSecurityTfid(result?.networkGroup?.tfId);
+      setAzureGroups(result?.networkModules);
+      setAzureTags(result?.networkGroup?.tags);
+      const networkGroup = result?.networkGroup;
       setAzureGroupLocation(networkGroup?.location);
       setAzureResourceGroup_name(networkGroup?.resourceGroupName);
-      setAzureGroups(editStack?.networkModules);
+      setAzureGroups(result?.networkModules);
     }
+    setLoading(false);
   }, []);
 
   const theme = useTheme();
-
+  console.log('ffff', JSON.stringify(editStack));
   const formik = useFormik({
     initialValues: {
-      stack_name: editStack?.stack_name,
+      stack_name: 'FF',
       security_group_name: editStack?.securityGroup?.name,
       network_security_group_name: editStack?.networkGroup?.name
     },
