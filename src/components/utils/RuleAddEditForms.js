@@ -692,7 +692,7 @@ function RuleAddEditForms({ className }) {
                           <TextField
                             fullWidth
                             size="small"
-                            // value={optionCidr}
+                            value={item?.key}
                             onChange={(event) => {
                               const securityType = event.target.value;
                               onChangeAzureTags(securityType, 'key', item?.id);
@@ -705,7 +705,7 @@ function RuleAddEditForms({ className }) {
                           <TextField
                             fullWidth
                             size="small"
-                            // value={optionCidr}
+                            value={item?.value}
                             onChange={(event) => {
                               const securityType = event.target.value;
                               onChangeAzureTags(
