@@ -15,7 +15,8 @@ import {
   InputAdornment,
   Collapse,
   IconButton,
-  Divider
+  Divider,
+  Dialog
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
@@ -36,10 +37,16 @@ import {
   getAzureModel,
   getUniqueId
 } from './DataModels/DataFormatters';
-import { saveInstance, saveInstanceMock } from 'src/redux/slices/data-sets';
+import {
+  saveInstance,
+  saveInstanceMock,
+  validateResource
+} from 'src/redux/slices/data-sets';
 import { useSnackbar } from 'notistack';
 import LoadingScreen from '../LoadingScreen';
 import ComingSoon from 'src/components/utils/ProviderForms/ComingSoon';
+import ViolationAccordian from './ProviderForms/ViolationAccordian';
+import { useDispatch } from 'react-redux';
 
 // ----------------------------------------------------------------------
 
@@ -119,8 +126,26 @@ function RuleAddEditForms({ className }) {
     handleAzureAddOption(tfid);
   }, []);
 
+  const dispatch = useDispatch();
   const [azureGroups, setAzureGroups] = useState({});
   const [securityAWSGroups, setAWSSecurityGroups] = useState({});
+  const [resourceViolations, setresourceViolations] = useState([]);
+  const [resourceWarnings, setresourceWarnings] = useState([]);
+
+  const [anchorel, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorel);
+
+  const handleClose = async (allow) => {
+    if (allow == 1) {
+      const response = handleDeleteDataSet();
+    } else {
+      setAnchorEl(null);
+    }
+  };
+
+  const handleClick = async (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const theme = useTheme();
 
@@ -133,14 +158,12 @@ function RuleAddEditForms({ className }) {
     // validationSchema: validateSchema(),
 
     onSubmit: async (values, { setSubmitting, resetForm }) => {
-      // handleRuleErrors();
-
-      // return;
       setLoading(true);
       let awsModel = {};
       let azureModel = {};
       let response = {};
 
+      handleClose();
       if (basicOpen) {
         awsModel = getAwsModel(
           values.stack_name,
@@ -160,7 +183,6 @@ function RuleAddEditForms({ className }) {
           azureGroups,
           azureTags
         );
-
         response = await saveInstance(azureModel);
       }
       if (response.status == 200) {
@@ -174,6 +196,7 @@ function RuleAddEditForms({ className }) {
         });
       }
       setLoading(false);
+      handleClose();
     }
   });
 
@@ -368,6 +391,32 @@ function RuleAddEditForms({ className }) {
 
     delete tags[index];
     setAzureTags({ ...tags });
+  };
+
+  const validateResources = async () => {
+    const awsModel = getAwsModel(
+      values.stack_name,
+      groupTfid,
+      values.security_group_name,
+      securityAWSGroups,
+      awsTags
+    );
+    const response = await validateResource(awsModel);
+
+    return response;
+  };
+
+  const handleDeleteDataSet = async () => {
+    const response = await dispatch(handleDeleteDataSet(values.stack_name));
+    if (response.status === 200) {
+      enqueueSnackbar('Resource destroyed successfully.', {
+        variant: 'success'
+      });
+    } else {
+      enqueueSnackbar('Resource not destroyed successfully.', {
+        variant: 'error'
+      });
+    }
   };
 
   return (
@@ -669,18 +718,7 @@ function RuleAddEditForms({ className }) {
                     />
                   </Grid>
                 </Grid>
-                {/* <TextField
-                  fullWidth
-                  size="small"
-                  value={azureSecurityRule_name}
-                  onChange={(event) => {
-                    const securityType = event.target.value;
-                    setAzureSecurityRuleName(securityType);
-                  }}
-                  // error={!options[index]}
-                  label="Network Security Rule Name"
-                  sx={{ mb: 1 }}
-                /> */}
+
                 <Typography variant="caption">
                   Create the Security Group Tags
                 </Typography>
@@ -889,7 +927,8 @@ function RuleAddEditForms({ className }) {
               <Box sx={{ display: 'flex', justifyContent: 'right' }}>
                 <Button
                   size="small"
-                  type="submit"
+                  // type="submit"
+                  onClick={handleClick}
                   variant="contained"
                   sx={{ my: 2 }}
                   startIcon={<Icon icon={plusFill} />}
@@ -912,6 +951,29 @@ function RuleAddEditForms({ className }) {
           </FormikProvider>
         </Box>
       )}
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth={false}
+        disableEscapeKeyDown={true}
+        anchorel={anchorel}
+      >
+        <Box
+          sx={{
+            minHeight: 600,
+            // width: 900,
+            p: 4
+          }}
+        >
+          <ViolationAccordian
+            violations={resourceViolations}
+            handleCancel={handleClose}
+            validateResource={validateResources}
+            handleSubmit={handleSubmit}
+          />
+        </Box>
+      </Dialog>
     </React.Fragment>
   );
 }

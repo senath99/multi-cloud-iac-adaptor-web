@@ -43,7 +43,9 @@ const slice = createSlice({
     // GET ESG Data
     getInstancesSuccess(state, action) {
       state.singleStack = {};
-      state.esgData = action.payload;
+      if (typeof action.payload == 'array') {
+        state.esgData = action.payload;
+      }
       state.isLoading = false;
     },
 
@@ -95,7 +97,7 @@ export function getInstances() {
     try {
       dispatch(slice.actions.startLoading());
       const response = await axios.get('http://127.0.0.1:8000/stacks');
-      console.log(JSON.stringify(response));
+
       dispatch(slice.actions.getInstancesSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -125,23 +127,6 @@ export function getInstancesByStackName(stackName) {
 }
 
 // -----------------------------------------------------------------
-
-export async function uploadESGDataSets(dataSet, customerId) {
-  try {
-    const dataFileName = dataSet.dataFile.file.name;
-    dataSet.dataFile = await getBase64FromUrlForDataSets(dataSet.dataFile.url);
-
-    const response = await axios.post('/data-sets/supplier', {
-      ...dataSet,
-      fileName: dataFileName,
-      customerId: customerId
-    });
-
-    return response;
-  } catch (error) {
-    return { status: -1 };
-  }
-}
 
 //---------------------------------------------------------------------------
 
@@ -201,4 +186,16 @@ export function getInstancesByStackId(Id) {
       return error;
     }
   };
+}
+
+export async function validateResource(dataModel) {
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/validate', {
+      ...dataModel
+    });
+
+    return response;
+  } catch (error) {
+    return error;
+  }
 }

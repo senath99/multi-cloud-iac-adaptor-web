@@ -15,7 +15,8 @@ import {
   InputAdornment,
   Collapse,
   IconButton,
-  Divider
+  Divider,
+  Dialog
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
@@ -41,12 +42,14 @@ import {
 import {
   getInstancesByStackId,
   saveInstance,
-  saveInstanceMock
+  saveInstanceMock,
+  validateResource
 } from 'src/redux/slices/data-sets';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import ComingSoon from './ProviderForms/ComingSoon';
 import { result } from 'lodash';
+import ViolationAccordian from './ProviderForms/ViolationAccordian';
 
 // ----------------------------------------------------------------------
 
@@ -98,6 +101,7 @@ const AZURE_PROTOCALS = [
 function RuleEditor({ id, stackData, className, provider }) {
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const [groupTfid, setSecurityTfid] = useState('');
   const [selectorIndex, setSelectorIndex] = useState(0);
@@ -111,6 +115,30 @@ function RuleEditor({ id, stackData, className, provider }) {
   const [azureGroups, setAzureGroups] = useState({});
   const [securityAWSGroups, setAWSSecurityGroups] = useState({});
 
+  const [anchorel, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorel);
+
+  const handleClose = async (allow) => {
+    if (allow == 1) {
+      const response = handleDeleteDataSet();
+    } else {
+      setAnchorEl(null);
+    }
+  };
+
+  const handleDeleteDataSet = async () => {
+    const response = await dispatch(handleDeleteDataSet(values.stack_name));
+    if (response.status === 200) {
+      enqueueSnackbar('Resource destroyed successfully.', {
+        variant: 'success'
+      });
+    } else {
+      enqueueSnackbar('Resource not destroyed successfully.', {
+        variant: 'error'
+      });
+    }
+  };
+
   const [awsTags, setAwsTags] = useState({
     key1: { key: '', value: '', id: 'key1' }
   });
@@ -120,7 +148,7 @@ function RuleEditor({ id, stackData, className, provider }) {
   });
 
   const { enqueueSnackbar } = useSnackbar();
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(async () => {
     setLoading(true);
@@ -156,10 +184,10 @@ function RuleEditor({ id, stackData, className, provider }) {
   }, []);
 
   const theme = useTheme();
-  console.log('ffff', JSON.stringify(editStack));
+
   const formik = useFormik({
     initialValues: {
-      stack_name: 'FF',
+      stack_name: '',
       security_group_name: editStack?.securityGroup?.name,
       network_security_group_name: editStack?.networkGroup?.name
     },
@@ -192,16 +220,17 @@ function RuleEditor({ id, stackData, className, provider }) {
         response = await saveInstance(azureModel);
       }
       if (response.status == 200) {
-        enqueueSnackbar('Resource create was successful.', {
+        enqueueSnackbar('Resource update was successful.', {
           variant: 'success'
         });
         history.push(`${PATH_DASHBOARD.general.dashboard}`);
       } else {
-        enqueueSnackbar('Resource create was unsuccessful.', {
+        enqueueSnackbar('Resource update was unsuccessful.', {
           variant: 'error'
         });
       }
       setLoading(false);
+      handleClose();
     }
   });
 
@@ -378,6 +407,23 @@ function RuleEditor({ id, stackData, className, provider }) {
 
   const handleCancel = () => {
     history.push(`${PATH_DASHBOARD.general.dashboard}`);
+  };
+
+  const validateResources = async () => {
+    const awsModel = getAwsModel(
+      values.stack_name,
+      groupTfid,
+      values.security_group_name,
+      securityAWSGroups,
+      awsTags
+    );
+    const response = await validateResource(awsModel);
+
+    return response;
+  };
+
+  const handleClick = async (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
   return (
@@ -897,7 +943,7 @@ function RuleEditor({ id, stackData, className, provider }) {
               <Box sx={{ display: 'flex', justifyContent: 'right' }}>
                 <Button
                   size="small"
-                  type="submit"
+                  onClick={handleClick}
                   variant="contained"
                   sx={{ my: 2 }}
                   startIcon={<Icon icon={plusFill} />}
@@ -920,6 +966,27 @@ function RuleEditor({ id, stackData, className, provider }) {
           </FormikProvider>
         </Box>
       )}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth={false}
+        disableEscapeKeyDown={true}
+        anchorel={anchorel}
+      >
+        <Box
+          sx={{
+            minHeight: 600,
+            // width: 900,
+            p: 4
+          }}
+        >
+          <ViolationAccordian
+            handleCancel={handleClose}
+            validateResource={validateResources}
+            handleSubmit={handleSubmit}
+          />
+        </Box>
+      </Dialog>
     </React.Fragment>
   );
 }

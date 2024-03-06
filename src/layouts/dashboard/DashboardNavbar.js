@@ -50,7 +50,9 @@ export default function DashboardNavbar() {
           }}
         >
           <RouterLink to="/" style={{ color: 'white', textDecoration: 'none' }}>
-            <HeaderStyle sx={{ mt: 2 }}>Multi Cloud IAC Adapter</HeaderStyle>
+            <HeaderStyle sx={{ mt: 2 }}>
+              Multi Cloud Firewall Framework
+            </HeaderStyle>
           </RouterLink>
         </Box>
       </ToolbarStyle>

@@ -429,3 +429,22 @@ export const getIRPeriod = (dateRangeName) => {
       return dateRangeName;
   }
 };
+
+export const getErrorAlert = (violationsLength, warningLength) => {
+  let violation_text = 'Violations';
+  let warning_text = 'Warnings';
+  if (violationsLength == 1) {
+    violation_text = 'Violation';
+  } else {
+  }
+
+  if (warningLength == 1) {
+    warning_text = 'Warning';
+  } else {
+  }
+
+  return `There are ${violationsLength + ' ' + violation_text}  , and ${
+    warningLength + ' ' + warning_text
+  }  captured . Please fix them ,and
+  retry.`;
+};
