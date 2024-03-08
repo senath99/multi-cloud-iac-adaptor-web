@@ -98,6 +98,13 @@ const AZURE_PROTOCALS = [
   { name: 'Icmpv6', value: 'Icmpv6' }
 ];
 
+const AZURE_ADRESS_PREFIX = [
+  { name: 'VirtualNetwork', value: 'VirtualNetwork' },
+  { name: 'AzureLoadBalancer', value: 'AzureLoadBalancer' },
+  { name: 'Internet', value: 'Internet' },
+  { name: '*', value: '*' }
+];
+
 function RuleEditor({ id, stackData, className, provider }) {
   const classes = useStyles();
   const history = useHistory();
@@ -881,20 +888,24 @@ function RuleEditor({ id, stackData, className, provider }) {
                         </Grid>
                         <Grid container direction="row" spacing={1} mb={1}>
                           <Grid item xs={6}>
-                            <ControlledTextField
+                            <ControlledDropdown
+                              options={AZURE_ADRESS_PREFIX}
                               value={option?.sourceAddressPrefix}
-                              property="sourceAddressPrefix"
+                              property={'sourceAddressPrefix'}
                               tfid={option?.tfId}
                               onChange={onchangeAzureSecurityGroups}
+                              defaultValue={AZURE_ADRESS_PREFIX[0]?.value}
                               label={`Source Address Prefix`}
                             />
                           </Grid>
                           <Grid item xs={6}>
-                            <ControlledTextField
+                            <ControlledDropdown
+                              options={AZURE_ADRESS_PREFIX}
                               value={option?.destinationAddressPrefix}
-                              property="destinationAddressPrefixype"
+                              property="destinationAddressPrefix"
                               tfid={option?.tfId}
                               onChange={onchangeAzureSecurityGroups}
+                              defaultValue={AZURE_ADRESS_PREFIX[0]?.value}
                               label={`Destination Address Prefix`}
                             />
                           </Grid>
