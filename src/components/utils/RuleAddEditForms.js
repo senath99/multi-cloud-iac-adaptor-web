@@ -87,6 +87,13 @@ const AZURE_ACCESS = [
   { name: 'Deny', value: 'Deny' }
 ];
 
+const AZURE_ADRESS_PREFIX = [
+  { name: 'VirtualNetwork', value: 'VirtualNetwork' },
+  { name: 'AzureLoadBalancer', value: 'AzureLoadBalancer' },
+  { name: 'Internet', value: 'Internet' },
+  { name: '*', value: '*' }
+];
+
 function RuleAddEditForms({ className }) {
   const classes = useStyles();
   const history = useHistory();
@@ -828,20 +835,24 @@ function RuleAddEditForms({ className }) {
                       </Grid>
                       <Grid container direction="row" spacing={1} mb={1}>
                         <Grid item xs={6}>
-                          <ControlledTextField
+                          <ControlledDropdown
+                            options={AZURE_ADRESS_PREFIX}
                             value={option?.sourceAddressPrefix}
-                            property="sourceAddressPrefix"
+                            property={'sourceAddressPrefix'}
                             tfid={option?.tfId}
                             onChange={onchangeAzureSecurityGroups}
+                            defaultValue={AZURE_ADRESS_PREFIX[0]?.value}
                             label={`Source Address Prefix`}
                           />
                         </Grid>
                         <Grid item xs={6}>
-                          <ControlledTextField
+                          <ControlledDropdown
+                            options={AZURE_ADRESS_PREFIX}
                             value={option?.destinationAddressPrefix}
-                            property="destinationAddressPrefixype"
+                            property="destinationAddressPrefix"
                             tfid={option?.tfId}
                             onChange={onchangeAzureSecurityGroups}
+                            defaultValue={AZURE_ADRESS_PREFIX[0]?.value}
                             label={`Destination Address Prefix`}
                           />
                         </Grid>
