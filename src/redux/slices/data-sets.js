@@ -2,13 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 // utils
 import axios from '../../utils/axios';
 import { getBase64FromUrlForDataSets } from '../../utils/convertBase64';
-import {
-  DATA_FILE_STATUS,
-  PROCESS_STATUS,
-  WEB_FORMS_STATUS
-} from '../../utils/constants';
-import { v4 as uuidv4 } from 'uuid';
-import { uniq, map } from 'lodash';
+
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -43,7 +37,9 @@ const slice = createSlice({
     // GET ESG Data
     getInstancesSuccess(state, action) {
       state.singleStack = {};
-      state.esgData = action.payload;
+      if (typeof action.payload == 'array') {
+        state.esgData = action.payload;
+      }
       state.isLoading = false;
     },
 
