@@ -32,7 +32,7 @@ export default function InstanceList() {
   }, []);
 
   return (
-    <Box>
+    <Box sx={{ mb: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'right', mb: 2 }}>
         <Button
           size="small"
