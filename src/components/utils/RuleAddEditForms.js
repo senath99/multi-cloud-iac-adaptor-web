@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import clsx from 'clsx';
-import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { Form, FormikProvider } from 'formik';
 
@@ -49,7 +48,6 @@ import { useSnackbar } from 'notistack';
 import ComingSoon from 'src/components/utils/ProviderForms/ComingSoon';
 import ViolationAccordian from './ProviderForms/ViolationAccordian';
 import { useDispatch } from 'react-redux';
-import { get } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -121,7 +119,6 @@ function RuleAddEditForms({ className }) {
     key1: { key: '', value: '', id: 'key1' }
   });
 
-  const [azureGroupName, setAzureGroupName] = useState('');
   const [azureNetworkLocation, setAzureGroupLocation] = useState(
     AZURE_LOCATIONS[0].value
   );
@@ -145,12 +142,8 @@ function RuleAddEditForms({ className }) {
   const [anchorel, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorel);
 
-  const handleClose = async (allow) => {
-    if (allow == 1) {
-      const response = await handleDeleteDataSet();
-    } else {
-      setAnchorEl(null);
-    }
+  const handleClose = async () => {
+    setAnchorEl(null);
   };
 
   const handleClick = async () => {
@@ -175,7 +168,7 @@ function RuleAddEditForms({ className }) {
 
     validationSchema: getSchema(provider),
 
-    onSubmit: async (values, { setSubmitting, resetForm }) => {
+    onSubmit: async () => {
       handleClick();
     }
   });
@@ -184,12 +177,9 @@ function RuleAddEditForms({ className }) {
     values,
     errors = { options: [''] },
     touched = { options: [''] },
-    resetForm,
-    setErrors,
     getFieldProps,
     setFieldValue,
-    handleSubmit,
-    isSubmitting
+    handleSubmit
   } = formik;
 
   const handleAddOption = (tfid) => {
@@ -259,7 +249,6 @@ function RuleAddEditForms({ className }) {
     });
 
     setFieldValue('securityRules', securityAWSGroups);
-    // console.log({ [indexNo]: { ...group, [property]: value } });
   };
 
   //AZURE
@@ -338,7 +327,6 @@ function RuleAddEditForms({ className }) {
     });
 
     setFieldValue('awsTags', awsTags);
-    // console.log({ [indexNo]: { ...group, [property]: value } });
   };
 
   const handleremoveTags = (index) => {
@@ -364,7 +352,6 @@ function RuleAddEditForms({ className }) {
     });
 
     setFieldValue('azureTags', azureTags);
-    // console.log({ [indexNo]: { ...group, [property]: value } });
   };
 
   const handleremoveAzureTags = (index) => {
@@ -446,18 +433,18 @@ function RuleAddEditForms({ className }) {
     history.push(`${PATH_DASHBOARD.general.dashboard}`);
   };
 
-  const handleDeleteDataSet = async () => {
-    const response = await dispatch(deleteDataSet(values.stack_name));
-    if (response.status === 200) {
-      enqueueSnackbar('Resource destroyed successfully.', {
-        variant: 'success'
-      });
-    } else {
-      enqueueSnackbar('Resource not destroyed successfully.', {
-        variant: 'error'
-      });
-    }
-  };
+  // const handleDeleteDataSet = async () => {
+  //   const response = await dispatch(deleteDataSet(values.stack_name));
+  //   if (response.status === 200) {
+  //     enqueueSnackbar('Resource destroyed successfully.', {
+  //       variant: 'success'
+  //     });
+  //   } else {
+  //     enqueueSnackbar('Resource not destroyed successfully.', {
+  //       variant: 'error'
+  //     });
+  //   }
+  // };
 
   return (
     <React.Fragment>
@@ -981,10 +968,10 @@ function RuleAddEditForms({ className }) {
                 // onClick={handleClick}
                 variant="contained"
                 sx={{ my: 2 }}
-                startIcon={<Icon icon={plusFill} />}
+                // startIcon={<Icon icon={plusFill} />}
                 disabled={options.length >= 4}
               >
-                Create Resource
+                Validate
               </Button>
 
               <Button

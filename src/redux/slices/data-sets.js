@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 // utils
 import axios from '../../utils/axios';
-import { getBase64FromUrlForDataSets } from '../../utils/convertBase64';
 
 // ----------------------------------------------------------------------
 
@@ -37,9 +36,9 @@ const slice = createSlice({
     // GET ESG Data
     getInstancesSuccess(state, action) {
       state.singleStack = {};
-      if (typeof action.payload == 'array') {
-        state.esgData = action.payload;
-      }
+
+      state.esgData = action.payload;
+
       state.isLoading = false;
     },
 

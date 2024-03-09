@@ -42,15 +42,13 @@ import {
 } from './DataModels/DataFormatters';
 import {
   deleteDataSet,
-  getInstancesByStackId,
   saveInstance,
-  saveInstanceMock,
   validateResource
 } from 'src/redux/slices/data-sets';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import ComingSoon from './ProviderForms/ComingSoon';
-import { result } from 'lodash';
+
 import ViolationAccordian from './ProviderForms/ViolationAccordian';
 
 // ----------------------------------------------------------------------
@@ -974,13 +972,11 @@ function RuleEditor({ id, stackData, className, provider }) {
               <Button
                 size="small"
                 type="submit"
-                // onClick={handleClick}
                 variant="contained"
                 sx={{ my: 2 }}
-                startIcon={<Icon icon={plusFill} />}
-                // disabled={options.length >= 4}
+                // startIcon={<Icon icon={plusFill} />}
               >
-                Update Resource
+                Validate
               </Button>
 
               <Button
@@ -988,7 +984,6 @@ function RuleEditor({ id, stackData, className, provider }) {
                 size="small"
                 variant="contained"
                 onClick={handleCancel}
-                // disabled={options.length >= 4}
               >
                 Cancel
               </Button>

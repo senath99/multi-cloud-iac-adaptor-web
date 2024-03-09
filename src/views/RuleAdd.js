@@ -6,7 +6,7 @@ import Page from '../components/Page';
 
 export default function RuleAdd() {
   return (
-    <Page title="Resource Add">
+    <Page>
       <Box sx={{ px: '15%', mt: '110px', mb: '20px' }}>
         <Card>
           <CardContent>

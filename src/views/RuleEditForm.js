@@ -12,21 +12,9 @@ import Page from '../components/Page';
 export default function RuleEditForm() {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { singleStack, error } = useSelector((state) => state.datasets);
+  const { singleStack } = useSelector((state) => state.datasets);
   const [isLoading, setLoading] = useState(true);
-  const [editStack, setSingleStack] = useState({});
   const [provider, setProvider] = useState('');
-
-  const [anchorel, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorel);
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +26,6 @@ export default function RuleEditForm() {
 
         if (response?.status === 200) {
           // Now that dispatch is complete, fetch stack data synchronously
-          let result = {};
 
           const providerType = response.data?.config?.provider?.type;
           setProvider(providerType);
@@ -59,16 +46,11 @@ export default function RuleEditForm() {
   }
 
   return (
-    <Page title="Resource Add">
+    <Page>
       <Box sx={{ px: '15%', mt: '110px', mb: '20px' }}>
         <Card>
           <CardContent>
-            <RuleEditor
-              id={id}
-              stackData={singleStack}
-              provider={provider}
-              handleClick={handleClick}
-            />
+            <RuleEditor id={id} stackData={singleStack} provider={provider} />
           </CardContent>
         </Card>
       </Box>

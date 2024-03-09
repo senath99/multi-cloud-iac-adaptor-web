@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import { Alert, Box } from '@mui/material';
 import { LoadingButton } from '@material-ui/lab';
-import { Warning } from '@mui/icons-material';
+//icons
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+
 import ComingSoon from './ComingSoon';
 import Success from './Success';
 import { getErrorAlert } from 'src/utils/functions';
@@ -63,7 +64,7 @@ export default function ViolationAccordian({
     setLoading(true);
     const response = await validateResource();
     if (response.status == 200) {
-      const data = response.data.data;
+      const data = response.data;
       setresourceViolations(data.violations);
       setresourceWarnings(data.warnings);
       setAllow(data.allow);
@@ -107,44 +108,50 @@ export default function ViolationAccordian({
           <Alert variant="filled" severity="error" sx={{ mb: 3 }}>
             {getErrorAlert(VIOLATION_LENGTH, WARNING_LENGTH)}
           </Alert>
-          <Accordion
-            sx={{ mb: 2 }}
-            expanded={expanded}
-            onChange={handleExpansion}
-          >
-            <AccordionSummary
-              aria-controls="panel1d-content"
-              id="panel1d-header"
+          {VIOLATION_LENGTH > 0 && (
+            <Accordion
+              sx={{ mb: 2 }}
+              expanded={expanded}
+              onChange={handleExpansion}
             >
-              <Typography>Violations</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {resourceViolations.map((violation) => {
-                return (
-                  <Alert severity="error" sx={{ mb: 1 }}>
-                    {violation}
-                  </Alert>
-                );
-              })}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              aria-controls="panel2d-content"
-              id="panel2d-header"
-            >
-              <Typography>Warnings</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {resourceWarnings.map((warning) => {
-                return (
-                  <Alert severity="warning" sx={{ mb: 1 }}>
-                    {warning}
-                  </Alert>
-                );
-              })}
-            </AccordionDetails>
-          </Accordion>
+              <AccordionSummary
+                aria-controls="panel1d-content"
+                id="panel1d-header"
+              >
+                <Typography>Violations</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {VIOLATION_LENGTH > 0 &&
+                  resourceViolations.map((violation) => {
+                    return (
+                      <Alert severity="error" sx={{ mb: 1 }}>
+                        {violation}
+                      </Alert>
+                    );
+                  })}
+              </AccordionDetails>
+            </Accordion>
+          )}
+          {WARNING_LENGTH > 0 && (
+            <Accordion>
+              <AccordionSummary
+                aria-controls="panel2d-content"
+                id="panel2d-header"
+              >
+                <Typography>Warnings</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {WARNING_LENGTH > 0 &&
+                  resourceWarnings.map((warning) => {
+                    return (
+                      <Alert severity="warning" sx={{ mb: 1 }}>
+                        {warning}
+                      </Alert>
+                    );
+                  })}
+              </AccordionDetails>
+            </Accordion>
+          )}
         </Box>
       ) : (
         <Box
@@ -167,7 +174,7 @@ export default function ViolationAccordian({
           onClick={handleSubmit}
           pending={isResourceLoading}
         >
-          Continue
+          Apply
         </LoadingButton>
         <LoadingButton
           id="cancel"
