@@ -52,7 +52,7 @@ export default function Success() {
           textAlign={'center'}
           sx={{ color: 'text.secondary', display: 'block', marginTop: 1 }}
         >
-          You could click continue , and start to provision the resource
+          You could click apply , and start to provision the resource
         </Typography>
       </Box>
     </Container>

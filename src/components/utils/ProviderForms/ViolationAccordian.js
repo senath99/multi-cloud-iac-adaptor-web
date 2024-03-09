@@ -12,6 +12,7 @@ import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import ComingSoon from './ComingSoon';
 import Success from './Success';
 import { getErrorAlert } from 'src/utils/functions';
+import WarningSuccess from './WarningSuccess';
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -152,6 +153,14 @@ export default function ViolationAccordian({
               </AccordionDetails>
             </Accordion>
           )}
+        </Box>
+      ) : WARNING_LENGTH > 0 ? (
+        <Box>
+          <WarningSuccess
+            resourceWarnings={resourceWarnings}
+            violationLength={VIOLATION_LENGTH}
+            warningLength={WARNING_LENGTH}
+          />
         </Box>
       ) : (
         <Box
