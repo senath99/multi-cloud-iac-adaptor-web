@@ -16,36 +16,24 @@ AWS CLI > 2
 
 ```bash
     # only for test and prod
-    ./build.sh -b -e {environment}
-```
-
-### Deploy
-
-```bash
-    # only for test and prod
-    ./build.sh -d -e {environment}
+    npm run build
 ```
 
 ### Start
 
 ```bash
     # only for dev primarily. Can be used for test environment too.
-    ./build.sh -s -e {environment}
+    npm start
 ```
-
-> Start is only supposed to be run against dev and test environment(s).
-
-> This script generates a .env file based on the environment, using SSM internally.
-
-> Required AWS credentials should be present to fetch SSM parameters and copy build artifacts to S3 bucket.
 
 ### Running Locally
 
 ```bash
     # install dependencies.
     npm install
-    # only for dev primarily. Can be used for test environment too.
-    ./build.sh -s -e dev
-    # this will pick the default .env file.
+
+    npm start
+
 ```
-"# multi-cloud-iac-adaptor-web" 
+
+"# multi-cloud-iac-adaptor-web"
