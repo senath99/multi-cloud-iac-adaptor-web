@@ -51,7 +51,8 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 export default function ViolationAccordian({
   handleCancel,
   validateResource,
-  handleSubmit
+  handleSubmit,
+  isResourceLoading
 }) {
   const [resourceViolations, setresourceViolations] = useState([]);
   const [resourceWarnings, setresourceWarnings] = useState([]);
@@ -96,6 +97,9 @@ export default function ViolationAccordian({
 
   const WARNING_LENGTH = resourceWarnings.length;
 
+  const onDelete = () => {
+    handleCancel();
+  };
   return (
     <div>
       {isAllow == 0 ? (
@@ -161,14 +165,14 @@ export default function ViolationAccordian({
           variant="contained"
           disabled={isAllow == 0}
           onClick={handleSubmit}
-          //   pending={isLoading}
+          pending={isResourceLoading}
         >
           Continue
         </LoadingButton>
         <LoadingButton
           id="cancel"
           type="button"
-          onClick={handleCancel}
+          onClick={() => onDelete()}
           //   sx={{ ml: 2 }}
           //   pending={iscancelLoading}
         >

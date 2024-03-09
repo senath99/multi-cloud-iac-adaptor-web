@@ -15,7 +15,7 @@ mock.onPut('/api/data-sets/instance/save').reply(async (request) => {
   }
 });
 
-mock.onPut('/api/data-sets/validate').reply(async (request) => {
+mock.onPost('/api/data-sets/validate').reply(async (request) => {
   try {
     await fakeRequest(5000);
 
@@ -23,7 +23,7 @@ mock.onPut('/api/data-sets/validate').reply(async (request) => {
       200,
       {
         data: {
-          allow: 1,
+          allow: 0,
           violations: [
             'Required tag value is missing for tag key: environment. Valid values are {"nonprod", "prod"}.',
             'SSH port 22 is not allowed'

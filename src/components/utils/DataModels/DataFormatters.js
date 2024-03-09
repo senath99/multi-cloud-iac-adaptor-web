@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import { v4 as uuidv4 } from 'uuid';
+import { forEach } from 'lodash';
 
 export function getAwsModel(stackName, groupId, groupName, groupRules, tags) {
   return {
@@ -180,7 +181,7 @@ export const getAzureRefactorModel = async (azureModel) => {
   });
 };
 
-export const validateSchema = () => {
+export const validateSchema = async (values) => {
   const networkSecurityRuleSchema = yup.object().shape({
     moduleType: yup.string().equals(['network-security-rule']).required(),
     tfId: yup.string().required(),
@@ -201,16 +202,32 @@ export const validateSchema = () => {
 
   const schema = yup.object().shape({
     stack_name: yup.string().label('Stack Name').required(),
-    security_group_name: yup.string().label('Stack Group Name').required(),
-    securityRules: yup.object().shape(
-      Object.keys(yup.object().required()).reduce((acc, key) => {
-        acc[key] = networkSecurityRuleSchema;
-        return acc;
-      }, {})
-    )
+    security_group_name: yup.string().label('Stack Group Name').required()
+    // securityRules: yup.object().shape(
+    //   Object.keys(yup.object().required()).reduce((acc, key) => {
+    //     acc[key] = networkSecurityRuleSchema;
+    //     return acc;
+    //   }, {})
+    // )
   });
 
-  return schema;
+  try {
+    // Validate the object against the schema
+    const validatedData = await schema.validate(values, { abortEarly: false });
+    console.log('Data is valid:', validatedData);
+    return validatedData;
+  } catch (error) {
+    const errors = {};
+
+    if (error.inner) {
+      error.inner.forEach((err) => {
+        errors[err.path] = err.message;
+      });
+    }
+
+    console.log('Validation errors:', errors);
+    return errors;
+  }
 };
 
 const refactorTags = (tags) => {
@@ -251,4 +268,25 @@ export const getUniqueId = () => {
   const uuid = uuidv4();
 
   return `_${uuid}`;
+};
+
+export const getSchema = (provider) => {
+  let schema = {};
+  if (provider == 'aws') {
+    schema = yup.object().shape({
+      stack_name: yup.string().label('Stack Name').required(),
+      security_group_name: yup.string().label('Security Group Name').required()
+    });
+  } else {
+    schema = yup.object().shape({
+      stack_name: yup.string().label('Stack Name').required()
+      // network_security_group_name: yup
+      //   .string()
+      //   .label('Network Security Group Name')
+      //   .required()
+      // azure_location: yup.string().label('Location').required()
+      // resource_group_name: yup.string().label('Resource Group Name').required()
+    });
+  }
+  return schema;
 };

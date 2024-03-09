@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, Dialog, Typography } from '@material-ui/core';
+import { Box, Card, CardContent } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 
 import RuleEditor from 'src/components/utils/RuleEditor';
 import { getInstancesByStackId } from 'src/redux/slices/data-sets';
-import {
-  getAWSRefactorModel,
-  getAzureRefactorModel
-} from 'src/components/utils/DataModels/DataFormatters';
+
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingScreen from 'src/components/LoadingScreen';
+import Page from '../components/Page';
 
 export default function RuleEditForm() {
   const { id } = useParams();
@@ -61,35 +59,19 @@ export default function RuleEditForm() {
   }
 
   return (
-    <Box sx={{ mt: 15, mb: 10, px: 30 }}>
-      <Card sx={{ display: 'flex', justifyContent: 'center' }}>
-        <RuleEditor
-          id={id}
-          stackData={singleStack}
-          provider={provider}
-          handleClick={handleClick}
-        />
-      </Card>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth={false}
-        disableEscapeKeyDown={true}
-        anchorel={anchorel}
-      >
-        <Box
-          sx={{
-            height: 500,
-            width: 900,
-            p: 4
-          }}
-        >
-          <Typography gutterBottom variant="h6">
-            Data Sets
-          </Typography>
-          TTTTTTTTTTTTT
-        </Box>
-      </Dialog>
-    </Box>
+    <Page title="Resource Add">
+      <Box sx={{ px: '15%', mt: '110px', mb: '20px' }}>
+        <Card>
+          <CardContent>
+            <RuleEditor
+              id={id}
+              stackData={singleStack}
+              provider={provider}
+              handleClick={handleClick}
+            />
+          </CardContent>
+        </Card>
+      </Box>
+    </Page>
   );
 }

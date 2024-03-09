@@ -36,7 +36,7 @@ const HeaderStyle = styled('header')(({ theme }) => ({
 export default function Success() {
   return (
     <Container>
-      <Box sx={{ maxWidth: 480, margin: 'auto', textAlign: 'center' }}>
+      <Box sx={{ margin: 'auto', textAlign: 'center' }}>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <Box
             component="img"
@@ -44,11 +44,12 @@ export default function Success() {
             src="/static/brand/success.gif"
           />
         </Box>
-        <Typography variant="title">
+        <Typography variant="title" noWrap>
           Resource Validated Successfully!
         </Typography>
         <Typography
           variant="caption"
+          textAlign={'center'}
           sx={{ color: 'text.secondary', display: 'block', marginTop: 1 }}
         >
           You could click continue , and start to provision the resource

@@ -1,25 +1,19 @@
 import React from 'react';
-import { Box, Card, Dialog, Typography } from '@material-ui/core';
+import { Box, Card, CardContent } from '@material-ui/core';
 
 import RuleAddEditForms from 'src/components/utils/RuleAddEditForms';
+import Page from '../components/Page';
 
 export default function RuleAdd() {
-  const [anchorel, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorel);
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   return (
-    <Box sx={{ mt: 15, mb: 10, px: 30 }}>
-      <Card sx={{ display: 'flex', justifyContent: 'center' }}>
-        <RuleAddEditForms />
-      </Card>
-    </Box>
+    <Page title="Resource Add">
+      <Box sx={{ px: '15%', mt: '110px', mb: '20px' }}>
+        <Card>
+          <CardContent>
+            <RuleAddEditForms />
+          </CardContent>
+        </Card>
+      </Box>
+    </Page>
   );
 }

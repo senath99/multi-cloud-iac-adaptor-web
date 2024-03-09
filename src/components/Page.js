@@ -15,23 +15,6 @@ import md5 from 'md5-hash';
 
 const Page = forwardRef(({ children, title = '', ...other }, ref) => {
   const { pathname } = useLocation();
-  const { user, isAuthenticated } = useAuth();
-
-  const sendPageViewEvent = useCallback(() => {
-    track.pageview({
-      // user_id: md5(user.email),
-      page_path: pathname,
-      page_title: title,
-      user_authenticated: isAuthenticated,
-      user_client_name: (user || {}).clientName || EMPTY_STRING,
-      user_email: (user || {}).email || EMPTY_STRING
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    sendPageViewEvent();
-  }, [sendPageViewEvent]);
 
   return (
     <Box ref={ref} {...other}>
