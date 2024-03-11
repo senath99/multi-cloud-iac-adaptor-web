@@ -906,25 +906,21 @@ function RuleEditor({ id, stackData, className, provider }) {
                         </Grid>
                       </Grid>
                       <Grid container direction="row" spacing={1} mb={1}>
-                        <Grid item xs={6}>
-                          <ControlledDropdown
-                            options={AZURE_ADRESS_PREFIX}
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                          <ControlledTextField
                             value={option?.sourceAddressPrefix}
                             property={'sourceAddressPrefix'}
                             tfid={option?.tfId}
                             onChange={onchangeAzureSecurityGroups}
-                            defaultValue={AZURE_ADRESS_PREFIX[0]?.value}
                             label={`Source Address Prefix`}
                           />
                         </Grid>
-                        <Grid item xs={6}>
-                          <ControlledDropdown
-                            options={AZURE_ADRESS_PREFIX}
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                          <ControlledTextField
                             value={option?.destinationAddressPrefix}
                             property="destinationAddressPrefix"
                             tfid={option?.tfId}
                             onChange={onchangeAzureSecurityGroups}
-                            defaultValue={AZURE_ADRESS_PREFIX[0]?.value}
                             label={`Destination Address Prefix`}
                           />
                         </Grid>
