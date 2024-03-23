@@ -14,6 +14,7 @@ import Success from './Success';
 import { getErrorAlert } from 'src/utils/functions';
 import WarningSuccess from './WarningSuccess';
 import { Stack } from '@material-ui/core';
+import parse from 'html-react-parser';
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -71,8 +72,7 @@ export default function ViolationAccordian({
       setresourceViolations(data.violations);
       setresourceWarnings(data.warnings);
 
-      let logArray = data.log?.split('\n').filter(Boolean);
-      setresourceLogs(logArray);
+      setresourceLogs(data.log);
       setAllow(data.allow);
     }
     setLoading(false);
@@ -175,14 +175,9 @@ export default function ViolationAccordian({
               </AccordionSummary>
               <AccordionDetails>
                 <Stack sx={{ maxHeight: '200px', overflowY: 'scroll' }}>
-                  {LOG_LENGTH > 0 &&
-                    resourceLogs.map((log) => {
-                      return (
-                        <Alert severity="success" sx={{ mb: 1, p: 0.3 }}>
-                          {log}
-                        </Alert>
-                      );
-                    })}
+                  <Typography variant="caption" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {resourceLogs}
+                  </Typography>
                 </Stack>
               </AccordionDetails>
             </Accordion>
@@ -218,14 +213,9 @@ export default function ViolationAccordian({
             </AccordionSummary>
             <AccordionDetails>
               <Stack sx={{ maxHeight: '200px', overflowY: 'scroll' }}>
-                {LOG_LENGTH > 0 &&
-                  resourceLogs.map((log) => {
-                    return (
-                      <Alert severity="success" sx={{ mb: 1, p: 0.3 }}>
-                        {log}
-                      </Alert>
-                    );
-                  })}
+                <Typography variant="caption" sx={{ whiteSpace: 'pre-wrap' }}>
+                  {resourceLogs}
+                </Typography>
               </Stack>
             </AccordionDetails>
           </Accordion>
