@@ -58,6 +58,7 @@ export default function ViolationAccordian({
 }) {
   const [resourceViolations, setresourceViolations] = useState([]);
   const [resourceWarnings, setresourceWarnings] = useState([]);
+  const [resourceLogs, setresourceLogs] = useState([]);
   const [isAllow, setAllow] = useState(false);
   const [isLoading, setLoading] = useState(0);
 
@@ -68,6 +69,7 @@ export default function ViolationAccordian({
       const data = response.data;
       setresourceViolations(data.violations);
       setresourceWarnings(data.warnings);
+      setresourceLogs(data.log);
       setAllow(data.allow);
     }
     setLoading(false);
@@ -98,6 +100,8 @@ export default function ViolationAccordian({
   const VIOLATION_LENGTH = resourceViolations.length;
 
   const WARNING_LENGTH = resourceWarnings.length;
+
+  const LOG_LENGTH = resourceLogs.length;
 
   const onDelete = () => {
     handleCancel();
@@ -134,7 +138,7 @@ export default function ViolationAccordian({
             </Accordion>
           )}
           {WARNING_LENGTH > 0 && (
-            <Accordion>
+            <Accordion sx={{ mb: 2 }}>
               <AccordionSummary
                 aria-controls="panel2d-content"
                 id="panel2d-header"
@@ -153,6 +157,27 @@ export default function ViolationAccordian({
               </AccordionDetails>
             </Accordion>
           )}
+
+          {LOG_LENGTH > 0 && (
+            <Accordion>
+              <AccordionSummary
+                aria-controls="panel2d-content"
+                id="panel2d-header"
+              >
+                <Typography>Logs</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {LOG_LENGTH > 0 &&
+                  resourceLogs.map((log) => {
+                    return (
+                      <Alert severity="success" sx={{ mb: 1 }}>
+                        {log}
+                      </Alert>
+                    );
+                  })}
+              </AccordionDetails>
+            </Accordion>
+          )}
         </Box>
       ) : WARNING_LENGTH > 0 ? (
         <Box>
@@ -160,6 +185,8 @@ export default function ViolationAccordian({
             resourceWarnings={resourceWarnings}
             violationLength={VIOLATION_LENGTH}
             warningLength={WARNING_LENGTH}
+            resourceLogs={resourceLogs}
+            logLength={LOG_LENGTH}
           />
         </Box>
       ) : (
@@ -175,7 +202,17 @@ export default function ViolationAccordian({
           <Success />
         </Box>
       )}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 10 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          mt: 2,
+          padding: 2
+          // position: 'fixed'
+          // bottom: '20px',
+          // right: '20px'
+        }}
+      >
         <LoadingButton
           type="button"
           variant="contained"

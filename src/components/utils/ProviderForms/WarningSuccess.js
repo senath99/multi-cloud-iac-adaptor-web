@@ -78,7 +78,9 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 export default function WarningSuccess({
   resourceWarnings = [],
   violationLength,
-  warningLength
+  warningLength,
+  resourceLogs,
+  logLength
 }) {
   const [expanded, setExpanded] = useState(true);
 
@@ -91,7 +93,7 @@ export default function WarningSuccess({
       <Alert variant="filled" severity="warning" sx={{ mb: 3 }}>
         {getErrorAlert(violationLength, warningLength)}
       </Alert>
-      <Accordion expanded={expanded} onChange={handleExpansion}>
+      <Accordion sx={{ mb: 2 }} expanded={expanded} onChange={handleExpansion}>
         <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
           <Typography>Warnings</Typography>
         </AccordionSummary>
@@ -100,6 +102,20 @@ export default function WarningSuccess({
             return (
               <Alert severity="warning" sx={{ mb: 1 }}>
                 {warning}
+              </Alert>
+            );
+          })}
+        </AccordionDetails>
+      </Accordion>
+      <Accordion expanded={expanded} onChange={handleExpansion}>
+        <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+          <Typography>Logs</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {resourceLogs.map((log) => {
+            return (
+              <Alert severity="success" sx={{ mb: 1 }}>
+                {log}
               </Alert>
             );
           })}
