@@ -5,7 +5,7 @@ import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 // material
 import { experimentalStyled as styled } from '@material-ui/core/styles';
-import { Alert, Container, Typography } from '@material-ui/core';
+import { Alert, Container, Stack, Typography } from '@material-ui/core';
 
 // components
 
@@ -93,18 +93,20 @@ export default function WarningSuccess({
       <Alert variant="filled" severity="warning" sx={{ mb: 3 }}>
         {getErrorAlert(violationLength, warningLength)}
       </Alert>
-      <Accordion sx={{ mb: 2 }} expanded={expanded} onChange={handleExpansion}>
+      <Accordion expanded={expanded} onChange={handleExpansion} sx={{ mb: 2 }}>
         <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
           <Typography>Warnings</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          {resourceWarnings.map((warning) => {
-            return (
-              <Alert severity="warning" sx={{ mb: 1 }}>
-                {warning}
-              </Alert>
-            );
-          })}
+          <Stack sx={{ maxHeight: '200px', overflowY: 'scroll' }}>
+            {resourceWarnings.map((warning) => {
+              return (
+                <Alert severity="warning" sx={{ mb: 1, p: 0.3 }}>
+                  {warning}
+                </Alert>
+              );
+            })}
+          </Stack>
         </AccordionDetails>
       </Accordion>
       <Accordion expanded={expanded} onChange={handleExpansion}>
@@ -112,13 +114,20 @@ export default function WarningSuccess({
           <Typography>Logs</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          {resourceLogs.map((log) => {
-            return (
-              <Alert severity="success" sx={{ mb: 1 }}>
-                {log}
-              </Alert>
-            );
-          })}
+          <Stack
+            direction="column"
+            sx={{ maxHeight: '200px', overflowY: 'scroll' }}
+            spacing={0.2}
+            alignItems="left"
+          >
+            {resourceLogs.map((log) => {
+              return (
+                <Alert severity="success" sx={{ mb: 1, p: 0.3 }}>
+                  {log}
+                </Alert>
+              );
+            })}
+          </Stack>
         </AccordionDetails>
       </Accordion>
       <Typography

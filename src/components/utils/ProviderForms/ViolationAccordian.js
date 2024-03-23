@@ -13,6 +13,7 @@ import ComingSoon from './ComingSoon';
 import Success from './Success';
 import { getErrorAlert } from 'src/utils/functions';
 import WarningSuccess from './WarningSuccess';
+import { Stack } from '@material-ui/core';
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -69,7 +70,9 @@ export default function ViolationAccordian({
       const data = response.data;
       setresourceViolations(data.violations);
       setresourceWarnings(data.warnings);
-      setresourceLogs(data.log);
+
+      let logArray = data.log?.split('\n').filter(Boolean);
+      setresourceLogs(logArray);
       setAllow(data.allow);
     }
     setLoading(false);
@@ -126,14 +129,16 @@ export default function ViolationAccordian({
                 <Typography>Violations</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                {VIOLATION_LENGTH > 0 &&
-                  resourceViolations.map((violation) => {
-                    return (
-                      <Alert severity="error" sx={{ mb: 1 }}>
-                        {violation}
-                      </Alert>
-                    );
-                  })}
+                <Stack sx={{ maxHeight: '200px', overflowY: 'scroll' }}>
+                  {VIOLATION_LENGTH > 0 &&
+                    resourceViolations.map((violation) => {
+                      return (
+                        <Alert severity="error" sx={{ mb: 1, p: 0.3 }}>
+                          {violation}
+                        </Alert>
+                      );
+                    })}
+                </Stack>
               </AccordionDetails>
             </Accordion>
           )}
@@ -146,14 +151,16 @@ export default function ViolationAccordian({
                 <Typography>Warnings</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                {WARNING_LENGTH > 0 &&
-                  resourceWarnings.map((warning) => {
-                    return (
-                      <Alert severity="warning" sx={{ mb: 1 }}>
-                        {warning}
-                      </Alert>
-                    );
-                  })}
+                <Stack sx={{ maxHeight: '200px', overflowY: 'scroll' }}>
+                  {WARNING_LENGTH > 0 &&
+                    resourceWarnings.map((warning) => {
+                      return (
+                        <Alert severity="warning" sx={{ mb: 1, p: 0.3 }}>
+                          {warning}
+                        </Alert>
+                      );
+                    })}
+                </Stack>
               </AccordionDetails>
             </Accordion>
           )}
@@ -167,20 +174,28 @@ export default function ViolationAccordian({
                 <Typography>Logs</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                {LOG_LENGTH > 0 &&
-                  resourceLogs.map((log) => {
-                    return (
-                      <Alert severity="success" sx={{ mb: 1 }}>
-                        {log}
-                      </Alert>
-                    );
-                  })}
+                <Stack sx={{ maxHeight: '200px', overflowY: 'scroll' }}>
+                  {LOG_LENGTH > 0 &&
+                    resourceLogs.map((log) => {
+                      return (
+                        <Alert severity="success" sx={{ mb: 1, p: 0.3 }}>
+                          {log}
+                        </Alert>
+                      );
+                    })}
+                </Stack>
               </AccordionDetails>
             </Accordion>
           )}
         </Box>
       ) : WARNING_LENGTH > 0 ? (
-        <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
           <WarningSuccess
             resourceWarnings={resourceWarnings}
             violationLength={VIOLATION_LENGTH}
@@ -190,16 +205,30 @@ export default function ViolationAccordian({
           />
         </Box>
       ) : (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            px: 30,
-            py: '10%'
-          }}
-        >
-          <Success />
+        <Box>
+          <Box sx={{ mb: 2, px: 20 }}>
+            <Success />
+          </Box>
+          <Accordion expanded={expanded} onChange={handleExpansion}>
+            <AccordionSummary
+              aria-controls="panel2d-content"
+              id="panel2d-header"
+            >
+              <Typography>Logs</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Stack sx={{ maxHeight: '200px', overflowY: 'scroll' }}>
+                {LOG_LENGTH > 0 &&
+                  resourceLogs.map((log) => {
+                    return (
+                      <Alert severity="success" sx={{ mb: 1, p: 0.3 }}>
+                        {log}
+                      </Alert>
+                    );
+                  })}
+              </Stack>
+            </AccordionDetails>
+          </Accordion>
         </Box>
       )}
       <Box
@@ -208,9 +237,6 @@ export default function ViolationAccordian({
           justifyContent: 'flex-end',
           mt: 2,
           padding: 2
-          // position: 'fixed'
-          // bottom: '20px',
-          // right: '20px'
         }}
       >
         <LoadingButton
