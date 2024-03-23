@@ -14,7 +14,6 @@ import Page from '../../Page';
 //icons
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import { getErrorAlert } from 'src/utils/functions';
-import parse from 'html-react-parser';
 
 // ----------------------------------------------------------------------
 
@@ -118,11 +117,16 @@ export default function WarningSuccess({
           <Stack
             direction="column"
             sx={{ maxHeight: '200px', overflowY: 'scroll' }}
+            spacing={0.2}
             alignItems="left"
           >
-            <Typography variant="caption" sx={{ whiteSpace: 'pre-wrap' }}>
-              {resourceLogs}
-            </Typography>
+            {resourceLogs.map((log) => {
+              return (
+                <Alert severity="success" sx={{ mb: 1, p: 0.3 }}>
+                  {log}
+                </Alert>
+              );
+            })}
           </Stack>
         </AccordionDetails>
       </Accordion>
