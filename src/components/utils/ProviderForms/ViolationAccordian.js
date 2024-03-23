@@ -165,7 +165,7 @@ export default function ViolationAccordian({
             </Accordion>
           )}
 
-          {LOG_LENGTH > 0 && (
+          {
             <Accordion>
               <AccordionSummary
                 aria-controls="panel2d-content"
@@ -181,7 +181,7 @@ export default function ViolationAccordian({
                 </Stack>
               </AccordionDetails>
             </Accordion>
-          )}
+          }
         </Box>
       ) : WARNING_LENGTH > 0 ? (
         <Box
