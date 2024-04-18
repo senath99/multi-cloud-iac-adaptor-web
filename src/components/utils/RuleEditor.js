@@ -136,6 +136,7 @@ function RuleEditor({ id, stackData, className, provider }) {
       setSecurityTfid(result?.securityGroup?.tfId);
       setAWSSecurityGroups(result?.securityModules);
       setAwsTags(result?.securityGroup?.tags);
+
       setFieldValue('stack_name', result?.stack_name);
       setFieldValue('security_group_name', result?.securityGroup?.name);
 
@@ -252,9 +253,10 @@ function RuleEditor({ id, stackData, className, provider }) {
 
   const handleDeleteCidrOption = (index, indexNo) => {
     let group = securityAWSGroups[index];
-    let cidrValues = group?.cidrBlocks;
 
-    if (cidrValues.length !== 1) {
+    let cidrValues = [...group.cidrBlocks];
+
+    if (cidrValues && cidrValues.length > 1) {
       cidrValues.splice(indexNo, 1);
 
       setAWSSecurityGroups({
@@ -628,7 +630,7 @@ function RuleEditor({ id, stackData, className, provider }) {
 
                       {option?.cidrBlocks?.map((optionCidr, thisIndex) => {
                         return (
-                          <Box key={index} sx={{ mt: 2 }}>
+                          <Box key={thisIndex} sx={{ mt: 2 }}>
                             <TextField
                               sx={{ width: '49%' }}
                               fullWidth
